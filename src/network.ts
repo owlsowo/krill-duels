@@ -1,4 +1,4 @@
-import Peer, { type DataConnection } from 'peerjs';
+import Peer, { type DataConnection, type PeerOptions } from 'peerjs';
 import { catalogVersion, promptById, PROMPT_IDS } from './data';
 import { commitment, DuelEngine, GRACE_MS, type DuelState, type Seat, safeName } from './duel-engine';
 import { DEFAULT_SETTINGS, validSettings, type DuelSettings } from './settings';
@@ -100,11 +100,18 @@ export class DuelRoom {
       return;
     }
     if (!this.alive) return;
+    let options: PeerOptions;
+    try { options = peerOptions(); }
+    catch {
+      this.lastError = 'configuration-error';
+      this.fail('Live rooms are temporarily unavailable because of a site setup problem. Please report it using the connection details below.');
+      return;
+    }
     try {
-      const options = peerOptions();
       this.peer = this.seat === 0 ? new Peer(`kd-${this.room}`, options) : new Peer(options);
-    } catch (error) {
-      this.fail(error instanceof Error ? error.message : 'Could not open the room service. Refresh and try again.');
+    } catch {
+      this.lastError = 'initialization-error';
+      this.fail('Could not start the live connection. Refresh the page and try again.');
       return;
     }
     this.peer.on('open', () => {
@@ -414,7 +421,7 @@ export class DuelRoom {
     }
     const serviceTimeout = this.state && (this.seat === 1 || this.guestToken) ? GRACE_MS + 8_000 : SIGNALING_TIMEOUT_MS;
     if (this.serviceStarted !== null && !this.peer?.open && !this.accepted && now - this.serviceStarted >= serviceTimeout) {
-      this.fail('Could not reach the room service. Check that your proxy allows 0.peerjs.com, then try again.');
+      this.fail('Could not reach the room service. Check your internet connection and try again.');
       return;
     }
     if (this.engine) {
@@ -441,7 +448,7 @@ export class DuelRoom {
           this.fail(this.state ? 'The host is no longer reachable. Ask for a new invite.' : this.lastError === 'peer-unavailable'
             ? 'The host room was not found. Keep the host tab open and ask for a fresh invite.'
             : this.handshakeStarted !== null || this.lastError === 'handshake-timeout' ? 'The connection opened, but the room did not respond. Both refresh and create a new room.'
-            : 'The room service is reachable, but the game connection could not open. With Clash, try TUN mode and a UDP-capable proxy node on both devices. See Connection help.');
+            : 'Could not connect to your friend. Keep both game tabs open and try again. If it still fails, try another network or VPN server. See Connection help.');
           return;
         }
         if (this.attemptStarted !== null) {
@@ -451,7 +458,7 @@ export class DuelRoom {
             this.retryConnection();
           } else if (!this.slowHintShown && this.handshakeStarted === null && now - this.attemptStarted >= 6_000) {
             this.slowHintShown = true;
-            this.callbacks.status('Still connecting to your friend… Using Clash? Check TUN mode and UDP support in Connection help.');
+            this.callbacks.status('Still connecting to your friend… This can take a little longer on some networks. See Connection help.');
           }
         } else if (now >= this.nextRetry && this.peer?.open) this.connect();
       }

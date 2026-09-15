@@ -38,11 +38,11 @@ Some school, work, VPN, or restrictive NAT networks can block browser connection
 ### If a duel stays on Connecting
 
 1. Keep the host's room open and use its current invite. Both players should refresh after an update, then create a new room.
-2. With **Clash Verge**, check whether **TUN mode** is enabled. System proxy mode can load the website and room service while WebRTC's UDP traffic takes a different route. TUN mode captures TCP and UDP; the selected proxy node and its server must also support UDP, and the routing rules must send this traffic through that node. The **Global** routing toggle alone does not enable TUN. [Clash Verge's explanation](https://www.clashverge.dev/guide/term.html).
-3. If TUN still fails, test another UDP-capable node or network. Loading the website proves that HTTPS works; it does not prove that a WebRTC route between the players works.
-4. If the connection details say the room service is unreachable, check access to `0.peerjs.com` over HTTPS/WebSocket port 443. If the room service connects but the friend connection times out, focus on WebRTC routing and TURN availability. Open **Connection help** and choose **Copy connection details** when reporting a failure; include both players' browsers and whether TUN is enabled.
+2. Allow up to a minute for the initial connection. You can cancel and retry if needed.
+3. If joining keeps failing, try another network or, if you use a VPN, another VPN server. Loading the website does not always mean a live connection between the two players can open.
+4. Open **Connection help** and choose **Copy connection details** when reporting a failure. Include both players' browsers and the message shown. The report distinguishes room-service access from the connection between players without assuming a particular VPN app or configuration.
 
-A regular HTTP/SOCKS proxy on an Oracle VM is not automatically a TURN relay. A reachable TURN service with TCP/TLS support, commonly on port 443, can provide an additional route for restrictive networks. It needs an actual TURN server and valid credentials; adding an arbitrary HTTPS URL or running only a PeerJS signaling server cannot relay gameplay. No configuration guarantees connectivity from every network. [WebRTC TURN guide](https://webrtc.org/getting-started/turn-server), [PeerJS connection FAQ](https://peerjs.com/client/faq).
+Technical relay setup for site operators is documented below.
 
 Answer commitments are exchanged before answers are revealed, so a regular client cannot wait to see the other answer before choosing. This is casual play: the catalog and code are public, and the host is trusted. It is not a server-authoritative ranked or anti-cheat system.
 
@@ -62,6 +62,8 @@ npm run build
 GitHub Actions runs the tests, builds the static app, and publishes `dist` to GitHub Pages on pushes to `main`. Pages must use **GitHub Actions** as its source. Vite uses relative asset paths so the game works under the repository subpath.
 
 ### Optional TURN configuration
+
+For site operators: the room service uses `0.peerjs.com` over HTTPS/WebSocket port 443. If signaling succeeds but the game connection cannot open, investigate WebRTC routing and relay availability. A reachable TURN service with TCP/TLS support can provide another route for restrictive networks. Running only a signaling server or a regular proxy does not provide a TURN relay. [WebRTC TURN guide](https://webrtc.org/getting-started/turn-server), [PeerJS connection FAQ](https://peerjs.com/client/faq).
 
 Copy `.env.example` to `.env.local` for local development, or supply the same environment variables to the deployment build:
 
