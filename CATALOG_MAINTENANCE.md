@@ -8,6 +8,8 @@ Answer eligibility and answer points are separate decisions. A low-readership ar
 
 Use one canonical answer with explicit aliases for equivalent names. A synonym must satisfy the question's naming rules; do not automatically add every country abbreviation to a spelling, length, or initial-letter question. Ambiguous aliases must not resolve to a convenient score. Preserve the conservative typo-suggestion limits in `src/match.ts`; the question bank is not a hint generator.
 
+For missing alternate names, add a question-specific entry to `answerAliases` in the correction manifest. Record the existing canonical answer, accepted aliases, stable identity, reason and factual sources. Alias-only additions keep the canonical name, historical score and historical scoring label. For example, “Ship of Theseus” and “Theseus's ship” identify the same answer in the famous-ship question; this is an explicit synonym, not a spelling-distance exception. Do not strip ship prefixes or reorder words globally. Run the catalog tests to catch aliases that collide with another answer.
+
 ## New reviewed questions
 
 Author new entries in `data/curated-questions.json`:
