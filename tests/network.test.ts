@@ -2,6 +2,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { DuelRoom } from '../src/network';
 import { PROMPTS, promptById } from '../src/data';
 import type { DuelSettings } from '../src/settings';
+import type { DuelEngine } from '../src/duel-engine';
 
 const transport = vi.hoisted(() => {
   type Handler = (...args: any[]) => void;
@@ -11,9 +12,11 @@ const transport = vi.hoisted(() => {
     emit(name: string, ...args: any[]) { this.handlers.get(name)?.forEach(fn => fn(...args)); }
   }
   const peers = new Map<string, MockPeer>();
-  const controls = { holdReveals: false, held: [] as (() => void)[], sent: 0, offline: false };
+  const controls = { holdReveals: false, held: [] as (() => void)[], sent: 0, offline: false,
+    holdOpens: false, opens: [] as (() => void)[], holdHellos: false, hellos: [] as (() => void)[], blockService: false };
   class Channel extends Events {
     open = false;
+    closed = false;
     serialization = 'binary';
     other!: Channel;
     send(packet: any) {
@@ -23,10 +26,12 @@ const transport = vi.hoisted(() => {
       const data = structuredClone(packet);
       const deliver = () => { if (this.open && this.other.open) this.other.emit('data', data); };
       if (controls.holdReveals && packet.type === 'reveal') controls.held.push(deliver);
+      else if (controls.holdHellos && packet.type === 'hello') controls.hellos.push(deliver);
       else queueMicrotask(deliver);
     }
     close() {
-      if (!this.open) return;
+      if (this.closed) return;
+      this.closed = true; this.other.closed = true;
       this.open = false; this.other.open = false;
       this.emit('close'); this.other.emit('close');
     }
@@ -37,9 +42,9 @@ const transport = vi.hoisted(() => {
     disconnected = false;
     destroyed = false;
     channels: Channel[] = [];
-    constructor(id = `guest-${peers.size}`) {
-      super(); this.id = id; peers.set(id, this);
-      queueMicrotask(() => { if (!this.destroyed) { this.open = true; this.emit('open', this.id); } });
+    constructor(idOrOptions?: string | object) {
+      super(); this.id = typeof idOrOptions === 'string' ? idOrOptions : `guest-${peers.size}`; peers.set(this.id, this);
+      queueMicrotask(() => { if (!this.destroyed && !controls.blockService) { this.open = true; this.emit('open', this.id); } });
     }
     connect(id: string, options?: {serialization:string}) {
       const local = new Channel(); const remote = new Channel(); local.other = remote; remote.other = local;
@@ -47,9 +52,15 @@ const transport = vi.hoisted(() => {
       this.channels.push(local);
       queueMicrotask(() => {
         const host = peers.get(id);
+        if (local.closed || this.destroyed) return;
         if (!host || controls.offline) { this.emit('error', { type: 'peer-unavailable' }); return; }
         host.channels.push(remote); host.emit('connection', remote);
-        local.open = true; remote.open = true; remote.emit('open'); local.emit('open');
+        const open = () => {
+          if (local.closed || this.destroyed) return;
+          local.open = true; remote.open = true; remote.emit('open'); local.emit('open');
+        };
+        if (controls.holdOpens) controls.opens.push(open);
+        else open();
       });
       return local;
     }
@@ -84,6 +95,7 @@ beforeEach(() => {
   const storage = new Map<string,string>();
   vi.stubGlobal('sessionStorage', { getItem: (k:string) => storage.get(k) ?? null, setItem: (k:string,v:string) => storage.set(k,v), removeItem: (k:string) => storage.delete(k) });
   transport.controls.holdReveals = false; transport.controls.held = []; transport.controls.sent = 0; transport.controls.offline = false;
+  transport.controls.holdOpens = false; transport.controls.opens = []; transport.controls.holdHellos = false; transport.controls.hellos = []; transport.controls.blockService = false;
   errors.length = 0;
 });
 afterEach(() => { rooms.forEach(r => r.dispose(false)); rooms = []; transport.peers.clear(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
@@ -191,5 +203,133 @@ describe('two-player protocol', () => {
     vi.setSystemTime(question.deadline + 21);
     expect(await guest.submit(promptById(question.promptId!)!.answers[0].answer)).toBe(false);
     expect(sessionStorage.getItem(`kd-answer-${guest.room}`)).toBeNull();
+  });
+});
+
+describe('connection lifecycle', () => {
+  async function joiningPair() {
+    const host = new DuelRoom('Host', null, callbacks()); rooms.push(host); await host.open(); await flush();
+    const guest = new DuelRoom('Guest', host.room, callbacks()); rooms.push(guest); await guest.open(); await flush();
+    return { host, guest, guestPeer: [...transport.peers.values()].find(peer => peer.id !== `kd-${host.room}`)! };
+  }
+
+  it('lets slow negotiation finish without replacing the channel or expiring host authentication', async () => {
+    transport.controls.holdOpens = true;
+    const { host, guest, guestPeer } = await joiningPair();
+    await advance(12_000);
+    expect(guestPeer.channels).toHaveLength(1);
+    expect(guestPeer.channels[0].closed).toBe(false);
+    guestPeer.emit('open'); // A recovered signaling socket must not cancel ICE.
+    expect(guestPeer.channels).toHaveLength(1);
+    transport.controls.opens.splice(0).forEach(open => open()); await flush();
+    expect(host.state?.connected).toBe(true);
+    expect(guest.state?.connected).toBe(true);
+    expect(errors).toEqual([]);
+  });
+
+  it('keeps an open retry alive while the room handshake is delayed', async () => {
+    transport.controls.offline = true;
+    const { host, guest, guestPeer } = await joiningPair();
+    transport.controls.offline = false; transport.controls.holdHellos = true;
+    await advance(2_000); await advance(6_000);
+    expect(guestPeer.channels).toHaveLength(2);
+    expect(guestPeer.channels[1].open).toBe(true);
+    transport.controls.hellos.splice(0).forEach(deliver => deliver()); await flush();
+    expect(host.state?.connected).toBe(true); expect(guest.state?.connected).toBe(true);
+    expect(errors).toEqual([]);
+  });
+
+  it('bounds stalled attempts and ends an unreachable join with useful diagnostics', async () => {
+    transport.controls.holdOpens = true;
+    const { guest, guestPeer } = await joiningPair();
+    await advance(19_000);
+    expect(guestPeer.channels).toHaveLength(1);
+    await advance(3_000);
+    expect(guestPeer.channels[0].closed).toBe(true);
+    expect(guestPeer.channels).toHaveLength(2);
+    await advance(38_000);
+    expect(errors).toHaveLength(1);
+    expect(errors[0]).toContain('TUN mode');
+    expect(guestPeer.destroyed).toBe(true);
+    expect(guest.diagnostics()).toMatchObject({ stage: 'failed' });
+    expect((guest.diagnostics() as {lastError:string}).lastError).toMatch(/^connection-/);
+    const report = JSON.stringify(guest.diagnostics());
+    expect(report).not.toContain(guest.room);
+    expect(report).not.toContain(sessionStorage.getItem(`kd-token-${guest.room}`));
+  });
+
+  it('does not advertise a host room until the signaling service opens', async () => {
+    transport.controls.blockService = true;
+    const host = new DuelRoom('Host', null, callbacks()); rooms.push(host); await host.open(); await flush();
+    await advance(24_000);
+    expect(host.state).toBeNull(); expect(errors).toEqual([]);
+    await advance(1_000);
+    expect(errors[0]).toContain('room service');
+    expect(transport.peers.size).toBe(0);
+  });
+
+  it('ignores late peer-level WebRTC errors from an expired attempt', async () => {
+    transport.controls.holdOpens = true;
+    const { host, guest, guestPeer } = await joiningPair();
+    await advance(22_000);
+    expect(guestPeer.channels).toHaveLength(2);
+    guestPeer.emit('error', { type: 'webrtc' });
+    transport.controls.opens.splice(0).forEach(open => open()); await flush();
+    expect(errors).toEqual([]);
+    expect(host.state?.connected).toBe(true); expect(guest.state?.connected).toBe(true);
+  });
+
+  it('cancels pending channels and ignores late open events', async () => {
+    transport.controls.holdOpens = true;
+    const { host, guest, guestPeer } = await joiningPair();
+    guest.dispose(false);
+    transport.controls.opens.splice(0).forEach(open => open()); await flush();
+    expect(host.state?.connected).toBe(false); expect(guest.state).toBeNull();
+    expect(guestPeer.channels[0].closed).toBe(true);
+    await advance(60_000); expect(errors).toEqual([]);
+  });
+
+  it('preserves gameplay through signaling loss and safely retries reconnection', async () => {
+    const { host, guest } = await pair();
+    const peer = [...transport.peers.values()].find(peer => peer.id !== `kd-${host.room}`)!;
+    peer.open = false; peer.disconnected = true;
+    const reconnect = vi.spyOn(peer, 'reconnect').mockImplementationOnce(() => { throw Error('not ready'); });
+    peer.emit('disconnected');
+    await advance(3_000);
+    expect(reconnect).toHaveBeenCalledTimes(2);
+    expect(guest.state?.connected).toBe(true); expect(host.state?.connected).toBe(true);
+    expect(errors).toEqual([]);
+  });
+
+  it('retries a host reveal rejected during a transient disconnect instead of losing its score', async () => {
+    const { host, guest } = await pair();
+    const engine = (host as unknown as {engine:DuelEngine}).engine;
+    const reveal = vi.spyOn(engine, 'reveal').mockResolvedValueOnce(false);
+    const answer = promptById(host.state!.promptId!)!.answers[0];
+    await host.submit(answer.answer); await flush();
+    await guest.submit(''); await flush();
+    await advance(1_000);
+    expect(reveal.mock.calls.filter(call => call[0] === 0)).toHaveLength(2);
+    expect(host.state!.history).toHaveLength(1);
+    expect(host.state!.history[0].results[0].points).toBe(answer.score);
+    expect(guest.state!.history).toEqual(host.state!.history);
+  });
+
+  it('starts a fresh signaling recovery budget when a healthy game connection drops', async () => {
+    const { host, guest } = await pair();
+    const peers = [...transport.peers.values()];
+    for (const peer of peers) {
+      peer.open = false; peer.disconnected = true;
+      vi.spyOn(peer, 'reconnect').mockImplementation(() => {});
+      peer.emit('disconnected');
+    }
+    await advance(26_000);
+    expect(errors).toEqual([]);
+    transport.peers.get(`kd-${host.room}`)!.channels.at(-1)!.close(); await flush();
+    await advance(3_000);
+    expect(errors).toEqual([]); expect(guest.state!.connected).toBe(false);
+    for (const peer of peers) { peer.open = true; peer.disconnected = false; peer.emit('open'); }
+    await flush();
+    expect(host.state!.connected).toBe(true); expect(guest.state!.connected).toBe(true);
   });
 });

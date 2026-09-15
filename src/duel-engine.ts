@@ -131,11 +131,11 @@ export class DuelEngine {
   }
 
   async reveal(seat: Seat, matchId: string, round: number, input: string, salt: string, now: number): Promise<boolean> {
-    if (this.state.phase !== 'reveal' || matchId !== this.state.matchId || round !== this.state.round ||
+    if (this.state.phase !== 'reveal' || !this.state.connected || matchId !== this.state.matchId || round !== this.state.round ||
         this.answers[seat] !== null || input.length > 160 || salt.length > 100 || now >= this.state.deadline) return false;
     const hash = await commitment(matchId, round, seat, this.state.promptId!, input, salt);
-    // Re-check after digest: the host may have timed out or advanced meanwhile.
-    if (this.state.phase !== 'reveal' || this.state.matchId !== matchId || this.state.round !== round || this.answers[seat] !== null) return false;
+    // Re-check after digest: the host may have paused, timed out, or advanced meanwhile.
+    if (this.state.phase !== 'reveal' || !this.state.connected || this.state.matchId !== matchId || this.state.round !== round || this.answers[seat] !== null) return false;
     if (hash !== this.hashes[seat]) return false;
     this.answers[seat] = input;
     if (this.answers.every(answer => answer !== null)) this.resolve();

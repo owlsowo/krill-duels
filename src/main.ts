@@ -1,4 +1,6 @@
 import './style.css';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/press-start-2p/latin-400.css';
 import { PROMPTS, promptById } from './data';
 import { multiplier, type DuelState } from './duel-engine';
 import { DEFAULT_SETTINGS, TIME_OPTIONS, validSettings, type DuelSettings } from './settings';
@@ -20,6 +22,7 @@ let state: DuelState | null = null;
 let status = '';
 let error = '';
 let answerHint = '';
+let answerSuggestions: string[] = [];
 let joining = false;
 let submitting = false;
 let offset = 0;
@@ -37,6 +40,19 @@ function announce(message: string): void {
   document.querySelector('#announcement')!.textContent = message;
 }
 
+function connectionReport(): string {
+  return JSON.stringify({ ...(room?.diagnostics() ?? { stage: 'idle' }), online: navigator.onLine, browser: navigator.userAgent }, null, 2);
+}
+
+function connectionHelp(): string {
+  return `<details class="connection-help"><summary>Connection help</summary><p>Keep the host tab open and use its latest invite. After an update, both refresh and create a new room.</p><p>Using Clash Verge? Try <strong>TUN mode</strong> with a proxy node that supports <strong>UDP</strong> on both devices. System proxy or Global mode alone may load this page without connecting the game.</p><p>If that fails, try another node or network. <a href="https://github.com/owlsowo/krill-duels#optional-turn-configuration" target="_blank" rel="noopener">Relay setup and troubleshooting ↗</a></p><label for="connection-report">Connection details</label><textarea id="connection-report" readonly rows="8" spellcheck="false">${esc(connectionReport())}</textarea><button class="quiet" data-action="copy-diagnostics">Copy connection details</button><span id="diagnostic-status" class="fine" role="status"></span></details>`;
+}
+
+function suggestionButtons(disabled = false): string {
+  if (!answerSuggestions.length) return '';
+  return `<div class="answer-suggestions" role="group" aria-label="Spelling suggestions"><span>Did you mean…?</span>${answerSuggestions.map(answer => `<button type="button" class="secondary" data-action="use-suggestion" data-answer="${esc(answer)}" ${disabled ? 'disabled' : ''}>${esc(answer)}</button>`).join('')}<small>Choose a spelling, then press Lock in to confirm.</small></div>`;
+}
+
 function playerCard(name: string, hp: number, side: number, detail: string): string {
   const maxHp = state?.settings.startingHp ?? settings.startingHp;
   return `<section class="player player-${side}"><div class="player-id"><span class="avatar" aria-hidden="true">${side === 0 ? '🦐' : '🦑'}</span><div><span class="player-label">${side === 0 ? 'PLAYER 01' : 'PLAYER 02'}</span><h2>${esc(name)}</h2></div><strong class="hp">${hp}<small> HP</small></strong></div><div class="health-track" role="meter" aria-label="${esc(name)} health" aria-valuemin="0" aria-valuemax="${maxHp}" aria-valuenow="${hp}"><div class="health-fill" style="width:${hp / maxHp * 100}%"></div></div><div class="player-status">${esc(detail)}</div></section>`;
@@ -44,7 +60,7 @@ function playerCard(name: string, hp: number, side: number, detail: string): str
 
 function render(force = false): void {
   if (practice) { renderPractice(force); return; }
-  const key = state ? JSON.stringify([state.matchId,state.phase,state.round,state.hp,state.ready,state.committed,state.connected,state.history.length,status,error,submitting,answerHint]) : `${joining}|${status}|${error}|${roomFromHash()}`;
+  const key = state ? JSON.stringify([state.matchId,state.phase,state.round,state.hp,state.ready,state.committed,state.connected,state.history.length,status,error,submitting,answerHint,answerSuggestions]) : `${joining}|${status}|${error}|${roomFromHash()}`;
   if (!force && key === lastKey) return;
   lastKey = key;
   const currentInput = screen.querySelector<HTMLInputElement>('#answer');
@@ -52,10 +68,16 @@ function render(force = false): void {
   const selection = currentInput?.selectionStart;
   const answerFocused = document.activeElement === currentInput;
   const previousName = screen.querySelector<HTMLInputElement>('#name')?.value;
+  const openDetails = [...screen.querySelectorAll<HTMLDetailsElement>('details[open]')].map(detail => detail.className);
+  const answerScroll = screen.querySelector('.answer-list')?.scrollTop ?? 0;
+  const restoreDetails = () => {
+    screen.querySelectorAll<HTMLDetailsElement>('details').forEach(detail => { detail.open = openDetails.includes(detail.className); });
+    const answers = screen.querySelector('.answer-list'); if (answers) answers.scrollTop = answerScroll;
+  };
   const mySeat = room?.seat ?? 0;
   if (!state) {
     renderHome(previousName ?? savedName);
-    bindForms(); return;
+    restoreDetails(); bindForms(); return;
   }
   const s = state;
   const last = s.history.at(-1);
@@ -69,14 +91,15 @@ function render(force = false): void {
     content = `<div class="countdown-content"><span class="eyebrow">ROUND ${s.round} · ${roundFactor(s)}× DAMAGE</span><h1>Get ready.</h1><div id="countdown" class="big-count" aria-live="off">3</div><p>A new question. A chance to turn the tide.</p></div>`;
   } else if (s.phase === 'question' || s.phase === 'reveal') {
     const locked = s.committed[mySeat] || s.phase === 'reveal' || submitting;
-    content = `<div class="question-top"><span class="eyebrow">${esc(prompt?.category || 'TRIVIA')}</span><div class="clock"><span id="seconds">${s.settings.questionSeconds}</span><small>SEC</small></div></div><h1 class="question">${esc(prompt?.prompt)}</h1><div class="timer-track" aria-hidden="true"><div id="timer-fill"></div></div><form id="answer-form"><label for="answer">${locked ? 'YOUR ANSWER IS LOCKED' : 'YOUR ANSWER'}</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…" ${locked || frozen ? 'disabled' : ''}><button class="primary" type="submit" ${locked || frozen ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock in →'}</button></div><div class="answer-foot"><span id="answer-hint" ${answerHint ? 'role="alert"' : ''}>${esc(answerHint || (s.phase === 'reveal' ? 'Revealing both answers…' : locked ? 'Waiting for the other answer…' : 'Press Enter to lock in. Rarer answers score higher.'))}</span>${!locked ? '<button class="quiet" type="button" data-action="skip">Skip</button>' : ''}</div></form>`;
+    content = `<div class="question-top"><span class="eyebrow">${esc(prompt?.category || 'TRIVIA')}</span><div class="clock"><span id="seconds">${s.settings.questionSeconds}</span><small>SEC</small></div></div><h1 class="question">${esc(prompt?.prompt)}</h1><div class="timer-track" aria-hidden="true"><div id="timer-fill"></div></div><form id="answer-form"><label for="answer">${locked ? 'YOUR ANSWER IS LOCKED' : 'YOUR ANSWER'}</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…" ${locked || frozen ? 'disabled' : ''}><button class="primary" type="submit" ${locked || frozen ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock in →'}</button></div><div class="answer-foot"><span id="answer-hint" ${answerHint ? 'role="alert"' : ''}>${esc(answerHint || (s.phase === 'reveal' ? 'Revealing both answers…' : locked ? 'Waiting for the other answer…' : 'Press Enter to lock in. Rarer answers score higher.'))}</span>${!locked ? `<button class="quiet" type="button" data-action="skip" ${frozen ? 'disabled' : ''}>Skip</button>` : ''}</div>${suggestionButtons(locked || frozen)}</form>`;
   } else {
     const finished = s.phase === 'finished';
     const headline = finished ? s.winner === null ? 'An even match.' : s.winner === mySeat ? 'You win.' : 'You’re sunk.' : last?.loser === null ? 'No damage.' : last?.loser === mySeat ? 'That one hurt.' : 'Direct hit.';
     content = `<div class="result-head"><span class="eyebrow">${finished ? 'DUEL COMPLETE' : `ROUND ${s.round} RESULTS`}</span><h1>${headline}</h1><p>${esc(finished ? s.reason : last?.damage ? `${s.names[last.loser!]} takes ${last.damage} damage${last.multiplier>1 ? ` at ${last.multiplier}×` : ''}.` : 'Equal scores. Both HP bars stay put.')}</p></div>${last ? `<p class="result-prompt">${esc(promptById(last.promptId)?.prompt)}</p><div class="result-grid">${last.results.map((result,i)=>`<div class="answer-result player-${i}"><div class="result-name">${esc(s.names[i])}</div><strong>${result.points}<small> pts</small></strong><h2>${esc(result.answer || (result.input ? `“${result.input}”` : 'No answer'))}</h2><span class="rarity score-${result.points}">${esc(scoreLabels[result.points])}</span></div>`).join('')}</div>` : ''}<button class="primary" data-action="ready" ${!s.connected || s.ready[mySeat] ? 'disabled' : ''}>${s.ready[mySeat] ? 'Waiting for your friend…' : finished ? 'Rematch · new shuffle →' : 'Ready for next question →'}</button>${last ? `<details class="answer-sheet"><summary>See accepted answers for this question</summary><p class="fine">Historical archive · <a href="${esc(promptById(last.promptId)?.source)}" target="_blank" rel="noopener">View source ↗</a></p><div class="answer-list">${[...(promptById(last.promptId)?.answers ?? [])].sort((a,b)=>b.score-a.score).map(a=>`<div><span>${esc(a.answer)}</span><b>${a.score}</b></div>`).join('')}</div></details>` : ''}`;
   }
-  screen.innerHTML = `<section class="match"><div class="match-heading"><span class="eyebrow">${s.phase==='lobby' ? 'LIVE 1V1' : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`}</span><button class="quiet" data-action="leave">Leave duel</button></div><div class="health-board">${playerCard(s.names[0],s.hp[0],0,details[0])}<span class="versus">VS</span>${playerCard(s.names[1],s.hp[1],1,details[1])}</div>${frozen ? `<div class="connection-warning" role="status">Connection interrupted. Round paused while your friend reconnects.</div>` : ''}<section class="arena ${s.phase}">${content}</section><div class="match-foot"><span class="status">${esc(status)}</span><button class="quiet" data-action="copy">Copy invite link</button></div>${error ? `<section class="connection-warning" role="alert">${esc(error)} <button class="secondary" data-action="retry">Reconnect</button><button class="quiet" data-action="home">New room</button></section>` : ''}${s.history.length > 1 ? `<details class="history"><summary>Match history · ${s.history.length} rounds</summary>${s.history.slice().reverse().map(r=>`<div class="history-row"><b>${r.round}</b><span>${esc(promptById(r.promptId)?.prompt)}</span><strong>${r.results[0].points} : ${r.results[1].points}</strong><small>${r.damage ? `${r.damage} damage` : 'Tie'}</small></div>`).join('')}</details>` : ''}</section>`;
+  screen.innerHTML = `<section class="match"><div class="match-heading"><span class="eyebrow">${s.phase==='lobby' ? 'LIVE 1V1' : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`}</span><button class="quiet" data-action="leave">Leave duel</button></div><div class="health-board">${playerCard(s.names[0],s.hp[0],0,details[0])}<span class="versus">VS</span>${playerCard(s.names[1],s.hp[1],1,details[1])}</div>${frozen ? `<div class="connection-warning" role="status">Connection interrupted. Round paused while your friend reconnects.</div>` : ''}<section class="arena ${s.phase}">${content}</section><div class="match-foot"><span class="status">${esc(status)}</span><button class="quiet" data-action="copy">Copy invite link</button></div>${error ? `<section class="connection-warning" role="alert">${esc(error)} <button class="secondary" data-action="retry">Reconnect</button><button class="quiet" data-action="home">New room</button></section>` : ''}${connectionHelp()}${s.history.length > 1 ? `<details class="history"><summary>Match history · ${s.history.length} rounds</summary>${s.history.slice().reverse().map(r=>`<div class="history-row"><b>${r.round}</b><span>${esc(promptById(r.promptId)?.prompt)}</span><strong>${r.results[0].points} : ${r.results[1].points}</strong><small>${r.damage ? `${r.damage} damage` : 'Tie'}</small></div>`).join('')}</details>` : ''}</section>`;
   bindForms();
+  restoreDetails();
   const input = screen.querySelector<HTMLInputElement>('#answer');
   if (input && previousAnswer !== undefined) { input.value = previousAnswer; if (answerFocused && !input.disabled) { input.focus({preventScroll:true}); input.setSelectionRange(selection ?? input.value.length,selection ?? input.value.length); } }
   if (input && !input.disabled && previousAnswer === undefined) input.focus({preventScroll:true});
@@ -103,7 +126,7 @@ async function connect(): Promise<void> {
     change: value => {
       if (room !== next) return;
       const changedRound = value.matchId !== state?.matchId || value.round !== state?.round;
-      if (changedRound) { answerHint = ''; submitting = false; }
+      if (changedRound) { answerHint = ''; answerSuggestions = []; submitting = false; }
       offset = next.hostClockOffset ?? Date.now() - value.now;
       state = value; joining = false; error = ''; render();
     },
@@ -111,7 +134,11 @@ async function connect(): Promise<void> {
     error: value => { if (room !== next) return; error = value; joining = false; render(); },
   }, settings);
   room = next;
-  try { await next.open(); } catch { error = 'Could not open the room. Check your connection and try again.'; joining = false; render(); }
+  try { await next.open(); } catch {
+    next.dispose(false);
+    if (room !== next) return;
+    error = 'Could not open the room. Check your connection and try again.'; joining = false; render();
+  }
 }
 
 async function submit(skip: boolean): Promise<void> {
@@ -120,12 +147,14 @@ async function submit(skip: boolean): Promise<void> {
   const input = screen.querySelector<HTMLInputElement>('#answer')?.value ?? '';
   if (!skip) {
     const prompt = promptById(state.promptId!);
-    if (!input.trim() || !prompt || !new AnswerIndex(prompt).match(input)) {
-      answerHint = input.trim() ? 'Not found in this archive. Try another answer or skip.' : 'Type an answer first, or choose Skip.';
+    const index = prompt ? new AnswerIndex(prompt) : null;
+    if (!input.trim() || !index?.match(input)) {
+      answerSuggestions = index?.suggest(input) ?? [];
+      answerHint = input.trim() ? answerSuggestions.length ? 'That spelling was not found in this archive.' : 'Not found in this archive. Try another answer or skip.' : 'Type an answer first, or choose Skip.';
       render(); screen.querySelector<HTMLInputElement>('#answer')?.focus(); return;
     }
   }
-  answerHint = ''; submitting = true; render();
+  answerHint = ''; answerSuggestions = []; submitting = true; render();
   try {
     const accepted = await room.submit(skip ? '' : input);
     if (!accepted) { submitting = false; answerHint = 'The answer could not lock before the round closed.'; render(); }
@@ -134,7 +163,7 @@ async function submit(skip: boolean): Promise<void> {
 
 function paintClock(): void {
   if (practice) {
-    if (practice.tick()) { answerHint = ''; render(); }
+    if (practice.tick()) { answerHint = ''; answerSuggestions = []; render(); }
     const p = practice.snapshot();
     updateClock(p.phase === 'question' ? Math.max(0,p.deadline-Date.now()) : 0,p.questionSeconds*1000);
     return;
@@ -154,7 +183,7 @@ function paintClock(): void {
 }
 
 function home(): void {
-  room?.dispose(); room = null; practice = null; state = null; error = ''; status = ''; joining = false; answerHint = ''; submitting = false;
+  room?.dispose(); room = null; practice = null; state = null; error = ''; status = ''; joining = false; answerHint = ''; answerSuggestions = []; submitting = false;
   history.replaceState(null,'',location.pathname); lastKey = ''; render();
 }
 
@@ -162,8 +191,15 @@ app.addEventListener('click', async event => {
   const action = (event.target as Element).closest<HTMLElement>('[data-action]')?.dataset.action;
   if (action === 'help') (document.querySelector('#help') as HTMLDialogElement).showModal();
   if (action === 'close-help') (document.querySelector('#help') as HTMLDialogElement).close();
-  if (action === 'ready') { answerHint = ''; submitting = false; room?.ready(); }
+  if (action === 'ready') { answerHint = ''; answerSuggestions = []; submitting = false; room?.ready(); }
   if (action === 'skip') void submit(true);
+  if (action === 'use-suggestion') {
+    const chosen = (event.target as Element).closest<HTMLElement>('[data-answer]')?.dataset.answer;
+    const input = screen.querySelector<HTMLInputElement>('#answer');
+    if (!chosen || !answerSuggestions.includes(chosen) || !input || input.disabled || submitting) return;
+    input.value = chosen; answerSuggestions = []; answerHint = 'Spelling updated. Press Lock in to confirm.';
+    render(); screen.querySelector<HTMLInputElement>('#answer')?.focus();
+  }
   if (action === 'mode') {
     readSettings(); savedName = screen.querySelector<HTMLInputElement>('#name')?.value || savedName;
     mode = (event.target as Element).closest<HTMLElement>('[data-mode]')?.dataset.mode === 'solo' ? 'solo' : 'duel';
@@ -173,6 +209,10 @@ app.addEventListener('click', async event => {
     nextPracticeRound();
   }
   if (action === 'home') home();
+  if (action === 'cancel') {
+    room?.dispose(false); room = null; state = null; joining = false; error = '';
+    status = 'Connection cancelled. You can try again.'; lastKey = ''; render();
+  }
   if (action === 'leave' && confirm('Leave this duel? Your friend will win if the match is in progress.')) home();
   if (action === 'retry') {
     if (room?.seat === 1) history.replaceState(null,'',room.invite);
@@ -183,8 +223,20 @@ app.addEventListener('click', async event => {
     try { await navigator.clipboard.writeText(room.invite); status = 'Invite copied. Send it to your friend.'; render(); }
     catch { const input = screen.querySelector<HTMLInputElement>('#invite'); if (input) { input.focus(); input.select(); } else { status = room.invite; render(); } }
   }
+  if (action === 'copy-diagnostics') {
+    const report = screen.querySelector<HTMLTextAreaElement>('#connection-report');
+    if (report) report.value = connectionReport();
+    const feedback = screen.querySelector('#diagnostic-status');
+    try { await navigator.clipboard.writeText(connectionReport()); if (feedback) feedback.textContent = 'Copied. Share these details when reporting a problem.'; }
+    catch { report?.focus(); report?.select(); if (feedback) feedback.textContent = 'Select and copy the details above.'; }
+  }
 });
 window.addEventListener('hashchange', () => { if (!room) render(true); });
+screen.addEventListener('input', event => {
+  if ((event.target as HTMLElement).id === 'answer' && (answerHint || answerSuggestions.length)) {
+    answerHint = ''; answerSuggestions = []; render();
+  }
+});
 screen.addEventListener('change', event => {
   const target = event.target as HTMLInputElement | HTMLSelectElement;
   if (!['starting-hp','question-time','damage-mode'].includes(target.id)) return;
@@ -219,7 +271,7 @@ const removeGameTools = installGameTools((document as Document & { modelContext?
       nextPracticeRound(); return visibleStatus();
     }
     if (!room || !state?.connected || !['lobby','result','finished'].includes(state.phase)) throw new Error('Ready is not available right now.');
-    answerHint = ''; submitting = false; room.ready(); return visibleStatus();
+    answerHint = ''; answerSuggestions = []; submitting = false; room.ready(); return visibleStatus();
   },
   answer: async answer => {
     const input = screen.querySelector<HTMLInputElement>('#answer');
@@ -233,7 +285,7 @@ function renderHome(name: string): void {
   const invited = !!roomFromHash();
   const soloMode = !invited && mode === 'solo';
   const selectTime = `<label for="question-time">Time per question</label><select id="question-time">${TIME_OPTIONS.map(seconds=>`<option value="${seconds}" ${seconds===settings.questionSeconds?'selected':''}>${seconds} seconds</option>`).join('')}</select>`;
-  screen.innerHTML = `<section class="start setup"><div class="start-heading"><span class="eyebrow">${invited?'YOUR FRIEND SENT AN INVITE':'RARE ANSWERS. REAL POINTS.'}</span><h1>${invited?'Your duel awaits.':'Play your way.'}</h1><p>${invited?'Join the room, check the rules, and press Ready.':'Practice on your own or challenge a friend to an HP battle.'}</p></div><section class="start-controls">${invited?'':`<div class="mode-picker" aria-label="Game mode"><button class="mode-choice ${soloMode?'selected':''}" data-action="mode" data-mode="solo" aria-pressed="${soloMode}"><span aria-hidden="true">🦐</span><strong>Solo practice</strong><small>Find rare answers at your own pace</small></button><button class="mode-choice ${!soloMode?'selected':''}" data-action="mode" data-mode="duel" aria-pressed="${!soloMode}"><span aria-hidden="true">⚔️</span><strong>Create duel</strong><small>Invite a friend and battle for HP</small></button></div>`}<form id="start-form">${soloMode?'':`<label for="name">Your name</label><input id="name" maxlength="24" autocomplete="nickname" value="${esc(name)}" placeholder="Player">`}${invited?'':`<fieldset class="settings"><legend>${soloMode?'Practice settings':'Duel settings'}</legend><div class="settings-grid ${soloMode?'solo-settings':''}">${soloMode?'':`<div><label for="starting-hp">Starting HP</label><input id="starting-hp" type="number" min="100" max="10000" step="1" value="${settings.startingHp}" required><small>100–10,000 · higher means longer</small></div>`}<div>${selectTime}</div>${soloMode?'':`<div><label for="damage-mode">Damage</label><select id="damage-mode"><option value="scaling" ${settings.damageScaling?'selected':''}>Increasing 1× → 3×</option><option value="steady" ${!settings.damageScaling?'selected':''}>Steady 1×</option></select><small>${settings.damageScaling?'2× at round 5, 3× at round 8':'Score difference only'}</small></div>`}</div></fieldset>`}<button class="primary start-button" type="submit" ${joining?'disabled':''}>${joining?'Connecting…':invited?'Join duel →':soloMode?'Start solo practice →':'Create duel →'}</button></form><div class="game-facts"><span>${PROMPTS.length.toLocaleString()} questions</span><span>${ANSWER_COUNT.toLocaleString()} scored answers</span></div><p class="status" role="status">${esc(status || (invited?'The host’s settings apply to both players.':soloMode?'No room or connection needed once the game loads.':'Create a private room and share its invite link.'))}</p>${error?`<p class="error" role="alert">${esc(error)}</p><button class="quiet" data-action="retry">Try again</button>`:''}${invited?'<button class="quiet" data-action="home">Play solo or create your own duel</button>':''}</section></section>`;
+  screen.innerHTML = `<section class="start setup"><div class="start-heading"><span class="eyebrow">${invited?'YOUR FRIEND SENT AN INVITE':'RARE ANSWERS. REAL POINTS.'}</span><h1>${invited?'Your duel awaits.':'Play your way.'}</h1><p>${invited?'Join the room, check the rules, and press Ready.':'Practice on your own or challenge a friend to an HP battle.'}</p></div><section class="start-controls">${invited?'':`<div class="mode-picker" aria-label="Game mode"><button class="mode-choice ${soloMode?'selected':''}" data-action="mode" data-mode="solo" ${joining?'disabled':''} aria-pressed="${soloMode}"><span aria-hidden="true">🦐</span><strong>Solo practice</strong><small>Find rare answers at your own pace</small></button><button class="mode-choice ${!soloMode?'selected':''}" data-action="mode" data-mode="duel" ${joining?'disabled':''} aria-pressed="${!soloMode}"><span aria-hidden="true">⚔️</span><strong>Create duel</strong><small>Invite a friend and battle for HP</small></button></div>`}<form id="start-form">${soloMode?'':`<label for="name">Your name</label><input id="name" ${joining?'disabled':''} maxlength="24" autocomplete="nickname" value="${esc(name)}" placeholder="Player">`}${invited?'':`<fieldset class="settings" ${joining?'disabled':''}><legend>${soloMode?'Practice settings':'Duel settings'}</legend><div class="settings-grid ${soloMode?'solo-settings':''}">${soloMode?'':`<div><label for="starting-hp">Starting HP</label><input id="starting-hp" type="number" min="100" max="10000" step="1" value="${settings.startingHp}" required><small>100–10,000 · higher means longer</small></div>`}<div>${selectTime}</div>${soloMode?'':`<div><label for="damage-mode">Damage</label><select id="damage-mode"><option value="scaling" ${settings.damageScaling?'selected':''}>Increasing 1× → 3×</option><option value="steady" ${!settings.damageScaling?'selected':''}>Steady 1×</option></select><small>${settings.damageScaling?'2× at round 5, 3× at round 8':'Score difference only'}</small></div>`}</div></fieldset>`}<button class="primary start-button" type="submit" ${joining?'disabled':''}>${joining?'Connecting…':invited?'Join duel →':soloMode?'Start solo practice →':'Create duel →'}</button></form>${joining?'<button class="quiet" data-action="cancel">Cancel connection</button>':''}<div class="game-facts"><span>${PROMPTS.length.toLocaleString()} questions</span><span>${ANSWER_COUNT.toLocaleString()} scored answers</span></div><p class="status" role="status">${esc(status || (invited?'The host’s settings apply to both players.':soloMode?'No room or connection needed once the game loads.':'Create a private room and share its invite link.'))}</p>${error?`<p class="error" role="alert">${esc(error)}</p><button class="quiet" data-action="retry">Try again</button>`:''}${soloMode?'':connectionHelp()}${invited?'<button class="quiet" data-action="home">Play solo or create your own duel</button>':''}</section></section>`;
 }
 
 function readSettings(): void {
@@ -250,7 +302,7 @@ async function startPlay(): Promise<void> {
   startPractice();
 }
 function startPractice(): void {
-  readSettings(); room?.dispose(); room = null; state = null; joining = false; submitting = false; error = ''; status = ''; answerHint = '';
+  readSettings(); room?.dispose(); room = null; state = null; joining = false; submitting = false; error = ''; status = ''; answerHint = ''; answerSuggestions = [];
   practice = new PracticeSession(settings.questionSeconds); lastKey = ''; render(true);
 }
 
@@ -262,7 +314,7 @@ function answerSheet(promptId: string): string {
 function renderPractice(force = false): void {
   if (!practice) return;
   const p = practice.snapshot();
-  const key = `solo|${p.phase}|${p.round}|${p.total}|${answerHint}`;
+  const key = `solo|${p.phase}|${p.round}|${p.total}|${answerHint}|${JSON.stringify(answerSuggestions)}`;
   if (!force && key === lastKey) return;
   lastKey = key;
   const oldInput = screen.querySelector<HTMLInputElement>('#answer');
@@ -272,7 +324,7 @@ function renderPractice(force = false): void {
   const prompt = promptById(p.promptId)!;
   const last = p.history.at(-1);
   const content = p.phase === 'question'
-    ? `<div class="question-top"><span class="eyebrow">${esc(prompt.category)}</span><div class="clock"><span id="seconds">${p.questionSeconds}</span><small>SEC</small></div></div><h1 class="question">${esc(prompt.prompt)}</h1><div class="timer-track" aria-hidden="true"><div id="timer-fill"></div></div><form id="answer-form"><label for="answer">YOUR ANSWER</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…"><button class="primary" type="submit">Lock in →</button></div><div class="answer-foot"><span ${answerHint?'role="alert"':''}>${esc(answerHint || 'Rarer answers score higher. Press Enter to lock in.')}</span><button class="quiet" type="button" data-action="skip">Skip</button></div></form>`
+    ? `<div class="question-top"><span class="eyebrow">${esc(prompt.category)}</span><div class="clock"><span id="seconds">${p.questionSeconds}</span><small>SEC</small></div></div><h1 class="question">${esc(prompt.prompt)}</h1><div class="timer-track" aria-hidden="true"><div id="timer-fill"></div></div><form id="answer-form"><label for="answer">YOUR ANSWER</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…"><button class="primary" type="submit">Lock in →</button></div><div class="answer-foot"><span ${answerHint?'role="alert"':''}>${esc(answerHint || 'Rarer answers score higher. Press Enter to lock in.')}</span><button class="quiet" type="button" data-action="skip">Skip</button></div>${suggestionButtons()}</form>`
     : `<div class="result-head"><span class="eyebrow">${p.phase==='finished'?'PRACTICE COMPLETE':`QUESTION ${p.round} RESULTS`}</span><h1>${p.phase==='finished'?'Bank completed.':last!.points>=85?'Rare find.':last!.points?'Points on the board.':'Keep exploring.'}</h1><p>${p.phase==='finished'?`${p.total.toLocaleString()} points across ${p.questionCount} questions.`:'Review your answer, then try the next random question.'}</p></div><p class="result-prompt">${esc(prompt.prompt)}</p><div class="answer-result solo-result player-0"><strong>${last!.points}<small> pts</small></strong><h2>${esc(last!.answer || (last!.input?`“${last!.input}”`:'No answer'))}</h2><span class="rarity score-${last!.points}">${esc(scoreLabels[last!.points])}</span></div><button class="primary" data-action="practice-next">${p.phase==='finished'?'New practice run →':'Next random question →'}</button>${answerSheet(p.promptId)}`;
   screen.innerHTML = `<section class="match practice"><div class="match-heading"><span class="eyebrow">SOLO PRACTICE</span><button class="quiet" data-action="home">Back to setup</button></div><div class="practice-stats"><div><span>Question</span><strong>${p.round}<small> / ${p.questionCount}</small></strong></div><div><span>Total points</span><strong>${p.total.toLocaleString()}</strong></div><div><span>Answer time</span><strong>${p.questionSeconds}<small> sec</small></strong></div></div><section class="arena ${p.phase}">${content}</section><p class="fine">Each question appears once per run. Published archive scores.</p></section>`;
   bindForms();
@@ -284,14 +336,16 @@ function renderPractice(force = false): void {
 
 function submitPractice(skip: boolean): void {
   if (!practice || practice.snapshot().phase !== 'question') return;
-  if (practice.tick()) { answerHint = ''; render(); return; }
+  if (practice.tick()) { answerHint = ''; answerSuggestions = []; render(); return; }
   const input = screen.querySelector<HTMLInputElement>('#answer')?.value ?? '';
   const prompt = promptById(practice.snapshot().promptId)!;
-  if (!skip && (!input.trim() || !new AnswerIndex(prompt).match(input))) {
-    answerHint = input.trim()?'Not found in this archive. Try another answer or skip.':'Type an answer first, or choose Skip.';
+  const index = new AnswerIndex(prompt);
+  if (!skip && (!input.trim() || !index.match(input))) {
+    answerSuggestions = index.suggest(input);
+    answerHint = input.trim() ? answerSuggestions.length ? 'That spelling was not found in this archive.' : 'Not found in this archive. Try another answer or skip.' : 'Type an answer first, or choose Skip.';
     render(); screen.querySelector<HTMLInputElement>('#answer')?.focus(); return;
   }
-  answerHint = ''; practice.submit(skip?'':input); render();
+  answerHint = ''; answerSuggestions = []; practice.submit(skip?'':input); render();
 }
 function updateClock(remaining: number, duration: number): void {
   const seconds = screen.querySelector('#seconds');
@@ -302,7 +356,7 @@ function updateClock(remaining: number, duration: number): void {
 
 function nextPracticeRound(): void {
   if (!practice) return;
-  answerHint = '';
+  answerHint = ''; answerSuggestions = [];
   if (practice.snapshot().phase === 'finished') practice = new PracticeSession(practice.snapshot().questionSeconds);
   else practice.next();
   render(true);

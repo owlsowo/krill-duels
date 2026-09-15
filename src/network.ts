@@ -2,6 +2,13 @@ import Peer, { type DataConnection } from 'peerjs';
 import { catalogVersion, promptById, PROMPT_IDS } from './data';
 import { commitment, DuelEngine, GRACE_MS, type DuelState, type Seat, safeName } from './duel-engine';
 import { DEFAULT_SETTINGS, validSettings, type DuelSettings } from './settings';
+import { peerOptions } from './connection-config';
+
+export const CONNECT_TIMEOUT_MS = 20_000;
+export const HANDSHAKE_TIMEOUT_MS = 10_000;
+export const JOIN_TIMEOUT_MS = 60_000;
+const SIGNALING_TIMEOUT_MS = 25_000;
+const RETRY_DELAY_MS = 2_000;
 
 type Draft = { matchId: string; round: number; promptId: string; input: string; salt: string; hash: string };
 type Callbacks = { change: (state: DuelState) => void; status: (message: string) => void; error: (message: string) => void };
@@ -34,6 +41,17 @@ export class DuelRoom {
   private reconnectStarted: number | null = null;
   private nextRetry = 0;
   private retryAttempts = 0;
+  private attemptStarted: number | null = null;
+  private handshakeStarted: number | null = null;
+  private serviceStarted: number | null = null;
+  private serviceOpened = false;
+  private nextServiceRetry = 0;
+  private slowHintShown = false;
+  private lastError = '';
+  private lastIce = 'not started';
+  private lastConnection = 'not started';
+  private stage = 'idle';
+  private pendingHost = new Map<DataConnection, { started: number; opened: number | null }>();
   private interval = 0;
   private draft: Draft | null = null;
   private revealing = false;
@@ -56,13 +74,47 @@ export class DuelRoom {
 
   get invite(): string { return `${location.origin}${location.pathname}#room=${this.room}`; }
 
+  /** Safe to share: no room IDs, session tokens, answers, IPs, or relay credentials. */
+  diagnostics(): object {
+    const pc = this.conn?.peerConnection;
+    return {
+      app: 'krill-duels', protocol: 2, role: this.seat === 0 ? 'host' : 'guest', stage: this.stage,
+      signaling: this.peer?.destroyed ? 'closed' : this.peer?.open ? 'open' : this.peer?.disconnected ? 'disconnected' : 'connecting',
+      attempts: this.retryAttempts, dataChannel: this.conn?.open ? 'open' : 'closed', accepted: this.accepted,
+      ice: pc?.iceConnectionState ?? this.lastIce, connection: pc?.connectionState ?? this.lastConnection,
+      lastError: this.lastError || null,
+    };
+  }
+
   async open(): Promise<void> {
+    if (!this.alive || this.interval) return;
+    this.stage = 'service';
+    this.serviceStarted = Date.now();
+    this.reconnectStarted = Date.now();
+    this.interval = window.setInterval(() => this.tick(), 250);
     this.callbacks.status(this.seat === 0 ? 'Opening your room…' : 'Joining your friend…');
-    this.version = `krill-duels-2:${await catalogVersion()}`;
+    try {
+      this.version = `krill-duels-2:${await catalogVersion()}`;
+    } catch {
+      this.fail('Could not prepare the game. Refresh the page and try again.');
+      return;
+    }
     if (!this.alive) return;
-    this.peer = this.seat === 0 ? new Peer(`kd-${this.room}`) : new Peer();
+    try {
+      const options = peerOptions();
+      this.peer = this.seat === 0 ? new Peer(`kd-${this.room}`, options) : new Peer(options);
+    } catch (error) {
+      this.fail(error instanceof Error ? error.message : 'Could not open the room service. Refresh and try again.');
+      return;
+    }
     this.peer.on('open', () => {
       if (!this.alive) return;
+      this.serviceOpened = true;
+      this.serviceStarted = null;
+      if (this.accepted) return;
+      // Signaling can recover while ICE is still negotiating. Keep that attempt.
+      if (this.seat === 1 && this.attemptStarted !== null) return;
+      this.stage = this.seat === 0 ? 'waiting for friend' : 'connecting';
       this.callbacks.status(this.seat === 0 ? 'Room open. Send your invite link.' : 'Connecting to your friend…');
       if (this.seat === 1 && !this.accepted) this.connect();
       else this.publish();
@@ -72,40 +124,58 @@ export class DuelRoom {
       this.wireHost(connection);
     });
     this.peer.on('disconnected', () => {
-      if (this.alive && this.peer && !this.peer.destroyed) this.peer.reconnect();
+      if (!this.alive) return;
+      this.serviceStarted ??= Date.now();
+      if (!this.accepted) this.callbacks.status('Room service interrupted. Reconnecting…');
     });
     this.peer.on('error', error => {
       if (!this.alive) return;
+      this.lastError = error.type;
+      // PeerJS emits these without a connection ID, including from promises on
+      // already-closed attempts. The channel's own events/timeouts own recovery.
+      if (error.type === 'webrtc') return;
       if (error.type === 'peer-unavailable' && this.seat === 1) {
-        if (!this.conn?.open || !this.accepted) this.startReconnect();
+        if (!this.accepted) this.retryConnection();
         return;
       }
       if (['network', 'server-error', 'socket-error', 'socket-closed'].includes(error.type)) {
-        this.callbacks.status('Connection interrupted. Reconnecting…');
-        if (!this.conn?.open || !this.accepted) this.startReconnect();
+        this.serviceStarted ??= Date.now();
+        if (!this.accepted) this.callbacks.status('Room service interrupted. Reconnecting…');
         return;
       }
-      this.callbacks.error(error.type === 'browser-incompatible'
+      this.fail(error.type === 'browser-incompatible'
         ? 'This browser cannot connect live rooms. Try a recent Chrome, Safari, Firefox, or Edge browser.'
         : 'The room could not connect. Try again, or try a different network.');
     });
-    this.interval = window.setInterval(() => this.tick(), 250);
-    this.reconnectStarted = Date.now();
   }
 
   private connect(): void {
     if (!this.peer || this.peer.disconnected || this.peer.destroyed || !this.alive) return;
     this.retryAttempts++;
-    this.nextRetry = Date.now() + 2_000;
+    this.attemptStarted = Date.now();
+    this.handshakeStarted = null;
+    this.slowHintShown = false;
+    this.stage = 'connecting';
+    this.callbacks.status(this.state ? 'Connection interrupted. Reconnecting…' : 'Connecting to your friend… Allowing time for your network.');
     // Binary serialization chunks long match histories; PeerJS JSON is limited to 16 KB.
-    const connection = this.peer.connect(`kd-${this.room}`, { reliable: true, serialization: 'binary' });
+    let connection: DataConnection;
+    try {
+      connection = this.peer.connect(`kd-${this.room}`, { reliable: true, serialization: 'binary' });
+    } catch {
+      this.lastError = 'connection-error';
+      this.retryConnection();
+      return;
+    }
     const previous = this.conn;
     this.conn = connection;
     previous?.close();
     this.accepted = false;
     connection.on('open', () => {
       if (this.conn !== connection || !this.alive) return;
-      connection.send({ type: 'hello', version: this.version, name: this.name, token: this.token });
+      this.handshakeStarted = Date.now();
+      this.stage = 'checking room';
+      this.callbacks.status('Connection open. Checking the room…');
+      this.send({ type: 'hello', version: this.version, name: this.name, token: this.token });
       this.lastSeen = Date.now();
     });
     connection.on('data', value => {
@@ -114,12 +184,15 @@ export class DuelRoom {
       if (!packet) return;
       this.lastSeen = Date.now();
       if (packet.type === 'reject') {
-        this.callbacks.error(typeof packet.reason === 'string' ? packet.reason : 'The room is unavailable.');
-        this.dispose(false);
+        this.fail(typeof packet.reason === 'string' ? packet.reason : 'The room is unavailable.');
       } else if (packet.type === 'state' && packet.version === this.version && this.validSnapshot(packet.state)) {
+        const wasAccepted = this.accepted;
         this.accepted = true;
         this.reconnectStarted = null;
-        this.callbacks.status('Connected');
+        this.attemptStarted = null;
+        this.handshakeStarted = null;
+        this.stage = 'connected';
+        if (!wasAccepted) this.callbacks.status('Connected');
         this.receive(packet.state as DuelState);
       } else if (packet.type === 'pong' && typeof packet.sent === 'number' && typeof packet.now === 'number') {
         const arrived = Date.now();
@@ -130,19 +203,26 @@ export class DuelRoom {
           this.hostClockOffset = this.clockSamples.reduce((best, sample) => sample.rtt < best.rtt ? sample : best).offset;
         }
       } else if (packet.type === 'ended') {
-        this.callbacks.error('The host closed this room. Ask your friend for a new invite.');
-        this.dispose(false);
+        this.fail('The host closed this room. Ask your friend for a new invite.');
       }
     });
-    connection.on('close', () => { if (this.conn === connection && this.alive) this.startReconnect(); });
-    connection.on('error', () => { if (this.conn === connection && this.alive) this.startReconnect(); });
+    connection.on('close', () => {
+      if (this.conn !== connection || !this.alive) return;
+      this.lastError = 'connection-closed'; this.startReconnect();
+    });
+    connection.on('error', () => {
+      if (this.conn !== connection || !this.alive) return;
+      this.lastError = 'connection-error'; this.startReconnect();
+    });
   }
 
   private wireHost(connection: DataConnection): void {
     let authenticated = false;
-    const timeout = window.setTimeout(() => { if (!authenticated) connection.close(); }, 6_000);
+    const timing = { started: Date.now(), opened: connection.open ? Date.now() : null as number | null };
+    this.pendingHost.set(connection, timing);
+    connection.on('open', () => { timing.opened = Date.now(); });
     connection.on('data', value => {
-      if (!this.alive) return;
+      if (!this.alive || !authenticated && !this.pendingHost.has(connection)) return;
       const packet = this.packet(value);
       if (!packet) return;
       if (!authenticated) {
@@ -157,7 +237,7 @@ export class DuelRoom {
         }
         // The same session token may reconnect; a different player cannot take this seat.
         authenticated = true;
-        clearTimeout(timeout);
+        this.pendingHost.delete(connection);
         const previous = this.conn;
         this.conn = connection;
         previous?.close();
@@ -165,6 +245,7 @@ export class DuelRoom {
         this.accepted = true;
         this.lastSeen = Date.now();
         this.reconnectStarted = null;
+        this.stage = 'connected';
         this.engine!.join(packet.name, Date.now());
         this.callbacks.status('Your friend joined. Both press Ready.');
         this.publish();
@@ -189,9 +270,12 @@ export class DuelRoom {
       }
     });
     const disconnected = (): void => {
-      clearTimeout(timeout);
+      this.pendingHost.delete(connection);
       if (this.conn !== connection || !this.alive || !authenticated) return;
+      if (this.accepted && !this.peer?.open) this.serviceStarted = Date.now();
       this.accepted = false;
+      this.stage = 'reconnecting';
+      this.callbacks.status('Connection interrupted. Waiting for your friend to reconnect…');
       this.engine!.connection(false, Date.now());
       this.publish();
     };
@@ -230,15 +314,13 @@ export class DuelRoom {
     this.hostClockOffset ??= Date.now() - state.now;
     const previous = this.state;
     if (previous && previous.matchId === state.matchId && JSON.stringify(previous.settings) !== JSON.stringify(state.settings)) {
-      this.callbacks.error('Room settings changed during the match. Create a new duel.');
-      this.dispose(false); return;
+      this.fail('Room settings changed during the match. Create a new duel.'); return;
     }
     // Pin commitments; a changed hash after locking is a protocol error.
     if (previous && previous.matchId === state.matchId && previous.round === state.round) {
       for (const seat of [0, 1] as const) {
         if (previous.hashes[seat] && previous.hashes[seat] !== state.hashes[seat]) {
-          this.callbacks.error('The room sent conflicting answers. Create a new duel.');
-          this.dispose(false); return;
+          this.fail('The room sent conflicting answers. Create a new duel.'); return;
         }
       }
     }
@@ -249,16 +331,20 @@ export class DuelRoom {
     }
     this.callbacks.change(state);
     const draft = this.draft;
-    if (draft && state.phase === 'question' && !state.committed[this.seat]) {
+    if (draft && state.connected && state.phase === 'question' && !state.committed[this.seat]) {
       // Restore a sent commitment after a brief guest reconnect.
       if (!this.engine) this.send({ type: 'commit', matchId: draft.matchId, round: draft.round, hash: draft.hash });
     }
     const revealKey = draft ? `${draft.matchId}:${draft.round}` : '';
-    if (draft && state.phase === 'reveal' && state.hashes[this.seat] === draft.hash && !this.revealing && (!this.engine || this.hostRevealedKey !== revealKey)) {
+    if (draft && state.connected && state.phase === 'reveal' && state.hashes[this.seat] === draft.hash && !this.revealing && (!this.engine || this.hostRevealedKey !== revealKey)) {
       this.revealing = true;
       if (this.engine) {
         this.hostRevealedKey = revealKey;
-        void this.engine.reveal(0, draft.matchId, draft.round, draft.input, draft.salt, Date.now()).then(accepted => { this.revealing = false; if (accepted) this.publish(); });
+        void this.engine.reveal(0, draft.matchId, draft.round, draft.input, draft.salt, Date.now()).then(accepted => {
+          this.revealing = false;
+          if (accepted) this.publish();
+          else if (this.hostRevealedKey === revealKey) this.hostRevealedKey = '';
+        });
       } else {
         this.send({ type: 'reveal', matchId: draft.matchId, round: draft.round, input: draft.input, salt: draft.salt });
         this.revealing = false;
@@ -267,7 +353,7 @@ export class DuelRoom {
   }
 
   private publish(): void {
-    if (!this.engine || !this.alive) return;
+    if (!this.engine || !this.alive || !this.serviceOpened) return;
     const state = this.engine.snapshot(Date.now());
     this.send({ type: 'state', version: this.version, state });
     this.receive(state);
@@ -275,9 +361,11 @@ export class DuelRoom {
 
   private startReconnect(): void {
     const wasAccepted = this.accepted;
+    if (wasAccepted && !this.peer?.open) this.serviceStarted = Date.now();
     this.accepted = false;
     this.reconnectStarted ??= Date.now();
-    this.callbacks.status('Connection interrupted. Reconnecting…');
+    this.stage = this.state ? 'reconnecting' : 'connecting';
+    this.callbacks.status(this.state ? 'Connection interrupted. Reconnecting…' : 'Could not connect yet. Retrying while the host keeps the room open…');
     if (this.engine) this.engine.connection(false, Date.now());
     else if (wasAccepted) {
       if (this.state && this.state.phase !== 'finished') {
@@ -285,33 +373,86 @@ export class DuelRoom {
         this.state = { ...this.state, connected:false, reconnectUntil:now + GRACE_MS, now };
         this.callbacks.change(this.state);
       }
-      this.conn?.close();
     }
+    if (!this.engine) this.clearAttempt();
+  }
+
+  private clearAttempt(): void {
+    const previous = this.conn;
+    this.lastIce = previous?.peerConnection?.iceConnectionState ?? this.lastIce;
+    this.lastConnection = previous?.peerConnection?.connectionState ?? this.lastConnection;
+    this.conn = null;
+    this.attemptStarted = null;
+    this.handshakeStarted = null;
+    this.nextRetry = Date.now() + RETRY_DELAY_MS;
+    previous?.close();
+  }
+
+  private retryConnection(): void {
+    this.startReconnect();
+  }
+
+  private fail(message: string): void {
+    this.stage = 'failed';
+    this.dispose(false);
+    if (this.state) {
+      this.state = { ...this.state, connected: false };
+      this.callbacks.change(this.state);
+    }
+    this.callbacks.status('Connection stopped.');
+    this.callbacks.error(message);
   }
 
   private tick(): void {
     if (!this.alive) return;
     const now = Date.now();
+    // Keep an established game alive even if signaling drops. Discovery is only
+    // needed for a new data channel, and reconnect() can throw during retries.
+    if (this.peer?.disconnected && !this.peer.destroyed && now >= this.nextServiceRetry) {
+      this.nextServiceRetry = now + RETRY_DELAY_MS;
+      try { this.peer.reconnect(); } catch { /* Retry after the peer finishes disconnecting. */ }
+    }
+    if (this.serviceStarted !== null && !this.peer?.open && !this.accepted && now - this.serviceStarted >= SIGNALING_TIMEOUT_MS) {
+      this.fail('Could not reach the room service. Check that your proxy allows 0.peerjs.com, then try again.');
+      return;
+    }
     if (this.engine) {
+      for (const [connection, timing] of this.pendingHost) {
+        const expired = timing.opened === null ? now - timing.started >= CONNECT_TIMEOUT_MS : now - timing.opened >= HANDSHAKE_TIMEOUT_MS;
+        if (expired) { this.pendingHost.delete(connection); connection.close(); }
+      }
       this.engine.tick(now);
       if (this.accepted && now - this.lastSeen > 8_000) {
+        if (!this.peer?.open) this.serviceStarted = now;
         this.accepted = false;
+        this.stage = 'reconnecting';
+        this.callbacks.status('Connection interrupted. Waiting for your friend to reconnect…');
         this.engine.connection(false, now);
         this.conn?.close();
       }
       if (now - this.lastBroadcast >= 500) { this.lastBroadcast = now; this.publish(); }
-      if (this.reconnectStarted && !this.peer?.open && now - this.reconnectStarted > 25_000) {
-        this.callbacks.error('Could not reach the room service. Try again, or use a different network.'); this.dispose(false);
-      }
     } else {
       if (this.accepted && now - this.lastSeen > 6_000) this.startReconnect();
       if (this.accepted) this.send({ type: 'ping', sent: now });
-      if (this.reconnectStarted) {
+      if (this.reconnectStarted !== null) {
         const elapsed = now - this.reconnectStarted;
-        if (elapsed > (this.state ? GRACE_MS + 8_000 : 25_000)) {
-          this.callbacks.error(this.state ? 'The host is no longer reachable. Ask for a new invite.' : 'Could not join. The host must keep the room open; some school, office, or VPN networks block direct connections. Try another network.');
-          this.dispose(false);
-        } else if (now >= this.nextRetry && this.peer?.open && (!this.conn?.open || this.retryAttempts > 1)) this.connect();
+        if (elapsed >= (this.state ? GRACE_MS + 8_000 : JOIN_TIMEOUT_MS)) {
+          this.fail(this.state ? 'The host is no longer reachable. Ask for a new invite.' : this.lastError === 'peer-unavailable'
+            ? 'The host room was not found. Keep the host tab open and ask for a fresh invite.'
+            : this.handshakeStarted !== null || this.lastError === 'handshake-timeout' ? 'The connection opened, but the room did not respond. Both refresh and create a new room.'
+            : 'The room service is reachable, but the game connection could not open. With Clash, try TUN mode and a UDP-capable proxy node on both devices. See Connection help.');
+          return;
+        }
+        if (this.attemptStarted !== null) {
+          const expired = this.handshakeStarted !== null ? now - this.handshakeStarted >= HANDSHAKE_TIMEOUT_MS : now - this.attemptStarted >= CONNECT_TIMEOUT_MS;
+          if (expired) {
+            this.lastError = this.handshakeStarted !== null ? 'handshake-timeout' : 'connection-timeout';
+            this.retryConnection();
+          } else if (!this.slowHintShown && this.handshakeStarted === null && now - this.attemptStarted >= 6_000) {
+            this.slowHintShown = true;
+            this.callbacks.status('Still connecting to your friend… Using Clash? Check TUN mode and UDP support in Connection help.');
+          }
+        } else if (now >= this.nextRetry && this.peer?.open) this.connect();
       }
     }
   }
@@ -355,7 +496,13 @@ export class DuelRoom {
     if (!this.alive) return;
     if (notify) this.send(this.seat === 0 ? { type: 'ended' } : { type: 'leave', matchId: this.state?.matchId, round: this.state?.round });
     this.alive = false;
+    this.accepted = false;
+    if (this.stage !== 'failed') this.stage = 'closed';
     clearInterval(this.interval);
+    this.lastIce = this.conn?.peerConnection?.iceConnectionState ?? this.lastIce;
+    this.lastConnection = this.conn?.peerConnection?.connectionState ?? this.lastConnection;
+    for (const connection of this.pendingHost.keys()) connection.close();
+    this.pendingHost.clear();
     this.conn?.close();
     this.peer?.destroy();
   }
