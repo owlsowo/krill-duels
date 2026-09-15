@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ARCHIVE_PROMPTS, CURATED_PROMPTS, PROMPTS } from '../src/data';
+import { ARCHIVE_PROMPTS, CURATED_PROMPTS, PROMPTS, promptById } from '../src/data';
 import { AnswerIndex, normalize } from '../src/match';
 
 describe('playable question bank integrity', () => {
@@ -44,5 +44,22 @@ describe('playable question bank integrity', () => {
       expect(new Set(prompt.answers.map(answer => answer.entityId)).size).toBe(prompt.answers.length);
       expect(prompt.answers.some(answer => answer.score === 15)).toBe(false);
     }
+  });
+
+  it('includes complete NASA landing and astronaut sets, with eligible aliases only', () => {
+    const apollo = promptById('curated-apollo-moon-landings')!;
+    expect(apollo.answers.map(answer => answer.answer)).toEqual([11,12,14,15,16,17].map(number => `Apollo ${number}`));
+    const missions = new AnswerIndex(apollo);
+    expect(missions.match('11')?.answer).toBe('Apollo 11');
+    expect(missions.match('Apollo-17')?.answer).toBe('Apollo 17');
+    expect(missions.match('Apollo 13')).toBeNull(); expect(missions.match('Apollo 10')).toBeNull();
+    const mercury = promptById('curated-mercury-seven')!;
+    expect(mercury.answers.map(answer => answer.answer)).toEqual(['Scott Carpenter','Gordon Cooper','John Glenn','Gus Grissom','Wally Schirra','Alan Shepard','Deke Slayton']);
+    const astronauts = new AnswerIndex(mercury);
+    expect(astronauts.match('Slayton')?.answer).toBe('Deke Slayton');
+    expect(astronauts.match('Virgil Ivan Grissom')?.answer).toBe('Gus Grissom');
+    expect(astronauts.match('Walter Marty Schirra Jr.')?.answer).toBe('Wally Schirra');
+    expect(astronauts.match('Neil Armstrong')).toBeNull();
+    expect(astronauts.match('John')).toBeNull();
   });
 });

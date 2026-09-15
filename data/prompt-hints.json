@@ -1,0 +1,482 @@
+{
+  "version": "context-hints-2026-09-15.1",
+  "reviewedAt": "2026-09-15",
+  "questions": [
+    {
+      "promptId": "archive-name-a-film-directed-by-wes-anderson",
+      "hints": [
+        "Wes Anderson is an American filmmaker whose work blends comedy with melancholy.",
+        "His films feature carefully arranged compositions, distinctive colour palettes and meticulously designed fictional worlds.",
+        "He also makes stop-motion animation; recurring collaborators include actors Owen Wilson and Bill Murray."
+      ],
+      "sources": [
+        "https://designmuseum.org/exhibitions/wes-anderson-the-archives",
+        "https://designmuseum.org/asset/download?id=cad60667-7f49-4518-a337-55c10708a610"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-roald-dahl-book",
+      "hints": [
+        "Roald Dahl wrote imaginative fiction for children as well as stories for adults.",
+        "His young heroes often face cruel grown-ups, with mischief and unexpected twists shaping their adventures.",
+        "Quentin Blake illustrated many of his books, giving the strange creatures and exaggerated characters a distinctive appearance."
+      ],
+      "sources": [
+        "https://www.roalddahl.com/stories",
+        "https://www.roalddahlmuseum.org/archive/roald-dahls-published-works/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-stephen-king-novel",
+      "hints": [
+        "Stephen King is an American author strongly associated with horror and suspense.",
+        "His fiction often brings frightening events into recognisable communities and ordinary lives.",
+        "Maine is closely connected with his life and writing; his work also extends into fantasy and science fiction."
+      ],
+      "sources": [
+        "https://stephenking.com/the-author/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-dr-seuss-book",
+      "hints": [
+        "Dr. Seuss was the pen name of writer and illustrator Theodor Geisel.",
+        "His children’s books use rhythmic language, playful repetition and unusual invented creatures.",
+        "Many are designed for beginning readers, using a limited vocabulary with drawings that help carry the story."
+      ],
+      "sources": [
+        "https://www.seussville.com/app/uploads/2023/02/DrSeuss_EducatorsGuide2023.pdf"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-shakespeare-play",
+      "hints": [
+        "William Shakespeare wrote for the English stage around the turn of the seventeenth century.",
+        "His drama spans comedy, tragedy and historical struggles for power.",
+        "The stories draw on royal chronicles, classical history and tales of love, mistaken identity and family conflict."
+      ],
+      "sources": [
+        "https://www.folger.edu/explore/shakespeares-works/",
+        "https://folgerpedia.folger.edu/William_Shakespeare%27s_plays"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-shakespeare-protagonist",
+      "hints": [
+        "A protagonist is a central character whose choices and conflicts shape a story.",
+        "For Shakespeare, think of leading figures in stage dramas about love, ambition, family or political power.",
+        "His principal characters include rulers and ordinary people, and their stories range from comic misunderstandings to tragic consequences."
+      ],
+      "sources": [
+        "https://www.folger.edu/explore/shakespeares-works/",
+        "https://folgerpedia.folger.edu/William_Shakespeare%27s_plays"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-first-billed-actor-in-a-christopher-nolan-directed-feature-film",
+      "hints": [
+        "Christopher Nolan is a filmmaker known for large-scale thrillers and stories that test the viewer’s sense of reality.",
+        "His plots often rearrange time or explore memory, perception and difficult moral choices.",
+        "First-billed refers to the performer credited first in the cast, which is a narrower role than simply appearing in one of his films."
+      ],
+      "sources": [
+        "https://www.bfi.org.uk/features/where-begin-with-christopher-nolan"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-steven-spielberg-movie",
+      "hints": [
+        "Steven Spielberg is an American filmmaker and the founder of Amblin Entertainment.",
+        "His career helped establish the modern blockbuster, pairing ambitious spectacle with accessible storytelling.",
+        "His work ranges from imaginative adventures to historical drama, often placing ordinary people in extraordinary circumstances."
+      ],
+      "sources": [
+        "https://amblin.com/about/",
+        "https://amblin.com/movie/spielberg/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-pixar-feature-film",
+      "hints": [
+        "Pixar is an animation studio that helped establish feature-length computer animation.",
+        "Its storytelling often gives human feelings and relationships to surprising kinds of protagonists.",
+        "Settings range from miniature communities underfoot to ocean journeys and fantastic workplaces connected to the human world."
+      ],
+      "sources": [
+        "https://www.pixar.com/our-story",
+        "https://www.pixar.com/a-bugs-life",
+        "https://www.pixar.com/finding-nemo",
+        "https://www.pixar.com/monsters-inc"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-pixar-character",
+      "hints": [
+        "Pixar creates animated stories using computer-generated imagery.",
+        "Its casts include people alongside creatures and objects given personalities and emotional lives.",
+        "Think of the inhabitants of miniature communities, ocean habitats and fantastic workplaces, including their families, allies and rivals."
+      ],
+      "sources": [
+        "https://www.pixar.com/our-story",
+        "https://www.pixar.com/a-bugs-life",
+        "https://www.pixar.com/finding-nemo",
+        "https://www.pixar.com/monsters-inc"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-dreamworks-animation-movie",
+      "hints": [
+        "DreamWorks Animation is a studio specialising in animated family entertainment.",
+        "Its stories often combine comic characters with fantasy, adventure or a surprising view of familiar worlds.",
+        "Think of comic fairy-tale reinventions, martial-arts adventures and unlikely friendships between people and fantastic creatures."
+      ],
+      "sources": [
+        "https://www.dreamworks.com/about"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-dreamworks-animated-character",
+      "hints": [
+        "DreamWorks Animation creates family films and television stories.",
+        "Its worlds range from animal communities to fairy-tale settings and adventures involving fantastic creatures.",
+        "Look to fairy-tale communities, martial-arts training grounds and stories of young adventurers forming friendships with creatures others fear."
+      ],
+      "sources": [
+        "https://www.dreamworks.com/about"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-studio-ghibli-film",
+      "hints": [
+        "Studio Ghibli is a Japanese animation studio established in 1985.",
+        "The studio was created to make animated films by directors Hayao Miyazaki and Isao Takahata.",
+        "Its catalogue includes imaginative adventures and intimate human dramas, with detailed environments playing an important part in the storytelling."
+      ],
+      "sources": [
+        "https://www.ghibli.jp/profile/",
+        "https://www.ghibli.jp/history/",
+        "https://www.ghibli.jp/works/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-james-bond-film",
+      "hints": [
+        "James Bond is a fictional British secret agent created by novelist Ian Fleming.",
+        "The screen adventures combine espionage with international travel, dangerous opponents and elaborate action.",
+        "The official film series began in 1962 and continued across successive generations of leading performers."
+      ],
+      "sources": [
+        "https://www.007.com/focus-week-dr-no-2/"
+      ]
+    },
+    {
+      "promptId": "archive-name-an-actor-who-has-played-james-bond-in-an-official-bond-film",
+      "hints": [
+        "James Bond is Ian Fleming’s fictional secret agent, also identified by the code number 007.",
+        "The official cinema series began in 1962 and has recast its central role across different eras.",
+        "This refers to the performer portraying the agent himself, rather than a supporting colleague or an opponent."
+      ],
+      "sources": [
+        "https://www.007.com/focus-week-dr-no-2/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-harry-potter-character",
+      "hints": [
+        "This fantasy series follows a hidden magical society alongside the ordinary world.",
+        "Much of the story centres on Hogwarts, a boarding school where young people learn magic.",
+        "The school has four houses, but the wider cast also includes relatives, officials and people on opposing sides of a larger conflict."
+      ],
+      "sources": [
+        "https://www.harrypotter.com/fact-file/locations/hogwarts",
+        "https://www.harrypotter.com/writing-by-jk-rowling/the-sorting-hat"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-lord-of-the-rings-character",
+      "hints": [
+        "J. R. R. Tolkien’s fantasy is set in the imagined world of Middle-earth.",
+        "The story combines a long journey with a wider struggle over a dangerous source of power.",
+        "Its cast comes from different peoples and generations, and friendships are tested by war, responsibility and temptation."
+      ],
+      "sources": [
+        "https://www.tolkienestate.com/writing/the-lord-of-the-rings/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-character-from-avatar-the-last-airbender-the-original-series-not-korra",
+      "hints": [
+        "This is the animated adventure series first broadcast by Nickelodeon in 2005.",
+        "Its world is divided into four nations associated with water, earth, fire and air.",
+        "Some inhabitants can control an element through movements resembling martial arts, while a long war shapes the characters’ journeys."
+      ],
+      "sources": [
+        "https://www.paramountplus.com/shows/avatar-the-last-airbender/",
+        "https://www.paramountplus.com/shows/avatar-the-last-airbender/episodes/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-breaking-bad-character",
+      "hints": [
+        "This is a crime drama created by Vince Gilligan.",
+        "The story begins with a chemistry teacher in New Mexico whose serious illness changes his plans for the future.",
+        "His entry into an illegal drug business draws family members, business associates and law enforcement into escalating conflict."
+      ],
+      "sources": [
+        "https://ce.amc.com/series/breaking-bad",
+        "https://www.amc.com/blogs/breaking-bad-creator-vince-gilligan-answers-fan-questions-part-i--1010047"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-character-from-stranger-things",
+      "hints": [
+        "This series mixes science fiction, horror and a coming-of-age story.",
+        "The Duffer brothers set much of the action in the fictional town of Hawkins, Indiana, during the 1980s.",
+        "Young friends and the adults around them encounter secret experiments and threats connected to another dimension."
+      ],
+      "sources": [
+        "https://www.netflix.com/tudum/features/stranger-things-digital-cover?inapp=true"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-game-of-thrones-character",
+      "hints": [
+        "This HBO fantasy drama adapts the fiction of George R. R. Martin.",
+        "Much of the story concerns rival noble families seeking political control of Westeros.",
+        "Alliances, inheritance and divided loyalties shape the cast, while threats beyond court politics complicate the struggle."
+      ],
+      "sources": [
+        "https://www.hbomaxlapress.com/programming/series/94",
+        "https://www.hbo.com/series"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-character-from-the-office-us",
+      "hints": [
+        "This American sitcom presents an everyday workplace as though a documentary crew were filming it.",
+        "The setting is a paper company’s branch in Scranton, Pennsylvania.",
+        "Awkward management, coworker rivalries, practical jokes and relationships provide much of the comedy."
+      ],
+      "sources": [
+        "https://www.peacocktv.com/blog/the-office-20-best-episodes-to-watch-peacock"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-star-wars-character",
+      "hints": [
+        "George Lucas created this space-fantasy setting for a film released in 1977.",
+        "The stories blend adventure and family conflict with struggles over the future of an entire galaxy.",
+        "Alongside spacecraft and advanced technology, a mysterious power called the Force connects the physical and spiritual sides of the setting."
+      ],
+      "sources": [
+        "https://www.starwars.com/news/why-we-love-star-wars",
+        "https://www.starwars.com/news/empire-at-40-george-lucas-interview"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-pokemon-from-the-original-151",
+      "hints": [
+        "This refers to the earliest group of creatures in the franchise’s creature-collecting world.",
+        "The original group is associated with the Kanto region and the beginning of the Pokédex numbering system.",
+        "The group contains related evolutionary stages as separate species, as well as creatures that have no evolution within that original set."
+      ],
+      "sources": [
+        "https://www.pokemon.com/us/pokemon-tcg/scarlet-violet-151"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-metal-alloy",
+      "hints": [
+        "An alloy is a material formed by combining chemical elements while retaining metallic properties.",
+        "The ingredients include at least one metal, but another ingredient can be a non-metal.",
+        "Mixing changes useful properties such as hardness, resistance to corrosion or melting behaviour."
+      ],
+      "sources": [
+        "https://edu.rsc.org/download?ac=512970"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-subatomic-particle",
+      "hints": [
+        "Subatomic physics studies matter at scales smaller than an atom.",
+        "Some particles are treated as fundamental, while others have smaller constituents inside them.",
+        "Physicists also study particles associated with interactions, rather than only those composing familiar everyday matter."
+      ],
+      "sources": [
+        "https://home.cern/science/physics/subatomic-particles/",
+        "https://home.cern/science/physics/standard-model/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-geologic-eon-era-period-or-epoch",
+      "hints": [
+        "Geologists divide Earth’s long history into formally named intervals.",
+        "These intervals form a hierarchy, from the broadest spans down to more detailed subdivisions.",
+        "Boundaries are tied to evidence preserved in rocks, allowing researchers to relate events recorded in different places."
+      ],
+      "sources": [
+        "https://ngmdb.usgs.gov/Info/NACSN/Code2/code2.html"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-metric-si-prefix",
+      "hints": [
+        "A metric prefix modifies the size of a measurement unit.",
+        "The internationally agreed prefixes represent multiplication or division by powers of ten.",
+        "They attach to a unit name or symbol, expressing very large or very small quantities without writing a long string of zeros."
+      ],
+      "sources": [
+        "https://www.bipm.org/en/measurement-units/si-prefixes",
+        "https://www.nist.gov/pml/owm/metric-si-prefixes"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-movie-starring-tom-hanks",
+      "hints": [
+        "Tom Hanks is an American performer whose career spans comedy and dramatic leading roles.",
+        "He is particularly associated with relatable people facing unusual pressure, responsibility or isolation.",
+        "His filmography spans romantic comedy, spaceflight stories, wartime experiences and survival drama, often balancing danger with moments of humour."
+      ],
+      "sources": [
+        "https://www.afi.com/laa/tom-hanks/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-movie-starring-harrison-ford",
+      "hints": [
+        "Harrison Ford is an American actor closely associated with adventure films and thrillers.",
+        "His screen persona often combines resourcefulness and dry humour with visible vulnerability under pressure.",
+        "His roles range from daring explorers and intelligence operatives to professionals drawn into dangerous investigations, alongside occasional romantic comedy."
+      ],
+      "sources": [
+        "https://www.afi.com/laa/harrison-ford/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-marsupial",
+      "hints": [
+        "Marsupials are mammals whose young are born at a very early stage of development.",
+        "The young continue growing while attached to the mother’s teats, often protected by a pouch.",
+        "They are especially associated with Australia, but many also live in the Americas; not every species has a fully enclosed pouch."
+      ],
+      "sources": [
+        "https://australian.museum/learn/species-identification/ask-an-expert/what-is-a-marsupial/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-legume",
+      "hints": [
+        "Legumes belong to the plant family Fabaceae, an important source of food crops.",
+        "The term is associated with the plants’ seeds and pod-like fruits; edible members can be harvested fresh or dried.",
+        "Many form partnerships with bacteria in their roots that make nitrogen available for growth, helping explain their importance in farming."
+      ],
+      "sources": [
+        "https://www.kew.org/read-and-watch/next-bean-thing",
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A30000147-2/general-information"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-brass-instrument",
+      "hints": [
+        "This musical family is identified by how the player starts the sound.",
+        "The player buzzes their lips into a mouthpiece, setting the air inside the instrument vibrating.",
+        "The tubing’s length and shape influence the range and tone, while changes in lip tension help select different notes."
+      ],
+      "sources": [
+        "https://philharmonia.co.uk/resources/instruments/tuba/",
+        "https://philharmonia.co.uk/resources/instruments/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-logical-fallacy",
+      "hints": [
+        "A logical fallacy is a recurring error in reasoning that weakens an argument.",
+        "The problem lies in how the conclusion is supported, rather than simply whether the speaker’s claim happens to be true.",
+        "Check whether the evidence is relevant and sufficient, and whether the conclusion really follows from the reasons provided."
+      ],
+      "sources": [
+        "https://owl.purdue.edu/owl/general_writing/academic_writing/logic_in_argumentative_writing/fallacies.html"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-chemical-element-lighter-than-iron",
+      "hints": [
+        "This concerns the relative masses of atoms, rather than the weight of a particular object.",
+        "Periodic tables report relative atomic mass, which differs from density: a small object can be light even when its material is dense.",
+        "The comparison point has a relative atomic mass of about 55.85; look to elements with a lower value."
+      ],
+      "sources": [
+        "https://periodic-table.rsc.org/element/26/iron"
+      ]
+    },
+    {
+      "promptId": "archive-name-an-officially-recognized-constellation",
+      "hints": [
+        "A constellation is an officially defined region of the sky, associated with a familiar pattern of stars.",
+        "These regions give astronomers a way to describe where an object appears in the sky.",
+        "Many names come from mythology or animals; a familiar star pattern can also be an informal grouping rather than an official constellation."
+      ],
+      "sources": [
+        "https://science.nasa.gov/skywatching/faq/",
+        "https://science.nasa.gov/solar-system/what-are-asterisms/"
+      ]
+    },
+    {
+      "promptId": "curated-space-shuttle-orbiters",
+      "hints": [
+        "NASA’s shuttle programme used winged spacecraft designed for repeated journeys to orbit.",
+        "The orbiter was the crew-carrying vehicle, launched with an external fuel tank and rocket boosters.",
+        "The fleet flew from 1981 to 2011, carrying out research, handling satellites and helping construct the International Space Station."
+      ],
+      "sources": [
+        "https://www.nasa.gov/space-shuttle/",
+        "https://starchild.gsfc.nasa.gov/docs/StarChild/space_level2/shuttle.html"
+      ]
+    },
+    {
+      "promptId": "curated-austen-novels",
+      "hints": [
+        "Jane Austen wrote English fiction that closely observes the society around its characters.",
+        "Courtship and marriage are tied to questions of money, status, family obligations and women’s independence.",
+        "Her social criticism often works through irony, exposing the distance between a character’s confidence and their understanding of other people."
+      ],
+      "sources": [
+        "https://janeaustens.house/learn/school-visits/online-resources/who-is-jane-austen/social-commentary/"
+      ]
+    },
+    {
+      "promptId": "curated-numbered-doctor-original-actors",
+      "hints": [
+        "This refers to the central traveller in the British science-fiction series Doctor Who.",
+        "The character journeys through space and time aboard the TARDIS, encountering different worlds with travelling companions.",
+        "Regeneration allows the character’s appearance and personality to change, so successive performers portray different incarnations."
+      ],
+      "sources": [
+        "https://www.doctorwho.tv/characters/the-tardis",
+        "https://www.doctorwho.tv/news-and-features/what-is-regeneration"
+      ]
+    },
+    {
+      "promptId": "curated-apollo-moon-landings",
+      "hints": [
+        "Apollo was NASA’s effort to send people to the Moon and bring them safely back to Earth.",
+        "A landing used a separate lunar module for two crew members, while a third remained in lunar orbit.",
+        "Neil Armstrong led the first landing; later crews included Charles Conrad and Gene Cernan. Recall the mission number attached to a landing crew."
+      ],
+      "sources": [
+        "https://www.nasa.gov/the-apollo-program/"
+      ]
+    },
+    {
+      "promptId": "curated-mercury-seven",
+      "hints": [
+        "Mercury was the United States’ first human-spaceflight project; this asks for the people chosen at its beginning.",
+        "NASA selected these men from military test pilots after demanding medical, physical and psychological screenings.",
+        "The group included the first American in space and the first American to orbit Earth; several later flew in Gemini or Apollo."
+      ],
+      "sources": [
+        "https://www.nasa.gov/history/60-years-ago-nasa-introduces-mercury-7-astronauts/"
+      ]
+    }
+  ]
+}

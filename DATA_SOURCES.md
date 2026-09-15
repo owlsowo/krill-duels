@@ -39,7 +39,9 @@ Historical grades remain editorial. Duplicate-label merges use the lower recorde
 
 ## New factual sets and estimated rarity
 
-The first expansion contains **24 reviewed questions and 239 accepted entities within those questions**, across literature, music, film, television, institutions, geography, space, science, mathematics, history and sport. Input definitions and factual references live in `data/curated-questions.json`; the generated playable bank is `src/curated.json`.
+The reviewed expansion contains **26 questions and 252 accepted entities within those questions**, across literature, music, film, television, institutions, geography, space, science, mathematics, history and sport. The original 24 reviewed sets remain in `data/curated-questions.json`; additional reviewed packs live in `data/question-packs/`. The generated playable bank is `src/curated.json`.
+
+The NASA history pack adds the six Apollo missions that landed astronauts on the Moon and the seven astronauts originally selected for Project Mercury. Membership and formal-name aliases were checked against [NASA's Apollo program overview](https://www.nasa.gov/the-apollo-program/), [Mercury Seven biographies](https://www.nasa.gov/history/mercury-seven-astronaut-biographies/) and [selection history](https://www.nasa.gov/history/60-years-ago-nasa-introduces-mercury-7-astronauts/). The latter set includes Deke Slayton, who was selected for Mercury but did not fly a Mercury mission. Apollo 13 is excluded because it did not land. These questions were written from factual sources; NASA prose, images and logos are not bundled.
 
 Every answer has a verified Wikidata identity and a resolved English Wikipedia article. Eligibility comes from each question’s cited factual sources, not from the existence of its Wikipedia page. Clear rules define dates, categories, exclusions and accepted alternate names.
 
