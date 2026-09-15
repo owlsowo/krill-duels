@@ -1,7 +1,10 @@
 import type { Answer, Prompt } from './types';
 
+const foldCase = (input: string): string => input.toLowerCase().replace(/ß/g, 'ss').replace(/ı/g, 'i').replace(/ς/g, 'σ');
+const canonicalKey = (input: string): string => foldCase(input.normalize('NFC')).trim().replace(/\s+/g, ' ');
+
 export function normalize(input: string): string {
-  return input.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+  return foldCase(input.normalize('NFKD')).replace(/[\u0300-\u036f]/g, '')
     .replace(/^\s*(AB|A|B|O)\s*-\s*$/i, '$1 negative')
     .replace(/^\s*(AB|A|B|O)\s*\+\s*$/i, '$1 positive')
     .replace(/♀/g, ' female ').replace(/♂/g, ' male ').replace(/&/g, ' and ')
@@ -11,9 +14,15 @@ export function normalize(input: string): string {
 
 /** Exact canonical names and explicit aliases avoid turning a wrong short answer into a hit. */
 export class AnswerIndex {
+  private exact = new Map<string, Answer | null>();
   private names = new Map<string, Answer | null>();
   constructor(prompt: Prompt) {
     for (const answer of prompt.answers) {
+      const exactKey = canonicalKey(answer.answer);
+      if (exactKey) {
+        if (this.exact.has(exactKey) && this.exact.get(exactKey) !== answer) this.exact.set(exactKey, null);
+        else this.exact.set(exactKey, answer);
+      }
       for (const alias of [answer.answer, ...answer.aliases]) {
         const key = normalize(alias);
         if (!key) continue;
@@ -22,5 +31,10 @@ export class AnswerIndex {
       }
     }
   }
-  match(input: string): Answer | null { const key = normalize(input); return key ? this.names.get(key) ?? null : null; }
+  match(input: string): Answer | null {
+    const exactKey = canonicalKey(input);
+    if (this.exact.has(exactKey)) return this.exact.get(exactKey) ?? null;
+    const key = normalize(input);
+    return key ? this.names.get(key) ?? null : null;
+  }
 }

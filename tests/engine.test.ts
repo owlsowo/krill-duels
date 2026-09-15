@@ -373,3 +373,152 @@ describe('deadlines, disconnects, and recovery', () => {
     expect(room.snapshot(q.now).names[0]).toBe('Host');
   });
 });
+// Append this entire block to tests/engine.test.ts after the existing fixture/helpers/tests.
+// Reuses its imported describe/it/expect, DuelEngine and begin/play helpers, and fixture.ids.
+import { DEFAULT_SETTINGS as SETTINGS_DEFAULTS, validSettings as isValidDuelSettings } from '../src/duel-engine';
+import type { DuelSettings as SettingsUnderTest } from '../src/duel-engine';
+
+describe('custom duel settings', () => {
+  function configured(overrides: Partial<SettingsUnderTest> = {}, pool = fixture.ids): DuelEngine {
+    const room = new DuelEngine('Host', 'settings-fixture-match', pool, { ...SETTINGS_DEFAULTS, ...overrides });
+    room.join('Friend', 0);
+    return room;
+  }
+
+  it('uses the declared defaults when no settings are supplied', () => {
+    const room = new DuelEngine('Host', 'default-settings-match', fixture.ids);
+    expect(SETTINGS_DEFAULTS).toEqual({ startingHp: 300, questionSeconds: 25, damageScaling: true });
+    expect(room.snapshot(0).settings).toEqual(SETTINGS_DEFAULTS);
+    expect(room.snapshot(0).hp).toEqual([300, 300]);
+    expect(isValidDuelSettings(SETTINGS_DEFAULTS)).toBe(true);
+  });
+
+  it.each([100, 101, 149, 300, 500, 1000, 9999, 10_000])('accepts custom integer HP %i without snapping it to the UI step', startingHp => {
+    const settings = { ...SETTINGS_DEFAULTS, startingHp };
+    expect(isValidDuelSettings(settings)).toBe(true);
+    const room = configured({ startingHp });
+    expect(room.snapshot(0).settings.startingHp).toBe(startingHp);
+    expect(room.snapshot(0).hp).toEqual([startingHp, startingHp]);
+  });
+
+  it.each([15, 25, 45, 60, 90])('gives both players the chosen %i-second question deadline', questionSeconds => {
+    const room = configured({ questionSeconds });
+    const question = begin(room);
+    expect(question.settings.questionSeconds).toBe(questionSeconds);
+    expect(question.deadline - question.now).toBe(questionSeconds * 1000);
+    room.tick(question.deadline - 1);
+    expect(room.snapshot(question.deadline - 1).phase).toBe('question');
+    room.tick(question.deadline);
+    expect(room.snapshot(question.deadline).history[0].results.map(answer => answer.points)).toEqual([0, 0]);
+  });
+
+  it.each([
+    0, -1, 99, 10_001, 300.5, NaN, Infinity, -Infinity, '300', null, true,
+  ])('rejects invalid HP value %s instead of coercing or silently defaulting it', startingHp => {
+    const settings = { ...SETTINGS_DEFAULTS, startingHp };
+    expect(isValidDuelSettings(settings)).toBe(false);
+    expect(() => new DuelEngine('Host', 'invalid-hp-match', fixture.ids, settings as SettingsUnderTest)).toThrow();
+  });
+
+  it.each([0, -1, 10, 20, 30, 91, 25.5, NaN, Infinity, '25', null])('rejects invalid timer value %s', questionSeconds => {
+    const settings = { ...SETTINGS_DEFAULTS, questionSeconds };
+    expect(isValidDuelSettings(settings)).toBe(false);
+    expect(() => new DuelEngine('Host', 'invalid-timer-match', fixture.ids, settings as SettingsUnderTest)).toThrow();
+  });
+
+  it.each([0, 1, '', 'false', 'true', null, undefined])('requires damageScaling to be a literal boolean, not %s', damageScaling => {
+    const settings = { ...SETTINGS_DEFAULTS, damageScaling };
+    expect(isValidDuelSettings(settings)).toBe(false);
+    expect(() => new DuelEngine('Host', 'invalid-scaling-match', fixture.ids, settings as unknown as SettingsUnderTest)).toThrow();
+  });
+
+  it('rejects missing fields, arrays, and unknown setting fields from a protocol payload', () => {
+    const invalid = [
+      null, false, 300, [], {},
+      { startingHp: 300, questionSeconds: 25 },
+      { startingHp: 300, damageScaling: true },
+      { questionSeconds: 25, damageScaling: true },
+      { ...SETTINGS_DEFAULTS, maxRounds: 15 },
+      { ...SETTINGS_DEFAULTS, opponentHp: 1 },
+    ];
+    for (const settings of invalid) {
+      expect(isValidDuelSettings(settings)).toBe(false);
+      expect(() => new DuelEngine('Host', 'invalid-shape-match', fixture.ids, settings as SettingsUnderTest)).toThrow();
+    }
+    // Omitted constructor settings may default, but an omitted field in a received snapshot may not.
+    expect(isValidDuelSettings(undefined)).toBe(false);
+  });
+
+  it('copies settings at construction and does not expose mutable engine settings through snapshots', () => {
+    const input = { startingHp: 175, questionSeconds: 45, damageScaling: false };
+    const room = new DuelEngine('Host', 'settings-copy-match', fixture.ids, input);
+    input.startingHp = 10_000;
+    input.questionSeconds = 90;
+    input.damageScaling = true;
+    expect(room.snapshot(0).settings).toEqual({ startingHp: 175, questionSeconds: 45, damageScaling: false });
+    const view = room.snapshot(0);
+    view.settings.startingHp = 100;
+    view.settings.questionSeconds = 15;
+    view.settings.damageScaling = true;
+    expect(room.snapshot(0).settings).toEqual({ startingHp: 175, questionSeconds: 45, damageScaling: false });
+    expect(room.snapshot(0).hp).toEqual([175, 175]);
+    expect(SETTINGS_DEFAULTS).toEqual({ startingHp: 300, questionSeconds: 25, damageScaling: true });
+  });
+
+  it('keeps damage at 1× past rounds 5 and 8 when scaling is disabled', async () => {
+    const room = configured({ startingHp: 1000, damageScaling: false });
+    for (let round = 0; round < 8; round++) await play(room, 'Clever', 'Common');
+    const state = room.snapshot(1_000_000);
+    expect(state.round).toBe(8);
+    expect(state.history.map(round => round.multiplier)).toEqual([1, 1, 1, 1, 1, 1, 1, 1]);
+    expect(state.history.map(round => round.damage)).toEqual([5, 5, 5, 5, 5, 5, 5, 5]);
+    expect(state.hp).toEqual([1000, 960]);
+  });
+
+  it('uses the normal round-5 and round-8 ramp when scaling is enabled', async () => {
+    const room = configured({ startingHp: 1000, damageScaling: true });
+    for (let round = 0; round < 8; round++) await play(room, 'Clever', 'Common');
+    const state = room.snapshot(1_000_000);
+    expect(state.history.map(round => round.multiplier)).toEqual([1, 1, 1, 1, 2, 2, 2, 3]);
+    expect(state.history.map(round => round.damage)).toEqual([5, 5, 5, 5, 10, 10, 10, 15]);
+    expect(state.hp).toEqual([1000, 935]);
+  });
+
+  it('applies normal damage to HP above 300 without clamping it to the old default', async () => {
+    const room = configured({ startingHp: 10_000 });
+    const state = await play(room, 'Common', '');
+    expect(state.hp).toEqual([10_000, 9990]);
+    expect(state.phase).toBe('result');
+    expect(state.settings.startingHp).toBe(10_000);
+  });
+
+  it('ends a low-HP match on knockout and clamps only at zero', async () => {
+    const room = configured({ startingHp: 100 });
+    expect((await play(room, 'Gem', 'Common')).hp).toEqual([100, 10]);
+    const final = await play(room, 'Gem', 'Common');
+    expect(final.hp).toEqual([100, 0]);
+    expect(final.phase).toBe('finished');
+    expect(final.winner).toBe(0);
+  });
+
+  it('preserves custom settings on rematch while resetting HP, history, and the timer', async () => {
+    const selected = { startingHp: 175, questionSeconds: 90, damageScaling: false };
+    const room = configured(selected, ['fixture-1', 'fixture-2']);
+    await play(room, 'Clever', 'Common');
+    const previous = await play(room, 'Common', 'Common');
+    expect(previous.phase).toBe('finished');
+    expect(previous.hp).toEqual([175, 170]);
+    room.ready(0, 1_000_000);
+    room.ready(1, 1_000_000);
+    const reset = room.snapshot(1_000_000);
+    expect(reset.matchId).not.toBe(previous.matchId);
+    expect(reset.settings).toEqual(selected);
+    expect(reset.hp).toEqual([175, 175]);
+    expect(reset.history).toEqual([]);
+    expect(reset.phase).toBe('countdown');
+    room.tick(reset.deadline);
+    const question = room.snapshot(reset.deadline);
+    expect(question.deadline - question.now).toBe(90_000);
+    expect(question.settings.damageScaling).toBe(false);
+  });
+});

@@ -1,6 +1,7 @@
 import Peer, { type DataConnection } from 'peerjs';
 import { catalogVersion, promptById, PROMPT_IDS } from './data';
 import { commitment, DuelEngine, GRACE_MS, type DuelState, type Seat, safeName } from './duel-engine';
+import { DEFAULT_SETTINGS, validSettings, type DuelSettings } from './settings';
 
 type Draft = { matchId: string; round: number; promptId: string; input: string; salt: string; hash: string };
 type Callbacks = { change: (state: DuelState) => void; status: (message: string) => void; error: (message: string) => void };
@@ -39,14 +40,14 @@ export class DuelRoom {
   private sending = false;
   private hostRevealedKey = '';
 
-  constructor(private name: string, room: string | null, private callbacks: Callbacks) {
+  constructor(private name: string, room: string | null, private callbacks: Callbacks, settings: DuelSettings = DEFAULT_SETTINGS) {
     this.name = safeName(name);
     this.room = room ?? crypto.randomUUID().replaceAll('-', '').slice(0, 24);
     this.seat = room ? 1 : 0;
     if (this.seat === 0) this.hostClockOffset = 0;
     this.token = storageRead(`kd-token-${this.room}`) || crypto.randomUUID();
     storageWrite(`kd-token-${this.room}`, this.token);
-    if (!room) this.engine = new DuelEngine(this.name);
+    if (!room) this.engine = new DuelEngine(this.name, undefined, undefined, settings);
     try {
       const saved = JSON.parse(storageRead(`kd-answer-${this.room}`) ?? 'null') as Draft | null;
       if (saved && typeof saved.input === 'string' && typeof saved.salt === 'string' && typeof saved.hash === 'string') this.draft = saved;
@@ -57,7 +58,7 @@ export class DuelRoom {
 
   async open(): Promise<void> {
     this.callbacks.status(this.seat === 0 ? 'Opening your room…' : 'Joining your friend…');
-    this.version = `krill-duels-1:${await catalogVersion()}`;
+    this.version = `krill-duels-2:${await catalogVersion()}`;
     if (!this.alive) return;
     this.peer = this.seat === 0 ? new Peer(`kd-${this.room}`) : new Peer();
     this.peer.on('open', () => {
@@ -96,7 +97,8 @@ export class DuelRoom {
     if (!this.peer || this.peer.disconnected || this.peer.destroyed || !this.alive) return;
     this.retryAttempts++;
     this.nextRetry = Date.now() + 2_000;
-    const connection = this.peer.connect(`kd-${this.room}`, { reliable: true, serialization: 'json' });
+    // Binary serialization chunks long match histories; PeerJS JSON is limited to 16 KB.
+    const connection = this.peer.connect(`kd-${this.room}`, { reliable: true, serialization: 'binary' });
     const previous = this.conn;
     this.conn = connection;
     previous?.close();
@@ -225,7 +227,12 @@ export class DuelRoom {
 
   private receive(state: DuelState): void {
     if (!this.alive) return;
+    this.hostClockOffset ??= Date.now() - state.now;
     const previous = this.state;
+    if (previous && previous.matchId === state.matchId && JSON.stringify(previous.settings) !== JSON.stringify(state.settings)) {
+      this.callbacks.error('Room settings changed during the match. Create a new duel.');
+      this.dispose(false); return;
+    }
     // Pin commitments; a changed hash after locking is a protocol error.
     if (previous && previous.matchId === state.matchId && previous.round === state.round) {
       for (const seat of [0, 1] as const) {
@@ -272,7 +279,14 @@ export class DuelRoom {
     this.reconnectStarted ??= Date.now();
     this.callbacks.status('Connection interrupted. Reconnecting…');
     if (this.engine) this.engine.connection(false, Date.now());
-    else if (wasAccepted) this.conn?.close();
+    else if (wasAccepted) {
+      if (this.state && this.state.phase !== 'finished') {
+        const now = Date.now() - (this.hostClockOffset ?? 0);
+        this.state = { ...this.state, connected:false, reconnectUntil:now + GRACE_MS, now };
+        this.callbacks.change(this.state);
+      }
+      this.conn?.close();
+    }
   }
 
   private tick(): void {
@@ -317,12 +331,12 @@ export class DuelRoom {
   private validSnapshot(value: unknown): value is DuelState {
     if (!value || typeof value !== 'object') return false;
     const s = value as DuelState;
-    return typeof s.matchId === 'string' && s.matchId.length <= 80 &&
+    return validSettings(s.settings) && typeof s.matchId === 'string' && s.matchId.length <= 80 &&
       ['lobby', 'countdown', 'question', 'reveal', 'result', 'finished'].includes(s.phase) &&
       Number.isInteger(s.round) && s.round >= 0 && s.round <= PROMPT_IDS.length &&
       (s.promptId === null || typeof s.promptId === 'string' && !!promptById(s.promptId)) &&
       Array.isArray(s.names) && s.names.length === 2 && s.names.every(n => typeof n === 'string' && n.length <= 24) &&
-      Array.isArray(s.hp) && s.hp.length === 2 && s.hp.every(h => Number.isFinite(h) && h >= 0 && h <= 300) &&
+      Array.isArray(s.hp) && s.hp.length === 2 && s.hp.every(h => Number.isFinite(h) && h >= 0 && h <= s.settings.startingHp) &&
       Array.isArray(s.ready) && s.ready.length === 2 && s.ready.every(b => typeof b === 'boolean') &&
       Array.isArray(s.committed) && s.committed.length === 2 && s.committed.every(b => typeof b === 'boolean') &&
       Array.isArray(s.hashes) && s.hashes.length === 2 && s.hashes.every(h => h === null || typeof h === 'string' && /^[a-f0-9]{64}$/.test(h)) &&

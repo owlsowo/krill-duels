@@ -2,6 +2,8 @@ import { PROMPT_IDS, promptById } from './data';
 import { AnswerIndex } from './match';
 import { shuffled } from './schedule';
 import type { RoundResult } from './types';
+import { DEFAULT_SETTINGS, settingsCopy, type DuelSettings } from './settings';
+export { DEFAULT_SETTINGS, validSettings, type DuelSettings } from './settings';
 
 export type Seat = 0 | 1;
 export type Phase = 'lobby' | 'countdown' | 'question' | 'reveal' | 'result' | 'finished';
@@ -20,6 +22,7 @@ export interface DuelRound {
 }
 
 export interface DuelState {
+  settings: DuelSettings;
   matchId: string;
   phase: Phase;
   round: number;
@@ -61,13 +64,14 @@ export class DuelEngine {
   private pausedAt: number | null = null;
   private pool: string[];
 
-  constructor(hostName: string, matchId: string = crypto.randomUUID(), pool = PROMPT_IDS) {
+  constructor(hostName: string, matchId: string = crypto.randomUUID(), pool = PROMPT_IDS, settings: DuelSettings = DEFAULT_SETTINGS) {
     if (!pool.length) throw new Error('The question catalog is empty.');
     this.pool = [...new Set(pool)];
     this.order = shuffled(this.pool);
     this.state = {
+      settings: settingsCopy(settings),
       matchId, phase: 'lobby', round: 0, promptId: null,
-      names: [safeName(hostName), 'Waiting for friend'], hp: [HP, HP],
+      names: [safeName(hostName), 'Waiting for friend'], hp: [settings.startingHp, settings.startingHp],
       ready: [false, false], committed: [false, false], hashes: [null, null], connected: false,
       reconnectUntil: null, deadline: 0, now: 0, history: [], winner: null, reason: '',
     };
@@ -101,7 +105,7 @@ export class DuelEngine {
     this.state.ready[seat] = true;
     if (!this.state.ready.every(Boolean)) return;
     if (this.state.phase === 'finished') {
-      const next = new DuelEngine(this.state.names[0], crypto.randomUUID(), this.pool);
+      const next = new DuelEngine(this.state.names[0], crypto.randomUUID(), this.pool, this.state.settings);
       next.join(this.state.names[1], now);
       this.state = next.state;
       this.order = next.order;
@@ -148,7 +152,7 @@ export class DuelEngine {
     if (this.state.phase === 'countdown') {
       this.state.phase = 'question';
       this.state.promptId = this.order[this.state.round - 1];
-      this.state.deadline = now + QUESTION_MS;
+      this.state.deadline = now + this.state.settings.questionSeconds * 1000;
     } else if (this.state.phase === 'question') this.beginReveal(now);
     else if (this.state.phase === 'reveal') this.resolve();
   }
@@ -175,7 +179,7 @@ export class DuelEngine {
     const results = ([0, 1] as const).map(seat => scoreAnswer(this.state.promptId!, this.answers[seat] ?? '')) as [RoundResult, RoundResult];
     const difference = results[0].points - results[1].points;
     const loser: Seat | null = difference > 0 ? 1 : difference < 0 ? 0 : null;
-    const factor = multiplier(this.state.round);
+    const factor = this.state.settings.damageScaling ? multiplier(this.state.round) : 1;
     const damage = Math.abs(difference) * factor;
     if (loser !== null) this.state.hp[loser] = Math.max(0, this.state.hp[loser] - damage);
     this.state.history.push({ round: this.state.round, promptId: this.state.promptId!, results, damage, loser, multiplier: factor });

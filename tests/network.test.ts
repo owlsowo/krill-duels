@@ -1,6 +1,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { DuelRoom } from '../src/network';
 import { PROMPTS, promptById } from '../src/data';
+import type { DuelSettings } from '../src/settings';
 
 const transport = vi.hoisted(() => {
   type Handler = (...args: any[]) => void;
@@ -13,9 +14,11 @@ const transport = vi.hoisted(() => {
   const controls = { holdReveals: false, held: [] as (() => void)[], sent: 0, offline: false };
   class Channel extends Events {
     open = false;
+    serialization = 'binary';
     other!: Channel;
     send(packet: any) {
       if (!this.open) throw Error('closed channel');
+      if (this.serialization === 'json' && JSON.stringify(packet).length >= 16300) throw Error('PeerJS JSON message limit');
       controls.sent++;
       const data = structuredClone(packet);
       const deliver = () => { if (this.open && this.other.open) this.other.emit('data', data); };
@@ -38,8 +41,9 @@ const transport = vi.hoisted(() => {
       super(); this.id = id; peers.set(id, this);
       queueMicrotask(() => { if (!this.destroyed) { this.open = true; this.emit('open', this.id); } });
     }
-    connect(id: string) {
+    connect(id: string, options?: {serialization:string}) {
       const local = new Channel(); const remote = new Channel(); local.other = remote; remote.other = local;
+      local.serialization = remote.serialization = options?.serialization ?? 'binary';
       this.channels.push(local);
       queueMicrotask(() => {
         const host = peers.get(id);
@@ -62,8 +66,8 @@ const callbacks = () => ({ change: () => {}, status: () => {}, error: (message: 
 async function flush() { for (let i = 0; i < 12; i++) { await new Promise<void>(resolve => setTimeout(resolve, 0)); } }
 // Real crypto runs between fake game-clock ticks.
 async function advance(ms: number) { await vi.advanceTimersByTimeAsync(ms); await flush(); }
-async function pair() {
-  const host = new DuelRoom('Host', null, callbacks()); rooms.push(host); await host.open(); await flush();
+async function pair(settings?: DuelSettings) {
+  const host = new DuelRoom('Host', null, callbacks(), settings); rooms.push(host); await host.open(); await flush();
   const guest = new DuelRoom('Guest', host.room, callbacks()); rooms.push(guest); await guest.open(); await flush();
   expect(host.state?.connected).toBe(true); expect(guest.state?.connected).toBe(true);
   host.ready(); guest.ready(); await flush(); await advance(3250);
@@ -85,6 +89,32 @@ beforeEach(() => {
 afterEach(() => { rooms.forEach(r => r.dispose(false)); rooms = []; transport.peers.clear(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 describe('two-player protocol', () => {
+  it('uses a transport that supports long match histories beyond the JSON message limit', async () => {
+    const {host,guest} = await pair();
+    const current = structuredClone(host.state!);
+    const pool = PROMPTS.slice(0,200);
+    current.round = pool.length; current.phase = 'finished';
+    current.history = pool.map((prompt,i) => ({round:i+1,promptId:prompt.id,damage:0,loser:null,multiplier:1,results:[0,1].map(()=>({promptId:prompt.id,input:prompt.answers[0].answer,answer:prompt.answers[0].answer,points:prompt.answers[0].score}))})) as typeof current.history;
+    const channel = transport.peers.get(`kd-${host.room}`)!.channels.at(-1)!;
+    expect(channel.serialization).toBe('binary');
+    const packet = {type:'state',version:(host as unknown as {version:string}).version,state:current};
+    expect(JSON.stringify(packet).length).toBeGreaterThan(16300);
+    channel.send(packet); await flush();
+    expect(guest.state!.history).toHaveLength(200);
+    expect(errors).toEqual([]);
+  });
+  it('shares custom host settings and prevents changing them mid-match', async () => {
+    const settings = {startingHp:5000,questionSeconds:60,damageScaling:false};
+    const {host,guest} = await pair(settings);
+    expect(guest.state!.settings).toEqual(settings);
+    expect(guest.state!.hp).toEqual([5000,5000]);
+    expect(guest.state!.deadline-guest.state!.now).toBeGreaterThan(59000);
+    const forged = structuredClone(host.state!);
+    forged.settings.questionSeconds = 15;
+    transport.peers.get(`kd-${host.room}`)!.channels.at(-1)!.send({type:'state',version:(host as unknown as {version:string}).version,state:forged});
+    await flush();
+    expect(errors).toContain('Room settings changed during the match. Create a new duel.');
+  });
   it('keeps answers hidden until both commit, handles delayed reveal, and damages once', async () => {
     const { host, guest } = await pair();
     const prompt = promptById(host.state!.promptId!)!;
