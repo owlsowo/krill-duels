@@ -1,10 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { handleApi, protocolVersion, PRESENCE_MS, type Database, type Statement } from '../server/worker';
-import { DuelEngine, type DuelState, type Seat } from '../src/duel-engine';
+import { DuelEngine, type DuelState, type Seat, type StoredEngine } from '../src/duel-engine';
 import { DEFAULT_SETTINGS } from '../src/settings';
-import { promptById } from '../src/data';
+import { PROMPTS, promptById } from '../src/data';
+import * as schedule from '../src/schedule';
 
 class SqliteD1 implements Database {
   sqlite = new DatabaseSync(':memory:');
@@ -45,7 +46,41 @@ async function playing() {
   return call(0, 'poll');
 }
 beforeEach(async () => { db = new SqliteD1(); now = epoch; version = await protocolVersion(); });
-afterEach(() => db.sqlite.close());
+afterEach(() => { db.sqlite.close(); vi.restoreAllMocks(); });
+
+// Keep authentication, SQL persistence, and normal API transitions real while
+// making the small room pool deterministic enough to catch premature reshuffles.
+const rematchPool = PROMPTS.filter(prompt => prompt.answers.some(answer => answer.score === 100)).slice(0, 3).map(prompt => prompt.id);
+function replaceStoredEngine(engine: StoredEngine) {
+  const row = db.sqlite.prepare('SELECT payload FROM rooms').get()!;
+  const payload = JSON.parse(row.payload as string);
+  payload.engine = engine; payload.drafts = [null, null];
+  db.sqlite.prepare('UPDATE rooms SET payload = ?, host_seen = ?, guest_seen = ?').run(JSON.stringify(payload), now, now);
+}
+async function smallRoom() {
+  vi.spyOn(schedule, 'shuffled').mockImplementation(<T>(items: readonly T[]) => [...items]);
+  await joined();
+  const engine = new DuelEngine('Host', 'persisted-rematch-fixture', rematchPool, { ...DEFAULT_SETTINGS, startingHp: 100 });
+  engine.join('Guest', now);
+  replaceStoredEngine(engine.store(now));
+  return engine;
+}
+async function readyBoth(state: DuelState) {
+  await call(0, 'ready', current(state));
+  const countdown = await call(1, 'ready', current(state));
+  expect(countdown.state.phase).toBe('countdown');
+  expect(countdown.state.promptId).toBeNull();
+  return countdown.state;
+}
+async function knockOut(state: DuelState) {
+  const input = promptById(state.promptId!)!.answers.find(answer => answer.score === 100)!.answer;
+  expect((await call(0, 'answer', { ...current(state), input })).data.accepted).toBe(true);
+  const ended = await call(1, 'answer', { ...current(state), input: '' });
+  expect(ended.data.accepted).toBe(true);
+  expect(ended.state).toMatchObject({ phase: 'finished', winner: 0, hp: [100, 0] });
+  expect(ended.state.history).toHaveLength(1);
+  return ended.state;
+}
 
 describe('HTTPS room API on persisted SQL state', () => {
   it('creates and joins without any peer connection; refresh create is idempotent', async () => {
@@ -71,7 +106,7 @@ describe('HTTPS room API on persisted SQL state', () => {
     expect(first.data.accepted).toBe(true);
     expect(first.state.committed).toEqual([true, false]);
     const publicText = JSON.stringify((await call(1, 'poll')).data);
-    for (const secret of ['drafts', 'salt', 'payload', 'order', 'pool', tokens[0], input]) expect(publicText).not.toContain(secret);
+    for (const secret of ['drafts', 'salt', 'payload', 'order', 'pool', 'nextPromptIndex', tokens[0], input]) expect(publicText).not.toContain(secret);
     expect(first.state.history).toHaveLength(0);
     const replies = await Promise.all([call(1, 'answer', { ...current(state), input }), call(0, 'answer', { ...current(state), input })]);
     expect(replies.every(r => r.data.accepted)).toBe(true);
@@ -157,6 +192,92 @@ describe('HTTPS room API on persisted SQL state', () => {
     const next = await call(0, 'poll');
     expect(next.state.matchId).not.toBe(state.matchId); expect(next.state.round).toBe(1);
     expect((await call(0, 'answer', { ...current(state), input: 'late' })).data.accepted).toBe(false);
+  });
+  it('persists unused questions across early knockouts and rematches until the whole room pool is exhausted', async () => {
+    await smallRoom();
+    let state = (await call(0, 'poll')).state;
+    const seen: string[] = [], matchIds = new Set<string>();
+    let previousQuestion: DuelState | undefined, previousFinished: DuelState | undefined;
+    for (let index = 0; index < rematchPool.length * 2; index++) {
+      const countdown = await readyBoth(state);
+      expect(countdown).toMatchObject({ round: 1, hp: [100, 100], history: [], committed: [false, false] });
+      if (previousQuestion && previousFinished) {
+        expect(countdown.matchId).not.toBe(previousQuestion.matchId);
+        await call(0, 'ready', current(previousFinished));
+        const stale = await call(0, 'answer', { ...current(previousQuestion), input: 'late previous match' });
+        expect(stale.data.accepted).toBe(false);
+        expect(stale.state).toMatchObject({ matchId: countdown.matchId, phase: 'countdown', promptId: null, ready: [false, false], committed: [false, false] });
+      }
+      now = countdown.deadline;
+      db.conflicts = 2;
+      const question = (await call(0, 'poll')).state;
+      expect(question.phase).toBe('question');
+      expect(question.promptId).toBe(rematchPool[index % rematchPool.length]);
+      seen.push(question.promptId!); matchIds.add(question.matchId);
+      // Each call restores a fresh engine from SQL; refresh and polling must
+      // neither redraw the exposed question nor spend another unused question.
+      expect((await create()).state.promptId).toBe(question.promptId);
+      expect((await call(1, 'join')).state.promptId).toBe(question.promptId);
+      if (previousQuestion) {
+        const stale = await call(0, 'answer', { ...current(previousQuestion), input: 'old round one' });
+        expect(stale.data.accepted).toBe(false);
+        expect(stale.state.committed).toEqual([false, false]);
+      }
+      state = await knockOut(question);
+      previousQuestion = question; previousFinished = state;
+    }
+    expect(seen.slice(0, rematchPool.length)).toEqual(rematchPool);
+    expect(seen.slice(rematchPool.length)).toEqual(rematchPool);
+    expect(matchIds.size).toBe(rematchPool.length * 2);
+  });
+  it('does not spend an unseen question when presence loss ends a countdown before it can reveal', async () => {
+    await smallRoom();
+    const lobby = (await call(0, 'poll')).state;
+    await call(0, 'ready', current(lobby));
+    now += PRESENCE_MS - 1000;
+    const countdown = await call(1, 'ready', current(lobby));
+    expect(countdown.state.phase).toBe('countdown');
+    now = epoch + PRESENCE_MS;
+    const paused = await call(1, 'poll');
+    expect(paused.state).toMatchObject({ phase: 'countdown', connected: false, promptId: null });
+    for (const delta of [10_000, 20_000, 30_000]) {
+      now = epoch + PRESENCE_MS + delta;
+      await call(1, 'poll');
+    }
+    const returned = (await call(0, 'poll')).state;
+    expect(returned).toMatchObject({ phase: 'finished', promptId: null, history: [] });
+    const retry = await readyBoth(returned);
+    now = retry.deadline;
+    expect((await call(1, 'poll')).state.promptId).toBe(rematchPool[0]);
+  });
+  it('migrates a legacy saved question without replaying it after a knockout', async () => {
+    const engine = await smallRoom();
+    engine.ready(0, now); engine.ready(1, now); now += 3000; engine.tick(now);
+    const legacy = engine.store(now);
+    delete legacy.nextPromptIndex;
+    replaceStoredEngine(legacy);
+    const question = (await call(0, 'poll')).state;
+    expect(question.promptId).toBe(rematchPool[0]);
+    expect((await call(1, 'poll')).state.promptId).toBe(rematchPool[0]);
+    const finished = await knockOut(question);
+    const next = await readyBoth(finished); now = next.deadline;
+    expect((await call(0, 'poll')).state.promptId).toBe(rematchPool[1]);
+  });
+  it('migrates a legacy finished countdown using exposed history rather than its unplayed round number', async () => {
+    const engine = await smallRoom();
+    engine.ready(0, now); engine.ready(1, now); now += 3000; engine.tick(now);
+    now = engine.snapshot(now).deadline; engine.tick(now);
+    expect(engine.snapshot(now)).toMatchObject({ phase: 'result', round: 1 });
+    engine.ready(0, now); engine.ready(1, now);
+    expect(engine.snapshot(now)).toMatchObject({ phase: 'countdown', round: 2, promptId: null });
+    engine.forfeit(1);
+    const legacy = engine.store(now);
+    delete legacy.nextPromptIndex;
+    replaceStoredEngine(legacy);
+    const finished = (await call(0, 'poll')).state;
+    expect(finished.history.map(round => round.promptId)).toEqual([rematchPool[0]]);
+    const next = await readyBoth(finished); now = next.deadline;
+    expect((await call(0, 'poll')).state.promptId).toBe(rematchPool[1]);
   });
   it('explicit Leave finishes the game and prevents the left session from reclaiming it', async () => {
     await joined(); await call(0, 'leave');
