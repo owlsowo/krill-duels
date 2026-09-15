@@ -349,6 +349,42 @@ describe('deadlines, disconnects, and recovery', () => {
     expect(room.snapshot(q.now + 2).committed).toEqual([false, false]);
   });
 
+  it('pauses reveals during a disconnect and accepts them after reconnecting with the remaining time', async () => {
+    const room = engine();
+    const { question: q, inputs, salts } = await committed(room);
+    const revealDeadline = room.snapshot(q.now).deadline;
+    room.connection(false, q.now + 3);
+    expect(await room.reveal(0, q.matchId, q.round, inputs[0], salts[0], q.now + 4)).toBe(false);
+    expect(await room.reveal(1, q.matchId, q.round, inputs[1], salts[1], q.now + 4)).toBe(false);
+    expect(room.snapshot(q.now + 4)).toMatchObject({ phase: 'reveal', history: [], hp: [300, 300] });
+
+    const resumedAt = q.now + 20_003;
+    room.join('Friend', resumedAt);
+    expect(room.snapshot(resumedAt).deadline).toBe(revealDeadline + 20_000);
+    expect(await room.reveal(0, q.matchId, q.round, inputs[0], salts[0], resumedAt + 1)).toBe(true);
+    expect(await room.reveal(1, q.matchId, q.round, inputs[1], salts[1], resumedAt + 2)).toBe(true);
+    expect(room.snapshot(resumedAt + 2)).toMatchObject({ phase: 'result', hp: [300, 210] });
+    expect(room.snapshot(resumedAt + 2).history).toHaveLength(1);
+  });
+
+  it('leaves an in-flight reveal retryable when the connection drops during hash verification', async () => {
+    const room = engine();
+    const { question: q, inputs, salts, hashes } = await committed(room);
+    const bytes = Uint8Array.from(hashes[0].match(/../g)!, part => Number.parseInt(part, 16));
+    let finishDigest!: (value: ArrayBuffer) => void;
+    vi.spyOn(crypto.subtle, 'digest').mockImplementationOnce(() => new Promise<ArrayBuffer>(resolve => { finishDigest = resolve; }));
+    const pending = room.reveal(0, q.matchId, q.round, inputs[0], salts[0], q.now + 3);
+    room.connection(false, q.now + 4);
+    finishDigest(bytes.buffer as ArrayBuffer);
+    expect(await pending).toBe(false);
+    expect(room.snapshot(q.now + 4).history).toEqual([]);
+
+    room.join('Friend', q.now + 1_004);
+    expect(await room.reveal(0, q.matchId, q.round, inputs[0], salts[0], q.now + 1_005)).toBe(true);
+    expect(await room.reveal(1, q.matchId, q.round, inputs[1], salts[1], q.now + 1_006)).toBe(true);
+    expect(room.snapshot(q.now + 1_006).history[0].results.map(answer => answer.points)).toEqual([100, 10]);
+  });
+
   it('does not revive a match when a guest rejoins after grace before the next timer tick', () => {
     const room = engine();
     const q = begin(room);
