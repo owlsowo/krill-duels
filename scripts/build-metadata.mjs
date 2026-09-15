@@ -1,6 +1,12 @@
-import { mkdir, cp, writeFile } from 'node:fs/promises';
+import { mkdir, cp, writeFile, readFile } from 'node:fs/promises';
 await mkdir('dist/.openai', { recursive: true });
-await cp('.openai/hosting.json', 'dist/.openai/hosting.json');
+// A registered Site supplies its own manifest. A fresh clone can still build
+// and run locally; no project is created or selected by this build helper.
+const hosting = await readFile('.openai/hosting.json', 'utf8').catch(error => {
+  if (error.code !== 'ENOENT') throw error;
+  return JSON.stringify({ d1: 'DB', r2: null });
+});
+await writeFile('dist/.openai/hosting.json', hosting);
 await cp('drizzle', 'dist/.openai/drizzle', { recursive: true });
 await writeFile('dist/server/wrangler.json', JSON.stringify({
   name: 'krill-duels-local', main: 'index.js', compatibility_date: '2026-05-15',

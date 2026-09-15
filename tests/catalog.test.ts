@@ -1,24 +1,48 @@
 import { describe, expect, it } from 'vitest';
-import { PROMPTS } from '../src/data';
+import { ARCHIVE_PROMPTS, CURATED_PROMPTS, PROMPTS } from '../src/data';
 import { AnswerIndex, normalize } from '../src/match';
 
-describe('published archive integrity', () => {
+describe('playable question bank integrity', () => {
   it('contains unique complete questions with accepted scored canonical answers', () => {
     expect(new Set(PROMPTS.map(p => p.id)).size).toBe(PROMPTS.length);
     expect(new Set(PROMPTS.map(p => normalize(p.prompt))).size).toBe(PROMPTS.length);
     const scores = new Set<number>();
     for (const prompt of PROMPTS) {
-      expect(prompt.source).toMatch(/^https:\/\/krillionanswers.com\/questions\//);
+      expect(new URL(prompt.source).protocol).toBe('https:');
       expect(prompt.answers.length).toBeGreaterThan(0);
       const index = new AnswerIndex(prompt);
+      const normalizedOwners = new Map<string, string>();
       expect(index.match('')).toBeNull(); expect(index.match('   ')).toBeNull();
       for (const answer of prompt.answers) {
         expect(index.match(answer.answer)).toEqual(answer);
         expect(index.match(`  ${answer.answer.toUpperCase()}  `)).toEqual(answer);
         expect([10,15,30,60,85,100]).toContain(answer.score);
+        for (const name of [answer.answer, ...answer.aliases]) {
+          expect(index.match(name), `${prompt.id}: ${name}`).toEqual(answer);
+          const key = normalize(name);
+          const owner = normalizedOwners.get(key);
+          expect(owner === undefined || owner === answer.answer, `${prompt.id}: conflicting name ${name}`).toBe(true);
+          normalizedOwners.set(key, answer.answer);
+        }
         scores.add(answer.score);
       }
     }
     expect([...scores].sort((a,b) => a-b)).toEqual([10,15,30,60,85,100]);
+  });
+
+  it('keeps the historical bank and an explicitly estimated, source-backed expansion', () => {
+    expect(ARCHIVE_PROMPTS).toHaveLength(461);
+    expect(CURATED_PROMPTS.length).toBeGreaterThanOrEqual(20);
+    expect(PROMPTS.length).toBe(ARCHIVE_PROMPTS.length + CURATED_PROMPTS.length);
+    for (const prompt of ARCHIVE_PROMPTS) expect(prompt.source).toMatch(/^https:\/\/krillionanswers.com\/questions\//);
+    for (const prompt of CURATED_PROMPTS) {
+      expect(prompt.scoring).toBe('estimated');
+      expect(prompt.scoringVersion).toBeTruthy();
+      expect(prompt.reviewedAt).toBeTruthy();
+      expect(prompt.rules).toBeTruthy();
+      expect(prompt.answers.every(answer => answer.entityId)).toBe(true);
+      expect(new Set(prompt.answers.map(answer => answer.entityId)).size).toBe(prompt.answers.length);
+      expect(prompt.answers.some(answer => answer.score === 15)).toBe(false);
+    }
   });
 });

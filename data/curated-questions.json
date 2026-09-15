@@ -1,0 +1,2315 @@
+[
+  {
+    "id": "curated-austen-novels",
+    "category": "books",
+    "prompt": "Name one of Jane Austen’s six completed major novels",
+    "rules": "The six completed major full-length novels; excludes short fiction, juvenilia and unfinished works.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Jane Austen Society of North America — Austen’s works",
+        "url": "https://www.jasna.org/austen/works/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Sense and Sensibility",
+        "aliases": [
+          "Sense & Sensibility"
+        ],
+        "article": "Sense_and_Sensibility",
+        "entityId": "Q274744"
+      },
+      {
+        "answer": "Pride and Prejudice",
+        "aliases": [
+          "Pride & Prejudice"
+        ],
+        "article": "Pride_and_Prejudice",
+        "entityId": "Q170583"
+      },
+      {
+        "answer": "Mansfield Park",
+        "aliases": [],
+        "article": "Mansfield_Park",
+        "entityId": "Q469690"
+      },
+      {
+        "answer": "Emma",
+        "aliases": [],
+        "article": "Emma_(novel)",
+        "entityId": "Q223880"
+      },
+      {
+        "answer": "Northanger Abbey",
+        "aliases": [],
+        "article": "Northanger_Abbey",
+        "entityId": "Q477508"
+      },
+      {
+        "answer": "Persuasion",
+        "aliases": [],
+        "article": "Persuasion_(novel)",
+        "entityId": "Q333179"
+      }
+    ]
+  },
+  {
+    "id": "curated-narnia-books",
+    "category": "books",
+    "prompt": "Name a book in The Chronicles of Narnia",
+    "rules": "The seven original novels by C. S. Lewis; excludes adaptations and companion books.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "C. S. Lewis official site — The Chronicles of Narnia collection",
+        "url": "https://www.cslewis.com/uk/books/ebook/the-chronicles-of-narnia-7-in-1-bundle-with-bonus-book-boxen-the-chronicles-of-narnia/9780007531202/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "The Lion, the Witch and the Wardrobe",
+        "aliases": [],
+        "article": "The_Lion,_the_Witch_and_the_Wardrobe",
+        "entityId": "Q485093"
+      },
+      {
+        "answer": "Prince Caspian",
+        "aliases": [],
+        "article": "Prince_Caspian",
+        "entityId": "Q218950"
+      },
+      {
+        "answer": "The Voyage of the Dawn Treader",
+        "aliases": [
+          "Voyage of the Dawn Treader"
+        ],
+        "article": "The_Voyage_of_the_Dawn_Treader",
+        "entityId": "Q331656"
+      },
+      {
+        "answer": "The Silver Chair",
+        "aliases": [],
+        "article": "The_Silver_Chair",
+        "entityId": "Q331669"
+      },
+      {
+        "answer": "The Horse and His Boy",
+        "aliases": [],
+        "article": "The_Horse_and_His_Boy",
+        "entityId": "Q157360"
+      },
+      {
+        "answer": "The Magician's Nephew",
+        "aliases": [],
+        "article": "The_Magician's_Nephew",
+        "entityId": "Q477831"
+      },
+      {
+        "answer": "The Last Battle",
+        "aliases": [],
+        "article": "The_Last_Battle",
+        "entityId": "Q289130"
+      }
+    ]
+  },
+  {
+    "id": "curated-booker-winners-2000-2024",
+    "category": "books",
+    "prompt": "Name a novel that won the Booker Prize from 2000 through 2024",
+    "rules": "Award years 2000–2024 inclusive. Both joint winners count; the International Booker Prize is a separate award.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Booker Prize Foundation — complete winners, shortlists and longlists",
+        "url": "https://thebookerprizes.com/the-booker-library/features/full-list-of-booker-prize-winners-shortlisted-and-longlisted-authors",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "The Blind Assassin",
+        "aliases": [],
+        "article": "The_Blind_Assassin",
+        "entityId": "Q1198405"
+      },
+      {
+        "answer": "True History of the Kelly Gang",
+        "aliases": [],
+        "article": "True_History_of_the_Kelly_Gang",
+        "entityId": "Q3821351"
+      },
+      {
+        "answer": "Life of Pi",
+        "aliases": [],
+        "article": "Life_of_Pi",
+        "entityId": "Q374204"
+      },
+      {
+        "answer": "Vernon God Little",
+        "aliases": [],
+        "article": "Vernon_God_Little",
+        "entityId": "Q475459"
+      },
+      {
+        "answer": "The Line of Beauty",
+        "aliases": [],
+        "article": "The_Line_of_Beauty",
+        "entityId": "Q2448434"
+      },
+      {
+        "answer": "The Sea",
+        "aliases": [],
+        "article": "The_Sea_(novel)",
+        "entityId": "Q1216210"
+      },
+      {
+        "answer": "The Inheritance of Loss",
+        "aliases": [],
+        "article": "The_Inheritance_of_Loss",
+        "entityId": "Q2657435"
+      },
+      {
+        "answer": "The Gathering",
+        "aliases": [],
+        "article": "The_Gathering_(Enright_novel)",
+        "entityId": "Q3824774"
+      },
+      {
+        "answer": "The White Tiger",
+        "aliases": [],
+        "article": "The_White_Tiger_(Adiga_novel)",
+        "entityId": "Q2301826"
+      },
+      {
+        "answer": "Wolf Hall",
+        "aliases": [],
+        "article": "Wolf_Hall",
+        "entityId": "Q2657795"
+      },
+      {
+        "answer": "The Finkler Question",
+        "aliases": [],
+        "article": "The_Finkler_Question",
+        "entityId": "Q1992396"
+      },
+      {
+        "answer": "The Sense of an Ending",
+        "aliases": [],
+        "article": "The_Sense_of_an_Ending",
+        "entityId": "Q1331310"
+      },
+      {
+        "answer": "Bring Up the Bodies",
+        "aliases": [],
+        "article": "Bring_Up_the_Bodies",
+        "entityId": "Q3644822"
+      },
+      {
+        "answer": "The Luminaries",
+        "aliases": [],
+        "article": "The_Luminaries",
+        "entityId": "Q15076530"
+      },
+      {
+        "answer": "The Narrow Road to the Deep North",
+        "aliases": [],
+        "article": "The_Narrow_Road_to_the_Deep_North_(novel)",
+        "entityId": "Q17056599"
+      },
+      {
+        "answer": "A Brief History of Seven Killings",
+        "aliases": [],
+        "article": "A_Brief_History_of_Seven_Killings",
+        "entityId": "Q19874028"
+      },
+      {
+        "answer": "The Sellout",
+        "aliases": [],
+        "article": "The_Sellout_(novel)",
+        "entityId": "Q22075195"
+      },
+      {
+        "answer": "Lincoln in the Bardo",
+        "aliases": [],
+        "article": "Lincoln_in_the_Bardo",
+        "entityId": "Q28841909"
+      },
+      {
+        "answer": "Milkman",
+        "aliases": [],
+        "article": "Milkman_(novel)",
+        "entityId": "Q57417096"
+      },
+      {
+        "answer": "Girl, Woman, Other",
+        "aliases": [],
+        "article": "Girl,_Woman,_Other",
+        "entityId": "Q70929843"
+      },
+      {
+        "answer": "The Testaments",
+        "aliases": [],
+        "article": "The_Testaments",
+        "entityId": "Q60786692"
+      },
+      {
+        "answer": "Shuggie Bain",
+        "aliases": [],
+        "article": "Shuggie_Bain",
+        "entityId": "Q100997892"
+      },
+      {
+        "answer": "The Promise",
+        "aliases": [],
+        "article": "The_Promise_(Galgut_novel)",
+        "entityId": "Q108687101"
+      },
+      {
+        "answer": "The Seven Moons of Maali Almeida",
+        "aliases": [],
+        "article": "The_Seven_Moons_of_Maali_Almeida",
+        "entityId": "Q114732705"
+      },
+      {
+        "answer": "Prophet Song",
+        "aliases": [],
+        "article": "Prophet_Song",
+        "entityId": "Q123347158"
+      },
+      {
+        "answer": "Orbital",
+        "aliases": [],
+        "article": "Orbital_(novel)",
+        "entityId": "Q130581281"
+      }
+    ]
+  },
+  {
+    "id": "curated-abba-studio-albums",
+    "category": "music",
+    "prompt": "Name an ABBA studio album released by the end of 2025",
+    "rules": "Original studio albums only; excludes compilations, live albums and reissues.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "ABBA official discography",
+        "url": "https://abbasite.com/discography/",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "ABBA official store — Voyage",
+        "url": "https://shopus.abbasite.com/collections/voyage-album",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Ring Ring",
+        "aliases": [],
+        "article": "Ring_Ring_(album)",
+        "entityId": "Q656525"
+      },
+      {
+        "answer": "Waterloo",
+        "aliases": [],
+        "article": "Waterloo_(album)",
+        "entityId": "Q744013"
+      },
+      {
+        "answer": "ABBA",
+        "aliases": [],
+        "article": "ABBA_(album)",
+        "entityId": "Q286672"
+      },
+      {
+        "answer": "Arrival",
+        "aliases": [],
+        "article": "Arrival_(ABBA_album)",
+        "entityId": "Q162392"
+      },
+      {
+        "answer": "The Album",
+        "aliases": [
+          "ABBA The Album"
+        ],
+        "article": "ABBA:_The_Album",
+        "entityId": "Q832259"
+      },
+      {
+        "answer": "Voulez-Vous",
+        "aliases": [],
+        "article": "Voulez-Vous",
+        "entityId": "Q755085"
+      },
+      {
+        "answer": "Super Trouper",
+        "aliases": [],
+        "article": "Super_Trouper_(album)",
+        "entityId": "Q832452"
+      },
+      {
+        "answer": "The Visitors",
+        "aliases": [],
+        "article": "The_Visitors_(ABBA_album)",
+        "entityId": "Q338553"
+      },
+      {
+        "answer": "Voyage",
+        "aliases": [],
+        "article": "Voyage_(ABBA_album)",
+        "entityId": "Q108384663"
+      }
+    ]
+  },
+  {
+    "id": "curated-henry-viii-wives",
+    "category": "history",
+    "prompt": "Name one of the six wives of Henry VIII of England",
+    "rules": "Names of the six queens consort, including marriages later annulled.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Historic Royal Palaces — Henry VIII’s wives",
+        "url": "https://www.hrp.org.uk/hampton-court-palace/history-and-stories/henry-viii-s-wives-six-queens-six-women/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Catherine of Aragon",
+        "aliases": [
+          "Katherine of Aragon",
+          "Katharine of Aragon"
+        ],
+        "article": "Catherine_of_Aragon",
+        "entityId": "Q162819"
+      },
+      {
+        "answer": "Anne Boleyn",
+        "aliases": [],
+        "article": "Anne_Boleyn",
+        "entityId": "Q80823"
+      },
+      {
+        "answer": "Jane Seymour",
+        "aliases": [],
+        "article": "Jane_Seymour",
+        "entityId": "Q182637"
+      },
+      {
+        "answer": "Anne of Cleves",
+        "aliases": [],
+        "article": "Anne_of_Cleves",
+        "entityId": "Q57126"
+      },
+      {
+        "answer": "Catherine Howard",
+        "aliases": [
+          "Katherine Howard",
+          "Katharine Howard"
+        ],
+        "article": "Catherine_Howard",
+        "entityId": "Q188926"
+      },
+      {
+        "answer": "Catherine Parr",
+        "aliases": [
+          "Katherine Parr",
+          "Katharine Parr"
+        ],
+        "article": "Catherine_Parr",
+        "entityId": "Q192943"
+      }
+    ]
+  },
+  {
+    "id": "curated-numbered-doctor-original-actors",
+    "category": "television",
+    "prompt": "Name an actor who first portrayed a numbered Doctor, from the First through the Fifteenth",
+    "rules": "The original credited actor for each numbered television incarnation. Later recastings, unnumbered incarnations and other adaptations are excluded; each actor counts once.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Doctor Who official character profiles — numbered Doctors",
+        "url": "https://www.doctorwho.tv/characters/first-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Second Doctor",
+        "url": "https://www.doctorwho.tv/characters/second-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Third Doctor",
+        "url": "https://www.doctorwho.tv/characters/third-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Fourth Doctor",
+        "url": "https://www.doctorwho.tv/characters/fourth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Fifth Doctor",
+        "url": "https://www.doctorwho.tv/characters/fifth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Sixth Doctor",
+        "url": "https://www.doctorwho.tv/characters/sixth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Seventh Doctor",
+        "url": "https://www.doctorwho.tv/characters/seventh-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Eighth Doctor",
+        "url": "https://www.doctorwho.tv/characters/eighth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Ninth Doctor",
+        "url": "https://www.doctorwho.tv/characters/ninth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Tenth Doctor",
+        "url": "https://www.doctorwho.tv/characters/tenth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Eleventh Doctor",
+        "url": "https://www.doctorwho.tv/characters/eleventh-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Twelfth Doctor",
+        "url": "https://www.doctorwho.tv/characters/twelfth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Thirteenth Doctor",
+        "url": "https://www.doctorwho.tv/characters/thirteenth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Fourteenth Doctor",
+        "url": "https://www.doctorwho.tv/characters/fourteenth-doctor",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Doctor Who — Fifteenth Doctor",
+        "url": "https://www.doctorwho.tv/characters/fifteenth-doctor",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "William Hartnell",
+        "aliases": [],
+        "article": "William_Hartnell",
+        "entityId": "Q361996"
+      },
+      {
+        "answer": "Patrick Troughton",
+        "aliases": [],
+        "article": "Patrick_Troughton",
+        "entityId": "Q559430"
+      },
+      {
+        "answer": "Jon Pertwee",
+        "aliases": [],
+        "article": "Jon_Pertwee",
+        "entityId": "Q467601"
+      },
+      {
+        "answer": "Tom Baker",
+        "aliases": [],
+        "article": "Tom_Baker",
+        "entityId": "Q358421"
+      },
+      {
+        "answer": "Peter Davison",
+        "aliases": [],
+        "article": "Peter_Davison",
+        "entityId": "Q358427"
+      },
+      {
+        "answer": "Colin Baker",
+        "aliases": [],
+        "article": "Colin_Baker",
+        "entityId": "Q440963"
+      },
+      {
+        "answer": "Sylvester McCoy",
+        "aliases": [],
+        "article": "Sylvester_McCoy",
+        "entityId": "Q455551"
+      },
+      {
+        "answer": "Paul McGann",
+        "aliases": [],
+        "article": "Paul_McGann",
+        "entityId": "Q335863"
+      },
+      {
+        "answer": "Christopher Eccleston",
+        "aliases": [],
+        "article": "Christopher_Eccleston",
+        "entityId": "Q312380"
+      },
+      {
+        "answer": "David Tennant",
+        "aliases": [],
+        "article": "David_Tennant",
+        "entityId": "Q214601"
+      },
+      {
+        "answer": "Matt Smith",
+        "aliases": [],
+        "article": "Matt_Smith",
+        "entityId": "Q312385"
+      },
+      {
+        "answer": "Peter Capaldi",
+        "aliases": [],
+        "article": "Peter_Capaldi",
+        "entityId": "Q732661"
+      },
+      {
+        "answer": "Jodie Whittaker",
+        "aliases": [],
+        "article": "Jodie_Whittaker",
+        "entityId": "Q449402"
+      },
+      {
+        "answer": "Ncuti Gatwa",
+        "aliases": [],
+        "article": "Ncuti_Gatwa",
+        "entityId": "Q60618349"
+      }
+    ]
+  },
+  {
+    "id": "curated-mission-impossible-films",
+    "category": "movies",
+    "prompt": "Name a Mission: Impossible feature film released from 1996 through 2025",
+    "rules": "The eight theatrical films starring Tom Cruise; full titles or distinctive subtitles count.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Paramount+ — Mission: Impossible collection",
+        "url": "https://www.paramountplus.com/sneak-peak/mission-impossible-movies-to-stream/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Mission: Impossible",
+        "aliases": [
+          "Mission Impossible 1",
+          "Mission Impossible I"
+        ],
+        "article": "Mission:_Impossible_(film)",
+        "entityId": "Q1741232"
+      },
+      {
+        "answer": "Mission: Impossible 2",
+        "aliases": [
+          "Mission Impossible II",
+          "MI2"
+        ],
+        "article": "Mission:_Impossible_2",
+        "entityId": "Q505790"
+      },
+      {
+        "answer": "Mission: Impossible III",
+        "aliases": [
+          "Mission Impossible 3",
+          "MI3"
+        ],
+        "article": "Mission:_Impossible_III",
+        "entityId": "Q288173"
+      },
+      {
+        "answer": "Mission: Impossible – Ghost Protocol",
+        "aliases": [
+          "Ghost Protocol",
+          "Mission Impossible 4"
+        ],
+        "article": "Mission:_Impossible_–_Ghost_Protocol",
+        "entityId": "Q628154"
+      },
+      {
+        "answer": "Mission: Impossible – Rogue Nation",
+        "aliases": [
+          "Rogue Nation",
+          "Mission Impossible 5"
+        ],
+        "article": "Mission:_Impossible_–_Rogue_Nation",
+        "entityId": "Q17548046"
+      },
+      {
+        "answer": "Mission: Impossible – Fallout",
+        "aliases": [
+          "Fallout",
+          "Mission Impossible 6"
+        ],
+        "article": "Mission:_Impossible_–_Fallout",
+        "entityId": "Q29261993"
+      },
+      {
+        "answer": "Mission: Impossible – Dead Reckoning Part One",
+        "aliases": [
+          "Dead Reckoning",
+          "Dead Reckoning Part One",
+          "Mission Impossible Dead Reckoning",
+          "Mission Impossible 7"
+        ],
+        "article": "Mission:_Impossible_–_Dead_Reckoning_Part_One",
+        "entityId": "Q61876370"
+      },
+      {
+        "answer": "Mission: Impossible – The Final Reckoning",
+        "aliases": [
+          "The Final Reckoning",
+          "Final Reckoning",
+          "Mission Impossible 8"
+        ],
+        "article": "Mission:_Impossible_–_The_Final_Reckoning",
+        "entityId": "Q61876374"
+      }
+    ]
+  },
+  {
+    "id": "curated-animated-feature-oscar-winners-2002-2025",
+    "category": "movies",
+    "prompt": "Name a film that won the animated feature Oscar at a ceremony from 2002 through 2025",
+    "rules": "Ceremony years 2002–2025 inclusive; only winners of the competitive Animated Feature Film category count.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2002 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2002",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2003 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2003",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2004 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2004",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2005 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2005",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2006 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2006",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2007 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2007",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2008 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2008",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2009 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2009",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2010 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2010",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2011 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2011",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2012 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2012",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2013 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2013",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2014 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2014",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2015 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2015",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2016 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2016",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2017 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2017",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2018 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2018",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2019 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2019",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2020 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2020",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2021 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2021",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2022 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2022",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2023 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2023",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2024 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2024",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Academy of Motion Picture Arts and Sciences — 2025 ceremony, Animated Feature Film winner",
+        "url": "https://www.oscars.org/oscars/ceremonies/2025",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Shrek",
+        "aliases": [],
+        "article": "Shrek",
+        "entityId": "Q483815"
+      },
+      {
+        "answer": "Spirited Away",
+        "aliases": [],
+        "article": "Spirited_Away",
+        "entityId": "Q155653"
+      },
+      {
+        "answer": "Finding Nemo",
+        "aliases": [],
+        "article": "Finding_Nemo",
+        "entityId": "Q132863"
+      },
+      {
+        "answer": "The Incredibles",
+        "aliases": [],
+        "article": "The_Incredibles",
+        "entityId": "Q213326"
+      },
+      {
+        "answer": "Wallace & Gromit: The Curse of the Were-Rabbit",
+        "aliases": [
+          "The Curse of the Were-Rabbit",
+          "Curse of the Were-Rabbit",
+          "Wallace and Gromit The Curse of the Were-Rabbit",
+          "Wallace and Gromit in The Curse of the Were-Rabbit"
+        ],
+        "article": "Wallace_&_Gromit:_The_Curse_of_the_Were-Rabbit",
+        "entityId": "Q318428"
+      },
+      {
+        "answer": "Happy Feet",
+        "aliases": [],
+        "article": "Happy_Feet",
+        "entityId": "Q126800"
+      },
+      {
+        "answer": "Ratatouille",
+        "aliases": [],
+        "article": "Ratatouille_(film)",
+        "entityId": "Q170035"
+      },
+      {
+        "answer": "WALL-E",
+        "aliases": [
+          "Wall E"
+        ],
+        "article": "WALL-E",
+        "entityId": "Q104905"
+      },
+      {
+        "answer": "Up",
+        "aliases": [],
+        "article": "Up_(2009_film)",
+        "entityId": "Q174811"
+      },
+      {
+        "answer": "Toy Story 3",
+        "aliases": [],
+        "article": "Toy_Story_3",
+        "entityId": "Q187278"
+      },
+      {
+        "answer": "Rango",
+        "aliases": [],
+        "article": "Rango_(2011_film)",
+        "entityId": "Q275432"
+      },
+      {
+        "answer": "Brave",
+        "aliases": [],
+        "article": "Brave_(2012_film)",
+        "entityId": "Q126796"
+      },
+      {
+        "answer": "Frozen",
+        "aliases": [],
+        "article": "Frozen_(2013_film)",
+        "entityId": "Q246283"
+      },
+      {
+        "answer": "Big Hero 6",
+        "aliases": [],
+        "article": "Big_Hero_6_(film)",
+        "entityId": "Q13091172"
+      },
+      {
+        "answer": "Inside Out",
+        "aliases": [],
+        "article": "Inside_Out",
+        "entityId": "Q6144664"
+      },
+      {
+        "answer": "Zootopia",
+        "aliases": [
+          "Zootropolis"
+        ],
+        "article": "Zootopia",
+        "entityId": "Q15270647"
+      },
+      {
+        "answer": "Coco",
+        "aliases": [],
+        "article": "Coco_(2017_film)",
+        "entityId": "Q5815826"
+      },
+      {
+        "answer": "Spider-Man: Into the Spider-Verse",
+        "aliases": [
+          "Into the Spider-Verse"
+        ],
+        "article": "Spider-Man:_Into_the_Spider-Verse",
+        "entityId": "Q29588607"
+      },
+      {
+        "answer": "Toy Story 4",
+        "aliases": [],
+        "article": "Toy_Story_4",
+        "entityId": "Q18517638"
+      },
+      {
+        "answer": "Soul",
+        "aliases": [],
+        "article": "Soul_(2020_film)",
+        "entityId": "Q64744044"
+      },
+      {
+        "answer": "Encanto",
+        "aliases": [],
+        "article": "Encanto",
+        "entityId": "Q103372692"
+      },
+      {
+        "answer": "Guillermo del Toro's Pinocchio",
+        "aliases": [
+          "Pinocchio"
+        ],
+        "article": "Guillermo_del_Toro's_Pinocchio",
+        "entityId": "Q73895818"
+      },
+      {
+        "answer": "The Boy and the Heron",
+        "aliases": [],
+        "article": "The_Boy_and_the_Heron",
+        "entityId": "Q47482560"
+      },
+      {
+        "answer": "Flow",
+        "aliases": [],
+        "article": "Flow_(2024_film)",
+        "entityId": "Q125622088"
+      }
+    ]
+  },
+  {
+    "id": "curated-un-principal-organs",
+    "category": "politics",
+    "prompt": "Name one of the six principal organs of the United Nations",
+    "rules": "The six organs established by Article 7 of the UN Charter, including the one whose regular operations are suspended.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "United Nations — main bodies",
+        "url": "https://www.un.org/en/about-us/main-bodies",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "General Assembly",
+        "aliases": [
+          "UN General Assembly",
+          "UNGA"
+        ],
+        "article": "United_Nations_General_Assembly",
+        "entityId": "Q47423"
+      },
+      {
+        "answer": "Security Council",
+        "aliases": [
+          "UN Security Council",
+          "UNSC"
+        ],
+        "article": "United_Nations_Security_Council",
+        "entityId": "Q37470"
+      },
+      {
+        "answer": "Economic and Social Council",
+        "aliases": [
+          "UN Economic and Social Council",
+          "ECOSOC"
+        ],
+        "article": "United_Nations_Economic_and_Social_Council",
+        "entityId": "Q170075"
+      },
+      {
+        "answer": "Trusteeship Council",
+        "aliases": [
+          "UN Trusteeship Council"
+        ],
+        "article": "United_Nations_Trusteeship_Council",
+        "entityId": "Q219693"
+      },
+      {
+        "answer": "International Court of Justice",
+        "aliases": [
+          "ICJ",
+          "World Court"
+        ],
+        "article": "International_Court_of_Justice",
+        "entityId": "Q7801"
+      },
+      {
+        "answer": "Secretariat",
+        "aliases": [
+          "UN Secretariat"
+        ],
+        "article": "United_Nations_Secretariat",
+        "entityId": "Q220563"
+      }
+    ]
+  },
+  {
+    "id": "curated-eu-institutions",
+    "category": "politics",
+    "prompt": "Name one of the seven institutions of the European Union",
+    "rules": "The seven treaty institutions; other EU bodies and agencies do not count. Distinguish the two councils by their full names.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "European Union — types of institutions and bodies",
+        "url": "https://european-union.europa.eu/institutions-law-budget/institutions-and-bodies/types-institutions-and-bodies_en",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "European Parliament",
+        "aliases": [
+          "EU Parliament"
+        ],
+        "article": "European_Parliament",
+        "entityId": "Q8889"
+      },
+      {
+        "answer": "European Council",
+        "aliases": [],
+        "article": "European_Council",
+        "entityId": "Q8886"
+      },
+      {
+        "answer": "Council of the European Union",
+        "aliases": [
+          "Council of the EU",
+          "Council of Ministers"
+        ],
+        "article": "Council_of_the_European_Union",
+        "entityId": "Q8896"
+      },
+      {
+        "answer": "European Commission",
+        "aliases": [
+          "EU Commission"
+        ],
+        "article": "European_Commission",
+        "entityId": "Q8880"
+      },
+      {
+        "answer": "Court of Justice of the European Union",
+        "aliases": [
+          "CJEU"
+        ],
+        "article": "Court_of_Justice_of_the_European_Union",
+        "entityId": "Q4951"
+      },
+      {
+        "answer": "European Central Bank",
+        "aliases": [
+          "ECB"
+        ],
+        "article": "European_Central_Bank",
+        "entityId": "Q8901"
+      },
+      {
+        "answer": "European Court of Auditors",
+        "aliases": [
+          "Court of Auditors",
+          "ECA"
+        ],
+        "article": "European_Court_of_Auditors",
+        "entityId": "Q8900"
+      }
+    ]
+  },
+  {
+    "id": "curated-canadian-provinces-territories",
+    "category": "geography",
+    "prompt": "Name a Canadian province or territory",
+    "rules": "The ten provinces and three territories existing on 15 September 2026.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Government of Canada — provinces and territories",
+        "url": "https://www.canada.ca/en/intergovernmental-affairs/services/provinces-territories.html",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Alberta",
+        "aliases": [],
+        "article": "Alberta",
+        "entityId": "Q1951"
+      },
+      {
+        "answer": "British Columbia",
+        "aliases": [
+          "BC"
+        ],
+        "article": "British_Columbia",
+        "entityId": "Q1973"
+      },
+      {
+        "answer": "Manitoba",
+        "aliases": [],
+        "article": "Manitoba",
+        "entityId": "Q1948"
+      },
+      {
+        "answer": "New Brunswick",
+        "aliases": [],
+        "article": "New_Brunswick",
+        "entityId": "Q1965"
+      },
+      {
+        "answer": "Newfoundland and Labrador",
+        "aliases": [
+          "Newfoundland & Labrador"
+        ],
+        "article": "Newfoundland_and_Labrador",
+        "entityId": "Q2003"
+      },
+      {
+        "answer": "Northwest Territories",
+        "aliases": [
+          "NWT"
+        ],
+        "article": "Northwest_Territories",
+        "entityId": "Q2007"
+      },
+      {
+        "answer": "Nova Scotia",
+        "aliases": [],
+        "article": "Nova_Scotia",
+        "entityId": "Q1952"
+      },
+      {
+        "answer": "Nunavut",
+        "aliases": [],
+        "article": "Nunavut",
+        "entityId": "Q2023"
+      },
+      {
+        "answer": "Ontario",
+        "aliases": [],
+        "article": "Ontario",
+        "entityId": "Q1904"
+      },
+      {
+        "answer": "Prince Edward Island",
+        "aliases": [
+          "PEI"
+        ],
+        "article": "Prince_Edward_Island",
+        "entityId": "Q1978"
+      },
+      {
+        "answer": "Quebec",
+        "aliases": [
+          "Québec"
+        ],
+        "article": "Quebec",
+        "entityId": "Q176"
+      },
+      {
+        "answer": "Saskatchewan",
+        "aliases": [],
+        "article": "Saskatchewan",
+        "entityId": "Q1989"
+      },
+      {
+        "answer": "Yukon",
+        "aliases": [
+          "Yukon Territory"
+        ],
+        "article": "Yukon",
+        "entityId": "Q2009"
+      }
+    ]
+  },
+  {
+    "id": "curated-australian-states-self-governing-territories",
+    "category": "geography",
+    "prompt": "Name an Australian state or self-governing mainland territory",
+    "rules": "The six states and two self-governing mainland territories; excludes other internal and external territories.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Parliament of Australia — the Australian system of government",
+        "url": "https://www.aph.gov.au/infosheets/20",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Tourism Australia — states and territories",
+        "url": "https://www.australia.com/en-us/facts-and-planning/about-australia/cities-states-and-territories.html",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "New South Wales",
+        "aliases": [
+          "NSW"
+        ],
+        "article": "New_South_Wales",
+        "entityId": "Q3224"
+      },
+      {
+        "answer": "Queensland",
+        "aliases": [
+          "QLD"
+        ],
+        "article": "Queensland",
+        "entityId": "Q36074"
+      },
+      {
+        "answer": "South Australia",
+        "aliases": [
+          "SA"
+        ],
+        "article": "South_Australia",
+        "entityId": "Q35715"
+      },
+      {
+        "answer": "Tasmania",
+        "aliases": [
+          "TAS"
+        ],
+        "article": "Tasmania",
+        "entityId": "Q34366"
+      },
+      {
+        "answer": "Victoria",
+        "aliases": [
+          "VIC"
+        ],
+        "article": "Victoria_(state)",
+        "entityId": "Q36687"
+      },
+      {
+        "answer": "Western Australia",
+        "aliases": [
+          "WA"
+        ],
+        "article": "Western_Australia",
+        "entityId": "Q3206"
+      },
+      {
+        "answer": "Australian Capital Territory",
+        "aliases": [
+          "ACT"
+        ],
+        "article": "Australian_Capital_Territory",
+        "entityId": "Q3258"
+      },
+      {
+        "answer": "Northern Territory",
+        "aliases": [
+          "NT"
+        ],
+        "article": "Northern_Territory",
+        "entityId": "Q3235"
+      }
+    ]
+  },
+  {
+    "id": "curated-nato-founding-countries",
+    "category": "history",
+    "prompt": "Name a founding member country of NATO",
+    "rules": "The twelve countries that signed the North Atlantic Treaty on 4 April 1949.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "NATO — member countries and founding members",
+        "url": "https://www.nato.int/cps/en/natohq/nato_countries.htm",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Belgium",
+        "aliases": [],
+        "article": "Belgium",
+        "entityId": "Q31"
+      },
+      {
+        "answer": "Canada",
+        "aliases": [],
+        "article": "Canada",
+        "entityId": "Q16"
+      },
+      {
+        "answer": "Denmark",
+        "aliases": [],
+        "article": "Denmark",
+        "entityId": "Q35"
+      },
+      {
+        "answer": "France",
+        "aliases": [],
+        "article": "France",
+        "entityId": "Q142"
+      },
+      {
+        "answer": "Iceland",
+        "aliases": [],
+        "article": "Iceland",
+        "entityId": "Q189"
+      },
+      {
+        "answer": "Italy",
+        "aliases": [],
+        "article": "Italy",
+        "entityId": "Q38"
+      },
+      {
+        "answer": "Luxembourg",
+        "aliases": [],
+        "article": "Luxembourg",
+        "entityId": "Q32"
+      },
+      {
+        "answer": "Netherlands",
+        "aliases": [
+          "The Netherlands"
+        ],
+        "article": "Netherlands",
+        "entityId": "Q55"
+      },
+      {
+        "answer": "Norway",
+        "aliases": [],
+        "article": "Norway",
+        "entityId": "Q20"
+      },
+      {
+        "answer": "Portugal",
+        "aliases": [],
+        "article": "Portugal",
+        "entityId": "Q45"
+      },
+      {
+        "answer": "United Kingdom",
+        "aliases": [
+          "UK",
+          "Great Britain",
+          "Britain"
+        ],
+        "article": "United_Kingdom",
+        "entityId": "Q145"
+      },
+      {
+        "answer": "United States",
+        "aliases": [
+          "USA",
+          "US",
+          "United States of America"
+        ],
+        "article": "United_States",
+        "entityId": "Q30"
+      }
+    ]
+  },
+  {
+    "id": "curated-space-shuttle-orbiters",
+    "category": "space",
+    "prompt": "Name a NASA Space Shuttle orbiter that flew in space",
+    "rules": "Operational orbiters that reached space during the 1981–2011 program; atmospheric test vehicles are excluded.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "NASA StarChild — the Space Shuttle",
+        "url": "https://starchild.gsfc.nasa.gov/docs/StarChild/space_level2/shuttle.html",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Columbia",
+        "aliases": [
+          "Space Shuttle Columbia",
+          "OV-102"
+        ],
+        "article": "Space_Shuttle_Columbia",
+        "entityId": "Q54383"
+      },
+      {
+        "answer": "Challenger",
+        "aliases": [
+          "Space Shuttle Challenger",
+          "OV-099"
+        ],
+        "article": "Space_Shuttle_Challenger",
+        "entityId": "Q54382"
+      },
+      {
+        "answer": "Discovery",
+        "aliases": [
+          "Space Shuttle Discovery",
+          "OV-103"
+        ],
+        "article": "Space_Shuttle_Discovery",
+        "entityId": "Q54384"
+      },
+      {
+        "answer": "Atlantis",
+        "aliases": [
+          "Space Shuttle Atlantis",
+          "OV-104"
+        ],
+        "article": "Space_Shuttle_Atlantis",
+        "entityId": "Q54381"
+      },
+      {
+        "answer": "Endeavour",
+        "aliases": [
+          "Space Shuttle Endeavour",
+          "Endeavor",
+          "OV-105"
+        ],
+        "article": "Space_Shuttle_Endeavour",
+        "entityId": "Q182508"
+      }
+    ]
+  },
+  {
+    "id": "curated-nasa-great-observatories",
+    "category": "space",
+    "prompt": "Name one of NASA’s original four Great Observatories",
+    "rules": "The four space telescopes launched under the original Great Observatories program from 1990 through 2003.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "NASA — Spitzer and the Great Observatories",
+        "url": "https://www.nasa.gov/news-release/nasas-spitzer-telescope-celebrates-10-years-in-space/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Hubble Space Telescope",
+        "aliases": [
+          "Hubble",
+          "HST"
+        ],
+        "article": "Hubble_Space_Telescope",
+        "entityId": "Q2513"
+      },
+      {
+        "answer": "Compton Gamma Ray Observatory",
+        "aliases": [
+          "Compton",
+          "CGRO",
+          "Compton Gamma-Ray Observatory"
+        ],
+        "article": "Compton_Gamma_Ray_Observatory",
+        "entityId": "Q41519"
+      },
+      {
+        "answer": "Chandra X-ray Observatory",
+        "aliases": [
+          "Chandra",
+          "CXO"
+        ],
+        "article": "Chandra_X-ray_Observatory",
+        "entityId": "Q49002"
+      },
+      {
+        "answer": "Spitzer Space Telescope",
+        "aliases": [
+          "Spitzer",
+          "SIRTF",
+          "Space Infrared Telescope Facility"
+        ],
+        "article": "Spitzer_Space_Telescope",
+        "entityId": "Q201953"
+      }
+    ]
+  },
+  {
+    "id": "curated-essential-amino-acids",
+    "category": "science",
+    "prompt": "Name an amino acid that is essential in the adult human diet",
+    "rules": "The nine nutritionally indispensable protein-building amino acids; conditionally essential amino acids are excluded.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "National Research Council — Recommended Dietary Allowances, Protein and Amino Acids",
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK234922/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Histidine",
+        "aliases": [
+          "His"
+        ],
+        "article": "Histidine",
+        "entityId": "Q485277"
+      },
+      {
+        "answer": "Isoleucine",
+        "aliases": [
+          "Ile"
+        ],
+        "article": "Isoleucine",
+        "entityId": "Q484940"
+      },
+      {
+        "answer": "Leucine",
+        "aliases": [
+          "Leu"
+        ],
+        "article": "Leucine",
+        "entityId": "Q483745"
+      },
+      {
+        "answer": "Lysine",
+        "aliases": [
+          "Lys"
+        ],
+        "article": "Lysine",
+        "entityId": "Q178430"
+      },
+      {
+        "answer": "Methionine",
+        "aliases": [
+          "Met"
+        ],
+        "article": "Methionine",
+        "entityId": "Q180341"
+      },
+      {
+        "answer": "Phenylalanine",
+        "aliases": [
+          "Phe"
+        ],
+        "article": "Phenylalanine",
+        "entityId": "Q170545"
+      },
+      {
+        "answer": "Threonine",
+        "aliases": [
+          "Thr"
+        ],
+        "article": "Threonine",
+        "entityId": "Q186521"
+      },
+      {
+        "answer": "Tryptophan",
+        "aliases": [
+          "Trp"
+        ],
+        "article": "Tryptophan",
+        "entityId": "Q181003"
+      },
+      {
+        "answer": "Valine",
+        "aliases": [
+          "Val"
+        ],
+        "article": "Valine",
+        "entityId": "Q483752"
+      }
+    ]
+  },
+  {
+    "id": "curated-canonical-nucleobases",
+    "category": "science",
+    "prompt": "Name one of the five standard nucleobases used in DNA or RNA",
+    "rules": "The canonical bases in ordinary DNA and RNA; modified bases and nucleosides are excluded. Full names are required.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "National Human Genome Research Institute — Nucleotide",
+        "url": "https://www.genome.gov/genetics-glossary/Nucleotide",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Adenine",
+        "aliases": [],
+        "article": "Adenine",
+        "entityId": "Q15277"
+      },
+      {
+        "answer": "Cytosine",
+        "aliases": [],
+        "article": "Cytosine",
+        "entityId": "Q178425"
+      },
+      {
+        "answer": "Guanine",
+        "aliases": [],
+        "article": "Guanine",
+        "entityId": "Q169313"
+      },
+      {
+        "answer": "Thymine",
+        "aliases": [],
+        "article": "Thymine",
+        "entityId": "Q171973"
+      },
+      {
+        "answer": "Uracil",
+        "aliases": [],
+        "article": "Uracil",
+        "entityId": "Q182990"
+      }
+    ]
+  },
+  {
+    "id": "curated-cranial-nerves",
+    "category": "science",
+    "prompt": "Name one of the twelve numbered human cranial nerves",
+    "rules": "Use the nerve name from the conventional I–XII classification; individual branches and the terminal nerve are excluded.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Johns Hopkins Medicine — Brain anatomy, Cranial Nerves",
+        "url": "https://www.hopkinsmedicine.org/health/conditions-and-diseases/anatomy-of-the-brain",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Olfactory nerve",
+        "aliases": [
+          "Olfactory"
+        ],
+        "article": "Olfactory_nerve",
+        "entityId": "Q209704"
+      },
+      {
+        "answer": "Optic nerve",
+        "aliases": [
+          "Optic"
+        ],
+        "article": "Optic_nerve",
+        "entityId": "Q186029"
+      },
+      {
+        "answer": "Oculomotor nerve",
+        "aliases": [
+          "Oculomotor"
+        ],
+        "article": "Oculomotor_nerve",
+        "entityId": "Q223903"
+      },
+      {
+        "answer": "Trochlear nerve",
+        "aliases": [
+          "Trochlear"
+        ],
+        "article": "Trochlear_nerve",
+        "entityId": "Q319584"
+      },
+      {
+        "answer": "Trigeminal nerve",
+        "aliases": [
+          "Trigeminal"
+        ],
+        "article": "Trigeminal_nerve",
+        "entityId": "Q189763"
+      },
+      {
+        "answer": "Abducens nerve",
+        "aliases": [
+          "Abducens",
+          "Abducent nerve"
+        ],
+        "article": "Abducens_nerve",
+        "entityId": "Q318773"
+      },
+      {
+        "answer": "Facial nerve",
+        "aliases": [
+          "Facial"
+        ],
+        "article": "Facial_nerve",
+        "entityId": "Q242160"
+      },
+      {
+        "answer": "Vestibulocochlear nerve",
+        "aliases": [
+          "Vestibulocochlear",
+          "Auditory nerve",
+          "Acoustic nerve"
+        ],
+        "article": "Vestibulocochlear_nerve",
+        "entityId": "Q319317"
+      },
+      {
+        "answer": "Glossopharyngeal nerve",
+        "aliases": [
+          "Glossopharyngeal"
+        ],
+        "article": "Glossopharyngeal_nerve",
+        "entityId": "Q334143"
+      },
+      {
+        "answer": "Vagus nerve",
+        "aliases": [
+          "Vagus"
+        ],
+        "article": "Vagus_nerve",
+        "entityId": "Q190140"
+      },
+      {
+        "answer": "Accessory nerve",
+        "aliases": [
+          "Accessory",
+          "Spinal accessory nerve"
+        ],
+        "article": "Accessory_nerve",
+        "entityId": "Q271987"
+      },
+      {
+        "answer": "Hypoglossal nerve",
+        "aliases": [
+          "Hypoglossal"
+        ],
+        "article": "Hypoglossal_nerve",
+        "entityId": "Q319577"
+      }
+    ]
+  },
+  {
+    "id": "curated-millennium-prize-problems",
+    "category": "science",
+    "prompt": "Name one of the seven Millennium Prize Problems",
+    "rules": "The original seven problems announced by the Clay Mathematics Institute in 2000, including any subsequently solved.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Clay Mathematics Institute — Millennium Prize Problems",
+        "url": "https://www.claymath.org/millennium-problems/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Birch and Swinnerton-Dyer conjecture",
+        "aliases": [
+          "Birch Swinnerton Dyer",
+          "BSD conjecture"
+        ],
+        "article": "Birch_and_Swinnerton-Dyer_conjecture",
+        "entityId": "Q527863"
+      },
+      {
+        "answer": "Hodge conjecture",
+        "aliases": [
+          "Hodge"
+        ],
+        "article": "Hodge_conjecture",
+        "entityId": "Q1143138"
+      },
+      {
+        "answer": "Navier–Stokes existence and smoothness",
+        "aliases": [
+          "Navier Stokes",
+          "Navier Stokes existence and smoothness",
+          "Navier Stokes equations"
+        ],
+        "article": "Navier–Stokes_existence_and_smoothness",
+        "entityId": "Q1098081"
+      },
+      {
+        "answer": "P versus NP problem",
+        "aliases": [
+          "P versus NP",
+          "P vs NP",
+          "P=NP"
+        ],
+        "article": "P_versus_NP_problem",
+        "entityId": "Q746242"
+      },
+      {
+        "answer": "Riemann hypothesis",
+        "aliases": [
+          "Riemann"
+        ],
+        "article": "Riemann_hypothesis",
+        "entityId": "Q205966"
+      },
+      {
+        "answer": "Yang–Mills existence and mass gap",
+        "aliases": [
+          "Yang Mills",
+          "Yang Mills and the mass gap",
+          "Yang Mills mass gap"
+        ],
+        "article": "Yang–Mills_existence_and_mass_gap",
+        "entityId": "Q1078496"
+      },
+      {
+        "answer": "Poincaré conjecture",
+        "aliases": [
+          "Poincare"
+        ],
+        "article": "Poincaré_conjecture",
+        "entityId": "Q203586"
+      }
+    ]
+  },
+  {
+    "id": "curated-phanerozoic-periods",
+    "category": "science",
+    "prompt": "Name a geological period in the Phanerozoic Eon",
+    "rules": "Formal periods in the International Commission on Stratigraphy chart v2026/06; eras, epochs and subperiods do not count.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "International Commission on Stratigraphy — International Chronostratigraphic Chart v2026/06",
+        "url": "https://stratigraphy.org/ICSchart/ChronostratChart2026-06.pdf",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Cambrian",
+        "aliases": [],
+        "article": "Cambrian",
+        "entityId": "Q79064"
+      },
+      {
+        "answer": "Ordovician",
+        "aliases": [],
+        "article": "Ordovician",
+        "entityId": "Q62100"
+      },
+      {
+        "answer": "Silurian",
+        "aliases": [],
+        "article": "Silurian",
+        "entityId": "Q62412"
+      },
+      {
+        "answer": "Devonian",
+        "aliases": [],
+        "article": "Devonian",
+        "entityId": "Q65955"
+      },
+      {
+        "answer": "Carboniferous",
+        "aliases": [],
+        "article": "Carboniferous",
+        "entityId": "Q133738"
+      },
+      {
+        "answer": "Permian",
+        "aliases": [],
+        "article": "Permian",
+        "entityId": "Q76402"
+      },
+      {
+        "answer": "Triassic",
+        "aliases": [],
+        "article": "Triassic",
+        "entityId": "Q47158"
+      },
+      {
+        "answer": "Jurassic",
+        "aliases": [],
+        "article": "Jurassic",
+        "entityId": "Q45805"
+      },
+      {
+        "answer": "Cretaceous",
+        "aliases": [],
+        "article": "Cretaceous",
+        "entityId": "Q44626"
+      },
+      {
+        "answer": "Paleogene",
+        "aliases": [
+          "Palaeogene"
+        ],
+        "article": "Paleogene",
+        "entityId": "Q55810"
+      },
+      {
+        "answer": "Neogene",
+        "aliases": [],
+        "article": "Neogene",
+        "entityId": "Q103924"
+      },
+      {
+        "answer": "Quaternary",
+        "aliases": [],
+        "article": "Quaternary",
+        "entityId": "Q26185"
+      }
+    ]
+  },
+  {
+    "id": "curated-rock-hall-inaugural-performers",
+    "category": "music",
+    "prompt": "Name a performer inducted into the Rock & Roll Hall of Fame in its inaugural 1986 class",
+    "rules": "The Performer category only. Groups count as one act; early influences and non-performer awards are excluded.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Rock & Roll Hall of Fame — 1986 induction ceremony",
+        "url": "https://rockhall.com/ceremony/1986/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Buddy Holly",
+        "aliases": [],
+        "article": "Buddy_Holly",
+        "entityId": "Q5977"
+      },
+      {
+        "answer": "Chuck Berry",
+        "aliases": [],
+        "article": "Chuck_Berry",
+        "entityId": "Q5921"
+      },
+      {
+        "answer": "Elvis Presley",
+        "aliases": [
+          "Elvis"
+        ],
+        "article": "Elvis_Presley",
+        "entityId": "Q303"
+      },
+      {
+        "answer": "The Everly Brothers",
+        "aliases": [
+          "Everly Brothers"
+        ],
+        "article": "The_Everly_Brothers",
+        "entityId": "Q690138"
+      },
+      {
+        "answer": "Fats Domino",
+        "aliases": [],
+        "article": "Fats_Domino",
+        "entityId": "Q209586"
+      },
+      {
+        "answer": "James Brown",
+        "aliases": [],
+        "article": "James_Brown",
+        "entityId": "Q5950"
+      },
+      {
+        "answer": "Jerry Lee Lewis",
+        "aliases": [],
+        "article": "Jerry_Lee_Lewis",
+        "entityId": "Q202729"
+      },
+      {
+        "answer": "Little Richard",
+        "aliases": [],
+        "article": "Little_Richard",
+        "entityId": "Q82222"
+      },
+      {
+        "answer": "Ray Charles",
+        "aliases": [],
+        "article": "Ray_Charles",
+        "entityId": "Q544387"
+      },
+      {
+        "answer": "Sam Cooke",
+        "aliases": [],
+        "article": "Sam_Cooke",
+        "entityId": "Q295919"
+      }
+    ]
+  },
+  {
+    "id": "curated-f1-winning-constructors",
+    "category": "sports",
+    "prompt": "Name a constructor that won the Formula 1 World Constructors’ Championship by the end of 2025",
+    "rules": "Constructor names credited with a title from 1958–2025. Chassis constructor names count without sponsors or engine suppliers; drivers do not.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "FIA — historical Constructors World Championship winners",
+        "url": "https://api.fia.com/sites/default/files/media_kit_-_2025_australian_grand_prix_.pdf",
+        "retrievedAt": "2026-09-15"
+      },
+      {
+        "title": "Formula 1 — final 2025 teams’ standings",
+        "url": "https://www.formula1.com/en/results/2025/team",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Vanwall",
+        "aliases": [],
+        "article": "Vanwall",
+        "entityId": "Q173093"
+      },
+      {
+        "answer": "Cooper",
+        "aliases": [
+          "Cooper Climax"
+        ],
+        "article": "Cooper_Car_Company",
+        "entityId": "Q173003"
+      },
+      {
+        "answer": "Ferrari",
+        "aliases": [
+          "Scuderia Ferrari"
+        ],
+        "article": "Scuderia_Ferrari",
+        "entityId": "Q169898"
+      },
+      {
+        "answer": "BRM",
+        "aliases": [
+          "British Racing Motors"
+        ],
+        "article": "British_Racing_Motors",
+        "entityId": "Q173012"
+      },
+      {
+        "answer": "Lotus",
+        "aliases": [
+          "Team Lotus"
+        ],
+        "article": "Team_Lotus",
+        "entityId": "Q173996"
+      },
+      {
+        "answer": "Brabham",
+        "aliases": [
+          "Brabham Repco"
+        ],
+        "article": "Brabham",
+        "entityId": "Q173103"
+      },
+      {
+        "answer": "Matra",
+        "aliases": [
+          "Matra Ford"
+        ],
+        "article": "Equipe_Matra_Sports",
+        "entityId": "Q844092"
+      },
+      {
+        "answer": "Tyrrell",
+        "aliases": [
+          "Tyrrell Racing"
+        ],
+        "article": "Tyrrell_Racing",
+        "entityId": "Q171992"
+      },
+      {
+        "answer": "McLaren",
+        "aliases": [
+          "McLaren Racing"
+        ],
+        "article": "McLaren",
+        "entityId": "Q172030"
+      },
+      {
+        "answer": "Williams",
+        "aliases": [
+          "Williams F1",
+          "Williams Grand Prix Engineering"
+        ],
+        "article": "Williams_Racing",
+        "entityId": "Q171337"
+      },
+      {
+        "answer": "Benetton",
+        "aliases": [
+          "Benetton Formula"
+        ],
+        "article": "Benetton_Formula",
+        "entityId": "Q171329"
+      },
+      {
+        "answer": "Renault",
+        "aliases": [
+          "Renault F1"
+        ],
+        "article": "Renault_in_Formula_One",
+        "entityId": "Q65954940"
+      },
+      {
+        "answer": "Brawn GP",
+        "aliases": [
+          "Brawn"
+        ],
+        "article": "Brawn_GP",
+        "entityId": "Q17596"
+      },
+      {
+        "answer": "Red Bull",
+        "aliases": [
+          "Red Bull Racing"
+        ],
+        "article": "Red_Bull_Racing",
+        "entityId": "Q173663"
+      },
+      {
+        "answer": "Mercedes",
+        "aliases": [
+          "Mercedes AMG",
+          "Mercedes AMG Petronas",
+          "Mercedes Benz"
+        ],
+        "article": "Mercedes-Benz_in_Formula_One",
+        "entityId": "Q65954812"
+      }
+    ]
+  },
+  {
+    "id": "curated-nobel-award-categories",
+    "category": "awards",
+    "prompt": "Name a Nobel award category, including the memorial prize in economics",
+    "rules": "The five categories in Alfred Nobel’s will plus the Sveriges Riksbank memorial prize category. Name the field, not a laureate.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "Nobel Prize — award categories",
+        "url": "https://www.nobelprize.org/about/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Physics",
+        "aliases": [
+          "Nobel Prize in Physics"
+        ],
+        "article": "Nobel_Prize_in_Physics",
+        "entityId": "Q38104"
+      },
+      {
+        "answer": "Chemistry",
+        "aliases": [
+          "Nobel Prize in Chemistry"
+        ],
+        "article": "Nobel_Prize_in_Chemistry",
+        "entityId": "Q44585"
+      },
+      {
+        "answer": "Physiology or Medicine",
+        "aliases": [
+          "Medicine",
+          "Physiology",
+          "Nobel Prize in Physiology or Medicine"
+        ],
+        "article": "Nobel_Prize_in_Physiology_or_Medicine",
+        "entityId": "Q80061"
+      },
+      {
+        "answer": "Literature",
+        "aliases": [
+          "Nobel Prize in Literature"
+        ],
+        "article": "Nobel_Prize_in_Literature",
+        "entityId": "Q37922"
+      },
+      {
+        "answer": "Peace",
+        "aliases": [
+          "Nobel Peace Prize"
+        ],
+        "article": "Nobel_Peace_Prize",
+        "entityId": "Q35637"
+      },
+      {
+        "answer": "Economic Sciences",
+        "aliases": [
+          "Economics",
+          "Nobel Prize in Economics",
+          "Nobel Memorial Prize in Economic Sciences"
+        ],
+        "article": "Nobel_Memorial_Prize_in_Economic_Sciences",
+        "entityId": "Q47170"
+      }
+    ]
+  },
+  {
+    "id": "curated-living-bear-species",
+    "category": "animals",
+    "prompt": "Name a living species of bear",
+    "rules": "The eight species recognized by the International Association for Bear Research and Management, reviewed 15 September 2026. Subspecies and hybrids do not count.",
+    "reviewedAt": "2026-09-15",
+    "sources": [
+      {
+        "title": "International Association for Bear Research and Management — the eight bear species",
+        "url": "https://www.bearbiology.org/the-eight-bear-species/",
+        "retrievedAt": "2026-09-15"
+      }
+    ],
+    "answers": [
+      {
+        "answer": "Giant panda",
+        "aliases": [
+          "Panda",
+          "Ailuropoda melanoleuca"
+        ],
+        "article": "Giant_panda",
+        "entityId": "Q33602"
+      },
+      {
+        "answer": "Sun bear",
+        "aliases": [
+          "Helarctos malayanus"
+        ],
+        "article": "Sun_bear",
+        "entityId": "Q144923"
+      },
+      {
+        "answer": "Sloth bear",
+        "aliases": [
+          "Melursus ursinus"
+        ],
+        "article": "Sloth_bear",
+        "entityId": "Q145016"
+      },
+      {
+        "answer": "Spectacled bear",
+        "aliases": [
+          "Andean bear",
+          "Tremarctos ornatus"
+        ],
+        "article": "Spectacled_bear",
+        "entityId": "Q137641"
+      },
+      {
+        "answer": "American black bear",
+        "aliases": [
+          "Ursus americanus"
+        ],
+        "article": "American_black_bear",
+        "entityId": "Q122783"
+      },
+      {
+        "answer": "Brown bear",
+        "aliases": [
+          "Ursus arctos"
+        ],
+        "article": "Brown_bear",
+        "entityId": "Q36341"
+      },
+      {
+        "answer": "Polar bear",
+        "aliases": [
+          "Ursus maritimus"
+        ],
+        "article": "Polar_bear",
+        "entityId": "Q33609"
+      },
+      {
+        "answer": "Asian black bear",
+        "aliases": [
+          "Asiatic black bear",
+          "Moon bear",
+          "Ursus thibetanus"
+        ],
+        "article": "Asian_black_bear",
+        "entityId": "Q124410"
+      }
+    ]
+  }
+]

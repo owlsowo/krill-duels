@@ -14,3 +14,7 @@
 
 /* Suggestions fill the answer; the player still confirms their choice. */
 .answer-suggestions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}.answer-suggestions>span{color:var(--yellow);font-size:14px;width:100%}.answer-suggestions .secondary{min-height:38px;padding:8px 14px;font-size:14px;white-space:normal;overflow-wrap:anywhere;max-width:100%}.answer-suggestions small{display:block;width:100%;font-size:12px;color:var(--muted);line-height:1.5}
+.question-notes { margin: -0.5rem 0 1.25rem; font-size: 0.875rem; line-height: 1.5; }
+.question-notes p { margin: 0.5rem 0 0; }
+.scoring-basis { display: inline-block; border: 1px solid currentColor; border-radius: 999px; padding: 0.2rem 0.65rem; font-size: 0.875rem; }
+.answer-sheet .fine, #help .fine { font-size: 0.875rem; }
