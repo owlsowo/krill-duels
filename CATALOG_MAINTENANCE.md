@@ -10,6 +10,8 @@ Use one canonical answer with explicit aliases for equivalent names. A synonym m
 
 For missing alternate names, add a question-specific entry to `answerAliases` in the correction manifest. Record the existing canonical answer, accepted aliases, stable identity, reason and factual sources. Alias-only additions keep the canonical name, historical score and historical scoring label. For example, “Ship of Theseus” and “Theseus's ship” identify the same answer in the famous-ship question; this is an explicit synonym, not a spelling-distance exception. Do not strip ship prefixes or reorder words globally. Run the catalog tests to catch aliases that collide with another answer.
 
+The [September 2026 alternate-name audit](data/ALIAS_AUDIT.md) records the broader review, examples and unresolved ambiguities. For each new batch, verify that proposed names actually reject before the change, combine proposals before checking normalized-name collisions, and test ordinary player inputs independently of the manifest. Review the same entity across all relevant questions while preserving each question’s existing score. Update curated aliases in their reviewed input and regenerate them with `catalog:build`; they do not use the historical correction overlay.
+
 ## New reviewed questions
 
 Author new entries in `data/curated-questions.json`:

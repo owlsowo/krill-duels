@@ -1386,7 +1386,9 @@
         "aliases": [
           "UK",
           "Great Britain",
-          "Britain"
+          "Britain",
+          "U.K.",
+          "United Kingdom of Great Britain and Northern Ireland"
         ],
         "article": "United_Kingdom",
         "entityId": "Q145"
@@ -1396,7 +1398,9 @@
         "aliases": [
           "USA",
           "US",
-          "United States of America"
+          "United States of America",
+          "U.S.",
+          "U.S.A."
         ],
         "article": "United_States",
         "entityId": "Q30"
