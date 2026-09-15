@@ -6,7 +6,7 @@ import { multiplier, type DuelState } from './duel-engine';
 import { DEFAULT_SETTINGS, TIME_OPTIONS, validSettings, type DuelSettings } from './settings';
 import { PracticeSession } from './practice';
 import { AnswerIndex } from './match';
-import { DuelRoom, roomFromHash } from './network';
+import { DuelRoom, roomFromHash, HTTPS_ROOMS } from './room';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 const esc = (s: unknown): string => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]!);
@@ -45,7 +45,7 @@ function connectionReport(): string {
 }
 
 function connectionHelp(): string {
-  return `<details class="connection-help"><summary>Connection help</summary><p>Keep both game tabs open and use the host’s latest invite. After an update, both refresh and create a new room.</p><p>If joining keeps failing, try another network or, if you use a VPN, another VPN server. Then try joining again.</p><p>Still unable to connect? Copy the details below when reporting the problem. <a href="https://github.com/owlsowo/krill-duels#if-a-duel-stays-on-connecting" target="_blank" rel="noopener">More connection troubleshooting ↗</a></p><label for="connection-report">Connection details</label><textarea id="connection-report" readonly rows="8" spellcheck="false">${esc(connectionReport())}</textarea><button class="quiet" data-action="copy-diagnostics">Copy connection details</button><span id="diagnostic-status" class="fine" role="status"></span></details>`;
+  return `<details class="connection-help"><summary>Connection help</summary><p>Keep both game tabs open and use the host’s latest invite. After an update, both refresh and create a new room.</p><p>If joining keeps failing, try another network or, if you use a VPN, another VPN server. Then try joining again.</p><p>${HTTPS_ROOMS ? 'This version connects through the website. Both players must use invites from this site.' : '<a href="https://krill-duels-play.owlsowo1.chatgpt.site/">Try the HTTPS version ↗</a> if joining keeps failing. Both players must open it and create a new room there.'} Still unable to connect? Copy the details below when reporting the problem.</p><label for="connection-report">Connection details</label><textarea id="connection-report" readonly rows="8" spellcheck="false">${esc(connectionReport())}</textarea><button class="quiet" data-action="copy-diagnostics">Copy connection details</button><span id="diagnostic-status" class="fine" role="status"></span></details>`;
 }
 
 function suggestionButtons(disabled = false): string {
@@ -97,7 +97,7 @@ function render(force = false): void {
     const headline = finished ? s.winner === null ? 'An even match.' : s.winner === mySeat ? 'You win.' : 'You’re sunk.' : last?.loser === null ? 'No damage.' : last?.loser === mySeat ? 'That one hurt.' : 'Direct hit.';
     content = `<div class="result-head"><span class="eyebrow">${finished ? 'DUEL COMPLETE' : `ROUND ${s.round} RESULTS`}</span><h1>${headline}</h1><p>${esc(finished ? s.reason : last?.damage ? `${s.names[last.loser!]} takes ${last.damage} damage${last.multiplier>1 ? ` at ${last.multiplier}×` : ''}.` : 'Equal scores. Both HP bars stay put.')}</p></div>${last ? `<p class="result-prompt">${esc(promptById(last.promptId)?.prompt)}</p><div class="result-grid">${last.results.map((result,i)=>`<div class="answer-result player-${i}"><div class="result-name">${esc(s.names[i])}</div><strong>${result.points}<small> pts</small></strong><h2>${esc(result.answer || (result.input ? `“${result.input}”` : 'No answer'))}</h2><span class="rarity score-${result.points}">${esc(scoreLabels[result.points])}</span></div>`).join('')}</div>` : ''}<button class="primary" data-action="ready" ${!s.connected || s.ready[mySeat] ? 'disabled' : ''}>${s.ready[mySeat] ? 'Waiting for your friend…' : finished ? 'Rematch · new shuffle →' : 'Ready for next question →'}</button>${last ? `<details class="answer-sheet"><summary>See accepted answers for this question</summary><p class="fine">Historical archive · <a href="${esc(promptById(last.promptId)?.source)}" target="_blank" rel="noopener">View source ↗</a></p><div class="answer-list">${[...(promptById(last.promptId)?.answers ?? [])].sort((a,b)=>b.score-a.score).map(a=>`<div><span>${esc(a.answer)}</span><b>${a.score}</b></div>`).join('')}</div></details>` : ''}`;
   }
-  screen.innerHTML = `<section class="match"><div class="match-heading"><span class="eyebrow">${s.phase==='lobby' ? 'LIVE 1V1' : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`}</span><button class="quiet" data-action="leave">Leave duel</button></div><div class="health-board">${playerCard(s.names[0],s.hp[0],0,details[0])}<span class="versus">VS</span>${playerCard(s.names[1],s.hp[1],1,details[1])}</div>${frozen ? `<div class="connection-warning" role="status">Connection interrupted. Round paused while your friend reconnects.</div>` : ''}<section class="arena ${s.phase}">${content}</section><div class="match-foot"><span class="status">${esc(status)}</span><button class="quiet" data-action="copy">Copy invite link</button></div>${error ? `<section class="connection-warning" role="alert">${esc(error)} <button class="secondary" data-action="retry">Reconnect</button><button class="quiet" data-action="home">New room</button></section>` : ''}${connectionHelp()}${s.history.length > 1 ? `<details class="history"><summary>Match history · ${s.history.length} rounds</summary>${s.history.slice().reverse().map(r=>`<div class="history-row"><b>${r.round}</b><span>${esc(promptById(r.promptId)?.prompt)}</span><strong>${r.results[0].points} : ${r.results[1].points}</strong><small>${r.damage ? `${r.damage} damage` : 'Tie'}</small></div>`).join('')}</details>` : ''}</section>`;
+  screen.innerHTML = `<section class="match"><div class="match-heading"><span class="eyebrow">${s.phase==='lobby' ? 'LIVE 1V1' : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`}</span><button class="quiet" data-action="leave">Leave duel</button></div><div class="health-board">${playerCard(s.names[0],s.hp[0],0,details[0])}<span class="versus">VS</span>${playerCard(s.names[1],s.hp[1],1,details[1])}</div>${frozen ? `<div class="connection-warning" role="status">Connection interrupted. Round paused while both players reconnect.</div>` : ''}<section class="arena ${s.phase}">${content}</section><div class="match-foot"><span class="status">${esc(status)}</span><button class="quiet" data-action="copy">Copy invite link</button></div>${error ? `<section class="connection-warning" role="alert">${esc(error)} <button class="secondary" data-action="retry">Reconnect</button><button class="quiet" data-action="home">New room</button></section>` : ''}${connectionHelp()}${s.history.length > 1 ? `<details class="history"><summary>Match history · ${s.history.length} rounds</summary>${s.history.slice().reverse().map(r=>`<div class="history-row"><b>${r.round}</b><span>${esc(promptById(r.promptId)?.prompt)}</span><strong>${r.results[0].points} : ${r.results[1].points}</strong><small>${r.damage ? `${r.damage} damage` : 'Tie'}</small></div>`).join('')}</details>` : ''}</section>`;
   bindForms();
   restoreDetails();
   const input = screen.querySelector<HTMLInputElement>('#answer');
@@ -125,6 +125,7 @@ async function connect(): Promise<void> {
   const next = new DuelRoom(name, roomFromHash(), {
     change: value => {
       if (room !== next) return;
+      if (HTTPS_ROOMS && next.seat === 0 && !state) history.replaceState(null, '', next.invite);
       const changedRound = value.matchId !== state?.matchId || value.round !== state?.round;
       if (changedRound) { answerHint = ''; answerSuggestions = []; submitting = false; }
       offset = next.hostClockOffset ?? Date.now() - value.now;
@@ -215,8 +216,8 @@ app.addEventListener('click', async event => {
   }
   if (action === 'leave' && confirm('Leave this duel? Your friend will win if the match is in progress.')) home();
   if (action === 'retry') {
-    if (room?.seat === 1) history.replaceState(null,'',room.invite);
-    else if (state) { error = 'A host room cannot survive a closed connection. Create a new room and send a fresh invite.'; render(); return; }
+    if (room && (HTTPS_ROOMS || room.seat === 1)) history.replaceState(null,'',room.invite);
+    else if (state) { error = 'Create a new room and send a fresh invite, or try the HTTPS version in Connection help.'; render(); return; }
     await connect();
   }
   if (action === 'copy' && room) {
@@ -244,7 +245,8 @@ screen.addEventListener('change', event => {
   if (target.id === 'damage-mode' && target.nextElementSibling) target.nextElementSibling.textContent = settings.damageScaling ? '2× at round 5, 3× at round 8' : 'Score difference only';
 });
 window.addEventListener('beforeunload', event => { if (room && state && state.phase !== 'finished') { event.preventDefault(); event.returnValue = ''; } });
-window.addEventListener('pagehide', () => room?.dispose());
+window.addEventListener('pagehide', () => room?.dispose(!HTTPS_ROOMS));
+window.addEventListener('pageshow', event => { if (event.persisted && room && HTTPS_ROOMS) void connect(); });
 window.setInterval(paintClock,100);
 render();
 

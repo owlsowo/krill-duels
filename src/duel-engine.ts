@@ -41,6 +41,17 @@ export interface DuelState {
   reason: string;
 }
 
+/** Private server storage. Never send this object in a room response. */
+export interface StoredEngine {
+  schema: 1;
+  state: DuelState;
+  order: string[];
+  pool: string[];
+  hashes: [string | null, string | null];
+  answers: [string | null, string | null];
+  pausedAt: number | null;
+}
+
 export const safeName = (value: string): string => value.replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, 24) || 'Player';
 
 export async function commitment(matchId: string, round: number, seat: Seat, promptId: string, input: string, salt: string): Promise<string> {
@@ -79,6 +90,27 @@ export class DuelEngine {
 
   snapshot(now: number): DuelState {
     return structuredClone({ ...this.state, hashes: this.hashes, now });
+  }
+
+  store(now = this.state.now): StoredEngine {
+    return structuredClone({ schema: 1, state: { ...this.state, now }, order: this.order, pool: this.pool,
+      hashes: this.hashes, answers: this.answers, pausedAt: this.pausedAt });
+  }
+
+  static restore(saved: StoredEngine): DuelEngine {
+    if (saved.schema !== 1) throw new Error('Unsupported room storage version');
+    const engine = new DuelEngine(saved.state.names[0], saved.state.matchId, saved.pool, saved.state.settings);
+    engine.state = structuredClone(saved.state);
+    engine.order = [...saved.order];
+    engine.hashes = [...saved.hashes];
+    engine.answers = [...saved.answers];
+    engine.pausedAt = saved.pausedAt;
+    return engine;
+  }
+
+  abandon(): void {
+    this.forfeit(0, 'Both players disconnected. Create a new room to play again.');
+    this.state.winner = null;
   }
 
   join(name: string, now: number): void {
