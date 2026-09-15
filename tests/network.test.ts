@@ -249,7 +249,7 @@ describe('connection lifecycle', () => {
     expect(guestPeer.channels).toHaveLength(2);
     await advance(38_000);
     expect(errors).toHaveLength(1);
-    expect(errors[0]).toContain('TUN mode');
+    expect(errors[0]).toContain('Could not connect to your friend.');
     expect(guestPeer.destroyed).toBe(true);
     expect(guest.diagnostics()).toMatchObject({ stage: 'failed' });
     expect((guest.diagnostics() as {lastError:string}).lastError).toMatch(/^connection-/);
