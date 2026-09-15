@@ -2,7 +2,7 @@
 
 Free rare-answer trivia for solo practice or a private battle with a friend.
 
-**[Play Krill Duels](https://owlsowo.github.io/krill-duels/)**
+**[Play Krill Duels](https://owlsowo.github.io/krill-duels/)** · **[Alternate HTTPS version](https://krill-duels-play.owlsowo1.chatgpt.site/)**
 
 Choose **Solo practice** to play immediately, or **Create duel** to set your rules and send an invite link to a friend. Both duel players press Ready to receive the same randomly selected question. Rarer answers earn more points; the score difference damages the lower scorer's HP.
 
@@ -37,16 +37,27 @@ Some school, work, VPN, or restrictive NAT networks can block browser connection
 
 ### If a duel stays on Connecting
 
-1. Keep the host's room open and use its current invite. Both players should refresh after an update, then create a new room.
-2. Allow up to a minute for the initial connection. You can cancel and retry if needed.
-3. If joining keeps failing, try another network or, if you use a VPN, another VPN server. Loading the website does not always mean a live connection between the two players can open.
-4. Open **Connection help** and choose **Copy connection details** when reporting a failure. Include both players' browsers and the message shown. The report distinguishes room-service access from the connection between players without assuming a particular VPN app or configuration.
+1. If the page loads but joining stalls, try the [HTTPS version](https://krill-duels-play.owlsowo1.chatgpt.site/). Both players must open it and create a new room there. It carries gameplay through the website and needs no direct browser connection.
+2. Keep the host's room open and use its current invite. Both players should refresh after an update, then create a new room.
+3. Allow up to a minute for the initial connection. You can cancel and retry if needed.
+4. If joining keeps failing, try another network or, if you use a VPN, another VPN server. Loading the website does not always mean a live connection between the two players can open.
+5. Open **Connection help** and choose **Copy connection details** when reporting a failure. Include both players' browsers and the message shown. The report distinguishes room-service access from the connection between players without assuming a particular VPN app or configuration.
 
 Technical relay setup for site operators is documented below.
 
 Answer commitments are exchanged before answers are revealed, so a regular client cannot wait to see the other answer before choosing. This is casual play: the catalog and code are public, and the host is trusted. It is not a server-authoritative ranked or anti-cheat system.
 
 Names and game settings are stored in local browser preferences; a guest reconnection token and pending answer are kept in session storage. Room IDs are random and carried in the invite's URL fragment. Only share your invite with the intended opponent.
+
+## Alternate HTTPS rooms
+
+The [public HTTPS edition](https://krill-duels-play.owlsowo1.chatgpt.site/) runs the same interface and scoring over a same-origin API. It uses `src/http-room.ts` and `server/worker.ts` instead of PeerJS. Both players must use that site; rooms are separate from GitHub Pages. This removes reliance on WebRTC/UDP, but the site still must be reachable through each player's network.
+
+The server owns timing, shuffle, and scoring. D1 persists private engine state, drafts and hashed seat tokens. Atomic revision checks protect simultaneous updates. Only public snapshots return to clients; choices remain private until the round resolves. A 12-second missing heartbeat pauses the round for up to 30 more seconds, and either seat can reconnect. Refresh preserves the room in the same tab; explicit Leave forfeits it. Both absent players draw after grace expiry. Inactive rooms expire after one hour and are deleted on subsequent room creation.
+
+`npm run build` still builds the original static GitHub Pages game. `npm run build:site` builds the HTTPS edition to `dist/client` and `dist/server/index.js`. Hosting needs a Worker with `ASSETS` and D1 `DB` bindings and the SQL under `drizzle/`. The Sites deployment also has its own `.openai/hosting.json` with its managed project ID and `"d1": "DB"`; the build copies that manifest into the artifact. For local HTTPS testing, run `npm run build:site`, apply `drizzle/0000_nasty_pete_wisdom.sql` with Wrangler against the local `DB`, then run `npm run start`. A fresh clone gets binding-only build metadata for local use; publishing requires its registered Site manifest. The database ID in generated Wrangler configuration is only a local placeholder.
+
+SQL-backed tests cover concurrent joins, Ready and answers, failed revision checks, duplicate submissions, hidden choices, deadline races, disconnects on both seats, abandoned rooms, rematches, session authentication, and schema/catalog mismatch. HTTP-client tests cover session recovery, stale replies, retries and cancellation. Live browser verification blocks WebRTC and completes a round through HTTPS; it does not reproduce routing from China.
 
 ## Development
 
