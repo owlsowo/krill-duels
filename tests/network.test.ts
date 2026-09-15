@@ -326,7 +326,7 @@ describe('connection lifecycle', () => {
     await advance(26_000);
     expect(errors).toEqual([]);
     transport.peers.get(`kd-${host.room}`)!.channels.at(-1)!.close(); await flush();
-    await advance(3_000);
+    await advance(27_000);
     expect(errors).toEqual([]); expect(guest.state!.connected).toBe(false);
     for (const peer of peers) { peer.open = true; peer.disconnected = false; peer.emit('open'); }
     await flush();

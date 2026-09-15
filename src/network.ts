@@ -412,7 +412,8 @@ export class DuelRoom {
       this.nextServiceRetry = now + RETRY_DELAY_MS;
       try { this.peer.reconnect(); } catch { /* Retry after the peer finishes disconnecting. */ }
     }
-    if (this.serviceStarted !== null && !this.peer?.open && !this.accepted && now - this.serviceStarted >= SIGNALING_TIMEOUT_MS) {
+    const serviceTimeout = this.state && (this.seat === 1 || this.guestToken) ? GRACE_MS + 8_000 : SIGNALING_TIMEOUT_MS;
+    if (this.serviceStarted !== null && !this.peer?.open && !this.accepted && now - this.serviceStarted >= serviceTimeout) {
       this.fail('Could not reach the room service. Check that your proxy allows 0.peerjs.com, then try again.');
       return;
     }
