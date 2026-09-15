@@ -2,15 +2,15 @@ import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
-import { buildCurated, normalizeTitle, resolutionUrl, pageviewsUrl, resolveIdentity, validateInputs, validateMonthlyViews, YEAR } from './curated-scoring.mjs';
+import { buildCurated, missingArticleCount, normalizeTitle, resolutionUrl, pageviewsUrl, resolveIdentity, validateMonthlyViews, YEAR } from './curated-scoring.mjs';
+import { loadReviewedInputs } from './question-packs.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = new Set(process.argv.slice(2));
 if ([...args].some(arg => !['--fetch', '--check'].includes(arg))) throw new Error('Usage: node scripts/build-curated.mjs [--fetch] [--check]');
 if (args.has('--fetch') && args.has('--check')) throw new Error('--check is offline; run --fetch separately.');
-const inputPath = resolve(root, 'data/curated-questions.json');
 const cachePath = resolve(root, `data/pageviews-${YEAR}.json`);
-const questions = validateInputs(JSON.parse(await readFile(inputPath, 'utf8')));
+const { questions, inputFiles, packs } = await loadReviewedInputs(root);
 let cache;
 try { cache = JSON.parse(await readFile(cachePath, 'utf8')); }
 catch (error) { if (error.code !== 'ENOENT') throw error; cache = { schemaVersion: 1, year: YEAR, resolutions: {}, pageviews: {} }; }
@@ -24,9 +24,12 @@ async function save(path, value) {
 
 if (args.has('--fetch')) {
   const answers = [...new Map(questions.flatMap(question => question.answers).map(answer => [normalizeTitle(answer.article), answer])).values()];
-  if (answers.length > 500) throw new Error('Refusing more than 500 distinct articles in one reviewed catalog fetch.');
-  let requestCount = 0;
+  const missing = missingArticleCount(questions, cache);
+  if (missing > 500) throw new Error('Refusing more than 500 missing article series in one fetch; add reviewed packs in smaller batches.');
+  console.log(`${answers.length} distinct articles; ${missing} need missing evidence.`);
+  let requestCount = 0, recordCount = 0;
   async function fetchRecord(sourceUrl) {
+    if (++recordCount > 1000) throw new Error('Refusing more than 1,000 uncached API records in one fetch.');
     for (let attempt = 0; attempt < 3; attempt++) {
       await delay(attempt ? 1000 * 2 ** attempt : 250);
       requestCount++;
@@ -56,6 +59,8 @@ if (args.has('--fetch')) {
 }
 
 const result = buildCurated(questions, cache);
+result.provenance.inputFiles = inputFiles;
+result.provenance.packs = packs;
 for (const [relativePath, value] of [['src/curated.json', result.prompts], ['public/curated-provenance.json', result.provenance]]) {
   const path = resolve(root, relativePath);
   if (args.has('--check')) {

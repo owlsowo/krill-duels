@@ -37,6 +37,10 @@ vi.mock('../src/data', () => ({
   PROMPT_IDS: fixture.prompts.map(prompt => prompt.id),
   promptById: (id: string) => fixture.prompts.find(prompt => prompt.id === id),
 }));
+vi.mock('../src/hints', async importOriginal => ({
+  ...await importOriginal<typeof import('../src/hints')>(),
+  getPromptHints: (id: string) => id.startsWith('fixture-') ? ['First context', 'More context', 'Deeper context'] : [],
+}));
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -109,6 +113,76 @@ describe('matching the pinned question catalog', () => {
     expect(index.match('shared')).toBeNull();
     expect(index.match('Alpha')?.score).toBe(10);
     expect(index.match('Beta')?.score).toBe(100);
+  });
+});
+
+describe('authoritative progressive hint purchases', () => {
+  it('charges escalating match totals per player, caps levels, and carries the price into the next round', () => {
+    const room = engine();
+    const q = begin(room);
+    for (let level = 0; level < 3; level++) expect(room.hint(0, q.matchId, q.round, level, q.now + 1)).toBe(true);
+    expect(room.hint(0, q.matchId, q.round, 3, q.now + 1)).toBe(false);
+    expect(room.hint(1, q.matchId, q.round, 0, q.now + 1)).toBe(true);
+    expect(room.snapshot(q.now + 1)).toMatchObject({ hp: [210, 285], hintUses: [3, 1], hintLevels: [3, 1] });
+    room.tick(q.deadline);
+    const next = begin(room);
+    expect(next.hintLevels).toEqual([0, 0]);
+    expect(next.hintUses).toEqual([3, 1]);
+    expect(room.hint(0, next.matchId, next.round, 0, next.now)).toBe(true);
+    expect(room.snapshot(next.now).hp).toEqual([150, 285]);
+  });
+
+  it('makes duplicate delivery idempotent through persistence and answer locking', () => {
+    let room = engine();
+    const q = begin(room);
+    expect(room.hint(0, q.matchId, q.round, 1, q.now)).toBe(false);
+    expect(room.hint(0, q.matchId, q.round, 0, q.now)).toBe(true);
+    room = DuelEngine.restore(JSON.parse(JSON.stringify(room.store(q.now))));
+    expect(room.hint(0, q.matchId, q.round, 0, q.now)).toBe(true);
+    expect(room.commit(0, q.matchId, q.round, 'a'.repeat(64), q.now)).toBe(true);
+    expect(room.hint(0, q.matchId, q.round, 0, q.now)).toBe(true);
+    expect(room.hint(0, q.matchId, q.round, 1, q.now)).toBe(false);
+    expect(room.snapshot(q.now)).toMatchObject({ hp: [285, 300], hintUses: [1, 0], hintLevels: [1, 0] });
+    room.tick(q.deadline); room.tick(q.deadline + 6000);
+    expect(room.hint(0, q.matchId, q.round, 0, q.deadline + 6000)).toBe(true);
+    expect(room.hint(0, q.matchId, q.round, 1, q.deadline + 6000)).toBe(false);
+    const next = begin(room);
+    expect(room.hint(0, q.matchId, q.round, 0, next.now)).toBe(false);
+  });
+
+  it('rejects expired, disconnected, invalid, unaffordable and unauthored requests without charging', () => {
+    const room = engine();
+    const q = begin(room);
+    for (const level of [-1, 0.5, NaN, 4]) expect(room.hint(0, q.matchId, q.round, level, q.now)).toBe(false);
+    expect(room.hint(0, 'wrong-match', q.round, 0, q.now)).toBe(false);
+    expect(room.hint(0, q.matchId, q.round, 0, q.deadline)).toBe(false);
+    room.connection(false, q.now);
+    expect(room.hint(0, q.matchId, q.round, 0, q.now)).toBe(false);
+    expect(room.snapshot(q.now).hintUses).toEqual([0, 0]);
+    room.connection(true, q.now);
+    for (const hp of [14, 15]) {
+      const saved = room.store(); saved.state.hp[0] = hp;
+      const poor = DuelEngine.restore(saved);
+      expect(poor.hint(0, q.matchId, q.round, 0, q.now)).toBe(false);
+      expect(poor.snapshot(q.now).hp[0]).toBe(hp);
+    }
+    const noHints = engine(['blank-fixture']);
+    const noHintQuestion = begin(noHints);
+    expect(noHints.hint(0, noHintQuestion.matchId, 1, 0, noHintQuestion.now)).toBe(false);
+  });
+
+  it('resets both counters on rematch and restores legacy rooms with zero counters', () => {
+    const room = engine();
+    const q = begin(room);
+    room.hint(0, q.matchId, q.round, 0, q.now);
+    room.forfeit(1);
+    const rematch = begin(room);
+    expect(rematch).toMatchObject({ hintUses: [0, 0], hintLevels: [0, 0], hp: [300, 300] });
+    expect(room.hint(0, q.matchId, rematch.round, 0, rematch.now)).toBe(false);
+    const saved = room.store();
+    delete (saved.state as Partial<typeof saved.state>).hintUses;
+    delete (saved.state as Partial<typeof saved.state>).hintLevels;
+    expect(DuelEngine.restore(saved).snapshot(rematch.now)).toMatchObject({ hintUses: [0, 0], hintLevels: [0, 0] });
   });
 });
 

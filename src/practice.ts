@@ -3,6 +3,7 @@ import { scoreAnswer } from './duel-engine';
 import { shuffled } from './schedule';
 import { TIME_OPTIONS } from './settings';
 import type { RoundResult } from './types';
+import { getPromptHints } from './hints';
 export interface PracticeState {
   phase: 'question' | 'result' | 'finished';
   round: number;
@@ -12,6 +13,7 @@ export interface PracticeState {
   total: number;
   history: RoundResult[];
   questionCount: number;
+  hintLevel: number;
 }
 /** Local single-player session. Never opens a network room. */
 export class PracticeSession {
@@ -21,9 +23,15 @@ export class PracticeSession {
     if (!(TIME_OPTIONS as readonly number[]).includes(questionSeconds)) throw new Error('Unsupported timer.');
     if (!pool.length) throw new Error('No practice questions available.');
     this.order = shuffled([...new Set(pool)]);
-    this.state = { phase:'question', round:1, promptId:this.order[0], questionSeconds, deadline:now+questionSeconds*1000, total:0, history:[], questionCount:this.order.length };
+    this.state = { phase:'question', round:1, promptId:this.order[0], questionSeconds, deadline:now+questionSeconds*1000, total:0, history:[], questionCount:this.order.length, hintLevel:0 };
   }
   snapshot(): PracticeState { return structuredClone(this.state); }
+  hint(now = Date.now()): boolean {
+    if (this.state.phase !== 'question' || now >= this.state.deadline ||
+        this.state.hintLevel >= Math.min(3, getPromptHints(this.state.promptId).length)) return false;
+    this.state.hintLevel += 1;
+    return true;
+  }
   submit(input: string, now = Date.now()): boolean {
     if (this.state.phase !== 'question') return false;
     if (now >= this.state.deadline) { this.finishRound(''); return false; }
@@ -38,6 +46,7 @@ export class PracticeSession {
     this.state.round++;
     this.state.promptId = this.order[this.state.round-1];
     this.state.phase = 'question';
+    this.state.hintLevel = 0;
     this.state.deadline = now + this.state.questionSeconds*1000;
     return true;
   }

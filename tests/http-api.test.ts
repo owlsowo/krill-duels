@@ -6,6 +6,7 @@ import { DuelEngine, type DuelState, type Seat, type StoredEngine } from '../src
 import { DEFAULT_SETTINGS } from '../src/settings';
 import { PROMPTS, promptById } from '../src/data';
 import * as schedule from '../src/schedule';
+import * as hints from '../src/hints';
 
 class SqliteD1 implements Database {
   sqlite = new DatabaseSync(':memory:');
@@ -83,6 +84,32 @@ async function knockOut(state: DuelState) {
 }
 
 describe('HTTPS room API on persisted SQL state', () => {
+  it('persists hint purchases exactly once across SQL retries and concurrent duplicate requests', async () => {
+    vi.spyOn(hints, 'getPromptHints').mockReturnValue(['Context', 'More context', 'Deeper context']);
+    const { state } = await playing();
+    const command = { ...current(state), expectedHintLevel: 0 };
+    db.conflicts = 2;
+    const replies = await Promise.all([call(0, 'hint', command), call(0, 'hint', command)]);
+    expect(replies.every(r => r.response.ok && r.data.accepted)).toBe(true);
+    let saved = (await call(0, 'poll')).state;
+    expect(saved).toMatchObject({ hp: [285, 300], hintUses: [1, 0], hintLevels: [1, 0] });
+    expect((await call(0, 'hint', { ...command, expectedHintLevel: 2 })).data.accepted).toBe(false);
+    expect((await call(0, 'hint', { ...command, expectedHintLevel: 1 })).data.accepted).toBe(true);
+    expect((await call(1, 'hint', command)).data.accepted).toBe(true);
+    saved = (await call(1, 'poll')).state;
+    expect(saved).toMatchObject({ hp: [255, 285], hintUses: [2, 1], hintLevels: [2, 1] });
+    await call(0, 'answer', { ...current(state), input: '' });
+    const locked = await call(0, 'hint', { ...command, expectedHintLevel: 2 });
+    expect(locked.data.accepted).toBe(false);
+    expect(locked.state.hp).toEqual([255, 285]);
+    const result = await call(1, 'answer', { ...current(state), input: '' });
+    expect((await call(0, 'hint', command)).data.accepted).toBe(true);
+    const next = await readyBoth(result.state);
+    expect(next).toMatchObject({ hintUses: [2, 1], hintLevels: [0, 0] });
+    expect((await call(0, 'hint', command)).data.accepted).toBe(false);
+    expect((await call(0, 'hint', { ...current(next), expectedHintLevel: -1 })).response.status).toBe(400);
+    expect((await call(0, 'hint', { ...current(next), expectedHintLevel: 0 }, tokens[1])).response.status).toBe(403);
+  });
   it('creates and joins without any peer connection; refresh create is idempotent', async () => {
     const first = await joined();
     expect(first.state.connected).toBe(true);

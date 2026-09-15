@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "id": "nasa-history",
+  "title": "NASA: Apollo landings and Mercury Seven",
+  "status": "reviewed",
+  "questions": [
+    {
+      "id": "curated-apollo-moon-landings",
+      "category": "space",
+      "prompt": "Name an Apollo mission that landed astronauts on the Moon",
+      "rules": "The six successful crewed lunar landing missions in the Apollo program, 1969–1972. Mission names or numbers count; lunar-orbit-only and aborted landing missions do not.",
+      "reviewedAt": "2026-09-15",
+      "sources": [
+        {
+          "title": "NASA — The Apollo Program",
+          "url": "https://www.nasa.gov/the-apollo-program/",
+          "retrievedAt": "2026-09-15"
+        }
+      ],
+      "answers": [
+        {
+          "answer": "Apollo 11",
+          "aliases": [
+            "11"
+          ],
+          "article": "Apollo_11",
+          "entityId": "Q43653"
+        },
+        {
+          "answer": "Apollo 12",
+          "aliases": [
+            "12"
+          ],
+          "article": "Apollo_12",
+          "entityId": "Q188433"
+        },
+        {
+          "answer": "Apollo 14",
+          "aliases": [
+            "14"
+          ],
+          "article": "Apollo_14",
+          "entityId": "Q178871"
+        },
+        {
+          "answer": "Apollo 15",
+          "aliases": [
+            "15"
+          ],
+          "article": "Apollo_15",
+          "entityId": "Q194068"
+        },
+        {
+          "answer": "Apollo 16",
+          "aliases": [
+            "16"
+          ],
+          "article": "Apollo_16",
+          "entityId": "Q188168"
+        },
+        {
+          "answer": "Apollo 17",
+          "aliases": [
+            "17"
+          ],
+          "article": "Apollo_17",
+          "entityId": "Q180971"
+        }
+      ]
+    },
+    {
+      "id": "curated-mercury-seven",
+      "category": "space",
+      "prompt": "Name one of NASA’s original Mercury Seven astronauts",
+      "rules": "The seven astronauts selected for Project Mercury in April 1959, whether or not they later flew a Mercury mission. Common names, formal names and unambiguous surnames count.",
+      "reviewedAt": "2026-09-15",
+      "sources": [
+        {
+          "title": "NASA — Mercury Seven Astronaut Biographies",
+          "url": "https://www.nasa.gov/history/mercury-seven-astronaut-biographies/",
+          "retrievedAt": "2026-09-15"
+        },
+        {
+          "title": "NASA — 60 Years Ago: NASA Introduces Mercury 7 Astronauts",
+          "url": "https://www.nasa.gov/history/60-years-ago-nasa-introduces-mercury-7-astronauts/",
+          "retrievedAt": "2026-09-15"
+        }
+      ],
+      "answers": [
+        {
+          "answer": "Scott Carpenter",
+          "aliases": [
+            "Carpenter",
+            "Malcolm Scott Carpenter",
+            "M. Scott Carpenter"
+          ],
+          "article": "Scott_Carpenter",
+          "entityId": "Q335503"
+        },
+        {
+          "answer": "Gordon Cooper",
+          "aliases": [
+            "Cooper",
+            "Leroy Gordon Cooper",
+            "Leroy Gordon Cooper Jr.",
+            "L. Gordon Cooper Jr."
+          ],
+          "article": "Gordon_Cooper",
+          "entityId": "Q312833"
+        },
+        {
+          "answer": "John Glenn",
+          "aliases": [
+            "Glenn",
+            "John Herschel Glenn",
+            "John Herschel Glenn Jr.",
+            "John H. Glenn Jr."
+          ],
+          "article": "John_Glenn",
+          "entityId": "Q182642"
+        },
+        {
+          "answer": "Gus Grissom",
+          "aliases": [
+            "Grissom",
+            "Virgil Grissom",
+            "Virgil Ivan Grissom",
+            "Virgil I. Grissom"
+          ],
+          "article": "Gus_Grissom",
+          "entityId": "Q110879"
+        },
+        {
+          "answer": "Wally Schirra",
+          "aliases": [
+            "Schirra",
+            "Walter Schirra",
+            "Walter Marty Schirra",
+            "Walter Marty Schirra Jr.",
+            "Walter M. Schirra Jr."
+          ],
+          "article": "Wally_Schirra",
+          "entityId": "Q110450"
+        },
+        {
+          "answer": "Alan Shepard",
+          "aliases": [
+            "Shepard",
+            "Alan Bartlett Shepard",
+            "Alan Bartlett Shepard Jr.",
+            "Alan B. Shepard Jr."
+          ],
+          "article": "Alan_Shepard",
+          "entityId": "Q174979"
+        },
+        {
+          "answer": "Deke Slayton",
+          "aliases": [
+            "Slayton",
+            "Donald Slayton",
+            "Donald Kent Slayton",
+            "Donald K. Slayton"
+          ],
+          "article": "Deke_Slayton",
+          "entityId": "Q336810"
+        }
+      ]
+    }
+  ]
+}

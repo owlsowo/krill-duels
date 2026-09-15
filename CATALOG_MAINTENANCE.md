@@ -14,13 +14,25 @@ The [September 2026 alternate-name audit](data/ALIAS_AUDIT.md) records the broad
 
 ## New reviewed questions
 
-Author new entries in `data/curated-questions.json`:
+The original reviewed sets stay in `data/curated-questions.json`. Author additions as small packs under `data/question-packs/`; the build combines them in filename order after the original sets. To start a draft:
+
+```sh
+node scripts/new-question-pack.mjs your-pack-name
+```
+
+This creates `data/question-drafts/your-pack-name.json` with `status: "draft"` and incomplete review fields. Drafts are outside the build inputs, and the command refuses to overwrite existing files. It does not research facts, invent identities or generate publishable questions.
+
+Before promoting a pack:
 
 - Define an independently useful question with a manageable, complete answer set. Check the existing bank for equivalent questions, not just identical wording.
 - Record factual sources, the review date, and precise inclusion rules. Specify a completed date range for changing lists. Missing database statements do not establish that an answer is invalid.
 - Give each answer a verified Wikidata entity ID, its English Wikipedia article title, and unambiguous accepted aliases. Multiple names for one entity share one score within a question.
 - Review every accepted entity against the stated rules. Article existence establishes identity, not eligibility.
 - Keep accepted examples and answer lists out of `rules`: the game displays that text before the player answers.
+
+The pack envelope has `schemaVersion: 1`, a lowercase hyphenated `id` matching the filename, a descriptive `title`, `status: "reviewed"`, and a `questions` array. Each question uses the original input schema: `id` beginning `curated-`, `category`, `prompt`, `rules`, `reviewedAt`, `sources` (title and HTTPS URL), and `answers` (canonical `answer`, `aliases`, exact verified `entityId`, and English Wikipedia `article`). Record source retrieval dates too. See `data/question-packs/nasa-history.json` for a complete example.
+
+After manual source review, set `status` to `reviewed` and move the file into `data/question-packs/`. The build rejects active drafts, malformed packs, duplicate question IDs and normalized question text across all reviewed inputs and the original/corrected archive. It also rejects conflicting aliases within an answer set. Different wording for the same question still needs manual overlap review. Limits are 100 packs, 100 questions per pack, 2,000 reviewed questions overall, 200 answers per question and 2 MiB per reviewed input file; they bound mistakes without imposing the old 40-question ceiling.
 
 ## Reproducible estimated scores
 
@@ -49,7 +61,11 @@ npm test
 npm run build
 ```
 
-Commit `data/curated-questions.json`, `data/pageviews-2025.json`, `src/curated.json`, and `public/curated-provenance.json` together. Normal tests and builds check these files offline. Gameplay makes no requests to Wikipedia or Wikidata. Both players' catalog hashes include the playable corrections and new questions, preventing different releases from silently disagreeing on scores.
+Commit the reviewed input changes in `data/curated-questions.json` or `data/question-packs/`, `data/pageviews-2025.json`, `src/curated.json`, and `public/curated-provenance.json` together. Provenance records each input file's hash and each pack's question IDs. Normal tests and builds check these files offline. Gameplay makes no requests to Wikipedia or Wikidata. Both players' catalog hashes include the playable corrections, new questions and reviewed hint content, preventing different releases from silently disagreeing.
+
+## Reviewed context hints
+
+`data/prompt-hints.json` separately supplies up to three progressively more specific context hints for selected questions. Write useful background or narrowing context from reliable factual sources; never generate clues by exposing answer names, prefixes or sampled answer lists. `tests/hints.test.ts` rejects literal accepted-name leaks. That mechanical check cannot assess whether a clue is useful, progressively specific or an indirect giveaway, so manual review remains required. Questions without reviewed hints remain playable. Hint content participates in the exact catalog hash used by both players.
 
 ## Future calibration
 

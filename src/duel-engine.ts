@@ -3,6 +3,7 @@ import { AnswerIndex } from './match';
 import { shuffled } from './schedule';
 import type { RoundResult } from './types';
 import { DEFAULT_SETTINGS, settingsCopy, type DuelSettings } from './settings';
+import { getPromptHints, hintCost } from './hints';
 export { DEFAULT_SETTINGS, validSettings, type DuelSettings } from './settings';
 
 export type Seat = 0 | 1;
@@ -29,6 +30,8 @@ export interface DuelState {
   promptId: string | null;
   names: [string, string];
   hp: [number, number];
+  hintUses: [number, number];
+  hintLevels: [number, number];
   ready: [boolean, boolean];
   committed: [boolean, boolean];
   hashes: [string | null, string | null];
@@ -86,6 +89,7 @@ export class DuelEngine {
       settings: settingsCopy(settings),
       matchId, phase: 'lobby', round: 0, promptId: null,
       names: [safeName(hostName), 'Waiting for friend'], hp: [settings.startingHp, settings.startingHp],
+      hintUses: [0, 0], hintLevels: [0, 0],
       ready: [false, false], committed: [false, false], hashes: [null, null], connected: false,
       reconnectUntil: null, deadline: 0, now: 0, history: [], winner: null, reason: '',
     };
@@ -104,6 +108,9 @@ export class DuelEngine {
     if (saved.schema !== 1) throw new Error('Unsupported room storage version');
     const engine = new DuelEngine(saved.state.names[0], saved.state.matchId, saved.pool, saved.state.settings);
     engine.state = structuredClone(saved.state);
+    // Rooms persisted before hints have no purchases to restore.
+    engine.state.hintUses ??= [0, 0];
+    engine.state.hintLevels ??= [0, 0];
     engine.order = [...saved.order];
     // Older rooms indexed questions by the current match's round. A countdown
     // (including one interrupted by forfeiture) has not exposed its question yet.
@@ -150,6 +157,7 @@ export class DuelEngine {
       this.state = {
         ...this.state, matchId: crypto.randomUUID(), round: 0, promptId: null,
         hp: [this.state.settings.startingHp, this.state.settings.startingHp],
+        hintUses: [0, 0], hintLevels: [0, 0],
         history: [], winner: null, reason: '', reconnectUntil: null,
       };
       this.pausedAt = null;
@@ -163,10 +171,29 @@ export class DuelEngine {
     this.state.promptId = null;
     this.state.ready = [false, false];
     this.state.committed = [false, false];
+    this.state.hintLevels = [0, 0];
     this.hashes = [null, null];
     this.answers = [null, null];
     this.state.phase = 'countdown';
     this.state.deadline = now + 3_000;
+  }
+
+  hint(seat: Seat, matchId: string, round: number, expectedHintLevel: number, now: number): boolean {
+    const s = this.state;
+    if (![0, 1].includes(seat) || matchId !== s.matchId || round !== s.round ||
+        !Number.isInteger(expectedHintLevel) || expectedHintLevel < 0 || expectedHintLevel >= 3) return false;
+    // The round and level identify a purchase, so a lost response can be retried
+    // even after locking/reveal without spending HP or revealing another hint.
+    if (expectedHintLevel < s.hintLevels[seat]) return true;
+    if (expectedHintLevel !== s.hintLevels[seat] || s.phase !== 'question' || !s.connected ||
+        now >= s.deadline || s.committed[seat] || !s.promptId ||
+        expectedHintLevel >= Math.min(3, getPromptHints(s.promptId).length)) return false;
+    const cost = hintCost(s.settings.startingHp, s.hintUses[seat]);
+    if (!Number.isSafeInteger(cost) || cost <= 0 || cost >= s.hp[seat]) return false;
+    s.hp[seat] -= cost;
+    s.hintUses[seat] += 1;
+    s.hintLevels[seat] += 1;
+    return true;
   }
 
   commit(seat: Seat, matchId: string, round: number, hash: string, now: number): boolean {
