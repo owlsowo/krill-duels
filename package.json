@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc --noEmit && vite build",
-    "test": "vitest run",
+    "build": "npm run catalog:check && tsc --noEmit && vite build",
+    "test": "npm run catalog:check && vitest run",
     "preview": "vite preview --host 127.0.0.1",
     "start": "wrangler dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
-    "build:site": "tsc --noEmit && vite build --mode https --outDir dist/client && vite build --config vite.server.config.ts && node scripts/build-metadata.mjs"
+    "build:site": "npm run catalog:check && tsc --noEmit && vite build --mode https --outDir dist/client && vite build --config vite.server.config.ts && node scripts/build-metadata.mjs",
+    "catalog:fetch": "node scripts/build-curated.mjs --fetch",
+    "catalog:build": "node scripts/build-curated.mjs",
+    "catalog:check": "node scripts/build-curated.mjs --check"
   },
   "dependencies": {
     "@fontsource-variable/space-grotesk": "5.3.0",

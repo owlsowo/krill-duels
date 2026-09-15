@@ -1,0 +1,1480 @@
+{
+  "schemaVersion": 1,
+  "version": "reviewed-2026-09-15.1",
+  "reviewedAt": "2026-09-15",
+  "scope": "A versioned overlay for identified archive defects. The raw catalog and data-provenance.json remain unchanged. This is not a claim that every historical answer or rarity tier has been fact-checked.",
+  "scorePolicy": "Retain historical scores unless a documented duplicate-entity or indistinguishable-label merge requires one score. For a merged answer use the lower recorded score, avoiding a spelling or historical-name bonus. These are reviewed game-design choices, not measured popularity estimates.",
+  "corrections": [
+    {
+      "promptId": "archive-name-a-famous-museum",
+      "rules": "Equivalent spellings and indistinguishable museum-name labels share one score. Historical rarity tiers otherwise remain unchanged.",
+      "removals": [],
+      "merges": [
+        {
+          "canonical": "Musée d'Orsay",
+          "members": [
+            {
+              "answer": "Musee d'Orsay",
+              "score": 60
+            },
+            {
+              "answer": "Musée d'Orsay",
+              "score": 30
+            }
+          ],
+          "score": 30,
+          "entityId": "museum:musee-d-orsay",
+          "reason": "The accent variants name one museum. Keep the official accented name and the lower recorded score, 30; the unaccented name becomes an alias.",
+          "sources": [
+            "https://www.musee-orsay.fr/en"
+          ]
+        },
+        {
+          "canonical": "Museo Nacional de Antropología",
+          "members": [
+            {
+              "answer": "Museo Nacional de Antropologia",
+              "score": 85
+            },
+            {
+              "answer": "Museo Nacional de Antropología",
+              "score": 60
+            }
+          ],
+          "score": 60,
+          "entityId": "label:museo-nacional-de-antropologia",
+          "reason": "The archive supplies no location and these accent variants normalize to an indistinguishable answer label. Museums in Mexico City and Madrid both use this name, so the source does not establish which institution was intended. Merge the labels at the conservative lower recorded score, 60, without inferring a city-specific identity; an accent must not change the accepted points.",
+          "sources": [
+            "https://mna.inah.gob.mx/",
+            "https://www.cultura.gob.es/mnantropologia/museo/museo.html"
+          ]
+        }
+      ],
+      "sources": [
+        "https://krillionanswers.com/questions/name-a-famous-museum/",
+        "https://www.musee-orsay.fr/en",
+        "https://mna.inah.gob.mx/",
+        "https://www.cultura.gob.es/mnantropologia/museo/museo.html"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-gas",
+      "rules": "Name a chemical element that is gaseous at 20°C and standard atmospheric pressure. Element names and their historical synonyms count; compounds, product names and separately named allotropes do not.",
+      "removals": [
+        {
+          "answer": "Acetylene",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Ethylene",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Freon",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Nitric oxide",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Nitrogen dioxide",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Phosgene",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Sulfur hexafluoride",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Hydrogen sulfide",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Mustard gas",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Nitrous oxide",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Ozone",
+          "score": 60,
+          "reason": "An oxygen allotrope, not a distinct chemical element name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Sulfur dioxide",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Water vapor",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Ammonia",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Butane",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Carbon monoxide",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Methane",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Propane",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        },
+        {
+          "answer": "Carbon dioxide",
+          "score": 10,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ]
+        }
+      ],
+      "merges": [
+        {
+          "canonical": "Radon",
+          "members": [
+            {
+              "answer": "Radium emanation",
+              "score": 100
+            },
+            {
+              "answer": "Radon",
+              "score": 85
+            }
+          ],
+          "score": 85,
+          "entityId": "element:86",
+          "reason": "Radium emanation is a historical name for radon. Keep the existing canonical Radon score, 85, for both names.",
+          "sources": [
+            "https://periodic-table.rsc.org/element/86/"
+          ]
+        }
+      ],
+      "answerReviews": [
+        {
+          "answer": "Radium emanation",
+          "decision": "merge",
+          "canonical": "Radon",
+          "reason": "Historical name for radon; not a separately scored chemical element.",
+          "sources": [
+            "https://periodic-table.rsc.org/element/86/"
+          ]
+        },
+        {
+          "answer": "Acetylene",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Ethylene",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Freon",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Nitric oxide",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Nitrogen dioxide",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Phosgene",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Sulfur hexafluoride",
+          "score": 85,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Fluorine",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/9/fluorine"
+          ]
+        },
+        {
+          "answer": "Radon",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/86/radon"
+          ]
+        },
+        {
+          "answer": "Hydrogen sulfide",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Krypton",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/36/krypton"
+          ]
+        },
+        {
+          "answer": "Mustard gas",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Nitrous oxide",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Ozone",
+          "score": 60,
+          "reason": "An oxygen allotrope, not a distinct chemical element name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Sulfur dioxide",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Water vapor",
+          "score": 60,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Xenon",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/54/xenon"
+          ]
+        },
+        {
+          "answer": "Argon",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/18/argon"
+          ]
+        },
+        {
+          "answer": "Ammonia",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Butane",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Carbon monoxide",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Chlorine",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/17/chlorine"
+          ]
+        },
+        {
+          "answer": "Methane",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Neon",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/10/neon"
+          ]
+        },
+        {
+          "answer": "Propane",
+          "score": 30,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Hydrogen",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/1/hydrogen"
+          ]
+        },
+        {
+          "answer": "Nitrogen",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/7/nitrogen"
+          ]
+        },
+        {
+          "answer": "Carbon dioxide",
+          "score": 10,
+          "reason": "Not a chemical element name; the displayed question requires an element, not a compound or product name.",
+          "sources": [
+            "https://periodic-table.rsc.org/"
+          ],
+          "decision": "remove"
+        },
+        {
+          "answer": "Helium",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/2/helium"
+          ]
+        },
+        {
+          "answer": "Oxygen",
+          "decision": "retain",
+          "classification": "chemical element; state at 20 degrees Celsius: gas",
+          "sources": [
+            "https://periodic-table.rsc.org/element/8/oxygen"
+          ]
+        }
+      ],
+      "sources": [
+        "https://krillionanswers.com/questions/name-a-gas/",
+        "https://periodic-table.rsc.org/"
+      ]
+    },
+    {
+      "promptId": "archive-name-a-bird-that-cannot-fly",
+      "originalPrompt": "Name a living bird that cannot fly",
+      "prompt": "Name a flightless or weak-flying wild bird (living or extinct)",
+      "rules": "Wild bird species, named subspecies and established groups with flightless or weak-flying mature adults count, including extinct forms and wild species held in captivity. A group answer does not require every member to be flightless. Domestic breeds are outside this question.",
+      "reason": "The archive mixes extinct forms, weak flyers, flightless adults and groups with mixed flight ability. State that broader supported scope explicitly rather than asserting every row is a living bird incapable of any flight.",
+      "removals": [
+        {
+          "answer": "Chicken",
+          "score": 15,
+          "reason": "Domestic chickens can fly briefly; domestic breeds are outside the clarified wild-bird scope.",
+          "sources": [
+            "https://howthingsfly.si.edu/ask-an-explainer/why-cant-chickens-fly"
+          ]
+        }
+      ],
+      "merges": [],
+      "answerReviews": [
+        {
+          "answer": "Stephens Island wren",
+          "decision": "retain",
+          "scientificName": "Traversia lyalli",
+          "datasetFile": "DataFileS1.xlsx",
+          "row": 511,
+          "classification": "Flightless",
+          "recordedStatus": "EX",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Inaccessible Island rail",
+          "decision": "retain",
+          "scientificName": "Atlantisia rogersi",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2716,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Auckland teal",
+          "decision": "retain",
+          "scientificName": "Anas aucklandica",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 344,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Campbell teal",
+          "decision": "retain",
+          "scientificName": "Anas nesiotis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 348,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Elephant bird",
+          "decision": "retain",
+          "scientificName": "Aepyornis maximus",
+          "datasetFile": "DataFileS1.xlsx",
+          "row": 49,
+          "classification": "Flightless",
+          "recordedStatus": "EX",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        },
+        {
+          "answer": "Flightless cormorant",
+          "decision": "retain",
+          "scientificName": "Nannopterum harrisi",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10880,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Fuegian steamer duck",
+          "decision": "retain",
+          "scientificName": "Tachyeres pteneres",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 276,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Great auk",
+          "decision": "retain",
+          "scientificName": "Pinguinus impennis",
+          "datasetFile": "DataFileS1.xlsx",
+          "row": 400,
+          "classification": "Flightless",
+          "recordedStatus": "EX",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Guam rail",
+          "decision": "retain",
+          "scientificName": "Hypotaenidia owstoni",
+          "datasetFile": "DataFileS1.xlsx",
+          "row": 283,
+          "classification": "Flightless",
+          "recordedStatus": "EW",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://www.fws.gov/species/guam-rail-rallus-owstoni"
+          ],
+          "note": "The research recorded extinct-in-the-wild status, which does not mean the species is extinct. Wild species in captivity remain eligible."
+        },
+        {
+          "answer": "Invisible rail",
+          "decision": "retain",
+          "scientificName": "Habroptila wallacii",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2664,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Junin grebe",
+          "decision": "retain",
+          "scientificName": "Podiceps taczanowskii",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 9977,
+          "classification": "Flightless",
+          "recordedStatus": "CR",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Kagu",
+          "decision": "retain",
+          "scientificName": "Rhynochetos jubatus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2185,
+          "classification": "Weak flyer",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Takahe",
+          "decision": "retain",
+          "scientificName": "Porphyrio hochstetteri",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2676,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Tasmanian native hen",
+          "decision": "retain",
+          "scientificName": "Tribonyx mortierii",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2596,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Titicaca grebe",
+          "decision": "retain",
+          "scientificName": "Rollandia microptera",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 9978,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Weka",
+          "decision": "retain",
+          "scientificName": "Gallirallus australis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2667,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Aldabra rail",
+          "decision": "retain",
+          "scientificName": "Dryolimnas cuvieri",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2657,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://pmc.ncbi.nlm.nih.gov/articles/PMC6927662/"
+          ],
+          "note": "The name specifically identifies the flightless Aldabra form, Dryolimnas cuvieri aldabranus, not all white-throated rails."
+        },
+        {
+          "answer": "Calayan rail",
+          "decision": "retain",
+          "scientificName": "Gallirallus calayanensis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2715,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Chubut steamer duck",
+          "decision": "retain",
+          "scientificName": "Tachyeres leucocephalus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 259,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Dwarf cassowary",
+          "decision": "retain",
+          "scientificName": "Casuarius bennetti",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10813,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Erect-crested penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes sclateri",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10569,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Falkland steamer duck",
+          "decision": "retain",
+          "scientificName": "Tachyeres brachypterus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 349,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://pmc.ncbi.nlm.nih.gov/articles/PMC3350674/"
+          ],
+          "note": "Classified as flightless in the research dataset; some research describes mixed flight capability. Eligible under the weak-flying scope."
+        },
+        {
+          "answer": "Fiordland penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes pachyrhynchus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10558,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Giant coot",
+          "decision": "retain",
+          "scientificName": "Fulica gigantea",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2594,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Flightlessness refers to mature adults; the scope does not require juveniles to be flightless."
+        },
+        {
+          "answer": "Gough Island moorhen",
+          "decision": "retain",
+          "scientificName": "Gallinula comeri",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2719,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Henderson crake",
+          "decision": "retain",
+          "scientificName": "Zapornia atra",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2710,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Lesser rhea",
+          "decision": "retain",
+          "scientificName": "Rhea pennata",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10818,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Lord Howe woodhen",
+          "decision": "retain",
+          "scientificName": "Hypotaenidia sylvestris",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2653,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Makira woodhen",
+          "decision": "retain",
+          "scientificName": "Pareudiastes silvestris",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2711,
+          "classification": "Flightless",
+          "recordedStatus": "CR",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://tropbiolab.org/JACU/Pubs/Mittermeier_etal_2018.pdf"
+          ],
+          "note": "Conservation status and continued survival are uncertain; the revised scope makes no claim that it is living."
+        },
+        {
+          "answer": "New Guinea flightless rail",
+          "decision": "retain",
+          "scientificName": "Megacrex inepta",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2595,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "North Island brown kiwi",
+          "decision": "retain",
+          "scientificName": "Apteryx mantelli",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10810,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Northern cassowary",
+          "decision": "retain",
+          "scientificName": "Casuarius unappendiculatus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10815,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Northern rockhopper penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes moseleyi",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10571,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Okarito kiwi",
+          "decision": "retain",
+          "scientificName": "Apteryx rowi",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10812,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Pink-legged rail",
+          "decision": "retain",
+          "scientificName": "Hypotaenidia insignis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2636,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=1244204"
+          ],
+          "note": "This is Hypotaenidia insignis (New Britain rail), a different species from Woodford's rail."
+        },
+        {
+          "answer": "Puna rhea",
+          "decision": "retain",
+          "scientificName": "Rhea tarapacensis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10819,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://forums.birdlife.org/wp-content/uploads/2022/04/Red_List_status_changes_2014.pdf"
+          ],
+          "note": "Kept as a named taxon: the source treats Rhea tarapacensis separately, while some checklists place it within lesser rhea. No spelling-based score conflict: both score 85."
+        },
+        {
+          "answer": "Roviana rail",
+          "decision": "retain",
+          "scientificName": "Hypotaenidia rovianae",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2712,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://sora.unm.edu/sites/default/files/journals/auk/v108n03/p0461-p0470.pdf"
+          ],
+          "note": "Its original description allows either flightless or weak-flying; the revised scope covers both."
+        },
+        {
+          "answer": "Royal penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes schlegeli",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10567,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Snares penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes robustus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10559,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Snoring rail",
+          "decision": "retain",
+          "scientificName": "Aramidopsis plateni",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2714,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Somali ostrich",
+          "decision": "retain",
+          "scientificName": "Struthio molybdophanes",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10821,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Southern brown kiwi",
+          "decision": "retain",
+          "scientificName": "Apteryx australis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10808,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Woodford's rail",
+          "decision": "retain",
+          "scientificName": "Hypotaenidia woodfordi",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 2713,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Yellow-eyed penguin",
+          "decision": "retain",
+          "scientificName": "Megadyptes antipodes",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10568,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Moa",
+          "decision": "retain",
+          "scientificName": "Dinornis robustus",
+          "datasetFile": "DataFileS1.xlsx",
+          "row": 215,
+          "classification": "Flightless",
+          "recordedStatus": "EX",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        },
+        {
+          "answer": "Rhea",
+          "decision": "retain",
+          "scientificName": "Rhea americana",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10817,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        },
+        {
+          "answer": "Steamer duck",
+          "decision": "retain",
+          "scientificName": "Tachyeres pteneres",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 276,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+            "https://academic.oup.com/evolut/article/73/9/1916/6727424"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group.",
+          "note": "Accepted as an established group with flightless members; this does not claim that every species or individual is flightless."
+        },
+        {
+          "answer": "Adelie penguin",
+          "decision": "retain",
+          "scientificName": "Pygoscelis adeliae",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10560,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "African penguin",
+          "decision": "retain",
+          "scientificName": "Spheniscus demersus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10563,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Chinstrap penguin",
+          "decision": "retain",
+          "scientificName": "Pygoscelis antarcticus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10561,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Common ostrich",
+          "decision": "retain",
+          "scientificName": "Struthio camelus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10820,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Galapagos penguin",
+          "decision": "retain",
+          "scientificName": "Spheniscus mendiculus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10566,
+          "classification": "Flightless",
+          "recordedStatus": "EN",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Gentoo penguin",
+          "decision": "retain",
+          "scientificName": "Pygoscelis papua",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10562,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Great spotted kiwi",
+          "decision": "retain",
+          "scientificName": "Apteryx haastii",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10809,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Greater rhea",
+          "decision": "retain",
+          "scientificName": "Rhea americana",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10817,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Humboldt penguin",
+          "decision": "retain",
+          "scientificName": "Spheniscus humboldti",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10564,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Little blue penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptula minor",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10570,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Little spotted kiwi",
+          "decision": "retain",
+          "scientificName": "Apteryx owenii",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10811,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Macaroni penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes chrysolophus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10557,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Magellanic penguin",
+          "decision": "retain",
+          "scientificName": "Spheniscus magellanicus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10565,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Southern cassowary",
+          "decision": "retain",
+          "scientificName": "Casuarius casuarius",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10814,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Southern rockhopper penguin",
+          "decision": "retain",
+          "scientificName": "Eudyptes chrysocome",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10556,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Cassowary",
+          "decision": "retain",
+          "scientificName": "Casuarius casuarius",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10814,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        },
+        {
+          "answer": "Dodo",
+          "decision": "retain",
+          "scientificName": "Raphus cucullatus",
+          "datasetFile": "DataFileS1.xlsx",
+          "row": 473,
+          "classification": "Flightless",
+          "recordedStatus": "EX",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Emu",
+          "decision": "retain",
+          "scientificName": "Dromaius novaehollandiae",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10816,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Kiwi",
+          "decision": "retain",
+          "scientificName": "Apteryx australis",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10808,
+          "classification": "Flightless",
+          "recordedStatus": "VU",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        },
+        {
+          "answer": "Emperor penguin",
+          "decision": "retain",
+          "scientificName": "Aptenodytes forsteri",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10554,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "King penguin",
+          "decision": "retain",
+          "scientificName": "Aptenodytes patagonicus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10555,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Kakapo",
+          "decision": "retain",
+          "scientificName": "Strigops habroptila",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10537,
+          "classification": "Flightless",
+          "recordedStatus": "CR",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ]
+        },
+        {
+          "answer": "Chicken",
+          "decision": "remove",
+          "classification": "domestic bird capable of short flight",
+          "reason": "The reviewed scope is wild bird taxa; a domestic chicken is not categorically flightless.",
+          "sources": [
+            "https://howthingsfly.si.edu/ask-an-explainer/why-cant-chickens-fly"
+          ]
+        },
+        {
+          "answer": "Ostrich",
+          "decision": "retain",
+          "scientificName": "Struthio camelus",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10820,
+          "classification": "Flightless",
+          "recordedStatus": "LC",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        },
+        {
+          "answer": "Penguin",
+          "decision": "retain",
+          "scientificName": "Aptenodytes forsteri",
+          "datasetFile": "DataFileS2.xlsx",
+          "row": 10554,
+          "classification": "Flightless",
+          "recordedStatus": "NT",
+          "sources": [
+            "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66"
+          ],
+          "interpretation": "Established group with flightless members; the scientific name identifies a supporting example, not a synonym for the entire group."
+        }
+      ],
+      "sources": [
+        "https://krillionanswers.com/questions/name-a-bird-that-cannot-fly/",
+        "https://doi.org/10.1126/sciadv.abb6095",
+        "https://datadryad.org/dataset/doi:10.5061/dryad.s1rn8pk66",
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7710364/supplementaryFiles"
+      ],
+      "reviewMethod": "Every original row is recorded below. Scientific names use the taxonomy of Sayol et al. (2020), Data Files S1/S2; row numbers are one-based Excel rows including the header. The historical conservation-status column is evidence context, not a current conservation-status claim. Group entries cite a qualifying species. Borderline flight/living status is covered by explicit scope and supporting references."
+    },
+    {
+      "promptId": "archive-name-a-country-whose-english-name-contains-j-k-or-v",
+      "rules": "Use an English country name containing at least one of the letters J, K or V.",
+      "removals": [
+        {
+          "answer": "Czech Republic",
+          "score": 60,
+          "reason": "The literal English answer contains none of J, K or V. Neither Czech Republic nor Czechia meets the displayed rule.",
+          "sources": [
+            "https://krillionanswers.com/questions/name-a-country-whose-english-name-contains-j-k-or-v/"
+          ]
+        }
+      ],
+      "merges": [],
+      "sources": [
+        "https://krillionanswers.com/questions/name-a-country-whose-english-name-contains-j-k-or-v/"
+      ]
+    }
+  ],
+  "countryAliases": {
+    "canonical": "United States",
+    "aliases": [
+      "USA",
+      "U.S.A.",
+      "US",
+      "U.S.",
+      "United States of America"
+    ],
+    "entityId": "country:USA",
+    "promptIds": [
+      "archive-name-a-country-whose-flag-includes-at-least-one-star",
+      "archive-name-a-country-with-a-coastline",
+      "archive-name-a-country-where-english-is-an-official-language",
+      "archive-name-a-country-that-celebrates-an-independence-day",
+      "archive-name-a-country-that-fought-in-world-war-ii",
+      "archive-name-a-country-that-has-territories-or-dependencies",
+      "archive-name-a-country-where-christianity-is-the-majority-religion",
+      "archive-name-a-country-with-more-than-100-million-people",
+      "archive-name-a-country-that-was-once-part-of-the-british-empire",
+      "archive-name-a-country-bigger-than-mexico-by-area",
+      "archive-name-a-country-that-uses-the-dollar",
+      "archive-name-a-sovereign-country-whose-flag-contains-both-red-and-white",
+      "archive-name-a-team-that-played-in-the-2026-fifa-world-cup",
+      "archive-name-a-country-that-shares-a-land-or-maritime-border-with-russia",
+      "archive-name-a-country-that-has-hosted-the-fifa-world-cup",
+      "archive-name-a-country-whose-flag-uses-all-three-of-red-white-and-blue-and-no-other-colors",
+      "archive-name-a-country-in-the-americas-north-central-or-south"
+    ],
+    "reason": "Explicit identity aliases for the existing United States answer, only in the enumerated factual/entity questions. No country-name spelling/letter questions or substring replacement. Scores remain the existing historical score. This reviews aliases only, not the rest of each question. America is intentionally omitted because it can identify a continent.",
+    "sources": [
+      "https://unstats.un.org/unsd/methodology/m49/overview",
+      "https://www.who.int/data/gho/data/countries/country-details/GHO/united-states-of-america?countryProfileId=5360f948-9917-4b8d-bea3-b3e593d10897"
+    ]
+  }
+}

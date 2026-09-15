@@ -19,13 +19,15 @@ Choose **Solo practice** to play immediately, or **Create duel** to set your rul
 
 ## Questions and provenance
 
-The catalog contains **461 distinct questions and 83,346 scored answers** from [Krillion Answers](https://krillionanswers.com/), retrieved September 15, 2026. It covers every normalized question page in the public archive index and every question URL in its public sitemap, with zero skipped pages. Repeated appearances are deduplicated. This is the complete indexed public archive at retrieval time, **not the original paid Unlimited database**.
+The original archive contains **461 distinct questions and 83,346 scored answers** from [Krillion Answers](https://krillionanswers.com/), retrieved September 15, 2026. It covers every normalized question page in the public archive index and every question URL in its public sitemap, with zero skipped pages. Repeated appearances are deduplicated. This is the complete indexed public archive at retrieval time, **not the original paid Unlimited database**.
+
+The playable bank applies documented corrections to that archive and adds **24 reviewed questions**, for **485 questions** total. New questions use fixed 2025 English Wikipedia readership estimates; historical questions retain their editorial grades. Equivalent reviewed names share a score. The question and answer sheet show which scoring method applies.
 
 Questions cover geography, movies, sports, and general knowledge. Only short question text, canonical answers, and recorded scores/tiers are retained. Suggestions, quips, editorial prose, page code, artwork, and broad search-keyword aliases are excluded. Thirteen public question lists merge multiple appearances; historical scores may differ from the current official game and can contain archive errors.
 
 The game serves its own bundled catalog. It does not access Krillion during gameplay, require a Krillion account, or unlock a paid mode. It does not use Outlier code, assets, or data.
 
-See [DATA_SOURCES.md](DATA_SOURCES.md) and [the detailed provenance](public/data-provenance.json). This fan project is not affiliated with or endorsed by Krillion or Krillion Answers.
+See [DATA_SOURCES.md](DATA_SOURCES.md), [historical provenance](public/data-provenance.json), [reviewed corrections](public/catalog-corrections.json), and [estimated-score provenance](public/curated-provenance.json). [CATALOG_MAINTENANCE.md](CATALOG_MAINTENANCE.md) explains the reviewed input format and offline reproduction workflow. This fan project is not affiliated with or endorsed by Krillion or Krillion Answers.
 
 ## How rooms work
 
