@@ -20,6 +20,9 @@ interface Correction {
 
 const corrections = new Map<string, Correction>(manifest.corrections.map(c => [c.promptId, c]));
 const countryAliasPrompts = new Set(manifest.countryAliases.promptIds);
+const answerAliases = new Map(manifest.answerAliases.map(group => [
+  group.promptId, new Map(group.answers.map(answer => [answer.canonical, answer])),
+]));
 
 function withIdentity(answer: Answer, aliases: string[], entityId: string, score = answer.score): Answer {
   const combined = [...new Set([...answer.aliases, ...aliases])].filter(name => name !== answer.answer);
@@ -35,7 +38,8 @@ export function applyCatalogCorrections(prompts: Prompt[]): Prompt[] {
   return prompts.map(prompt => {
     const correction = corrections.get(prompt.id);
     const addCountryAliases = countryAliasPrompts.has(prompt.id);
-    if (!correction && !addCountryAliases) return prompt;
+    const reviewedAliases = answerAliases.get(prompt.id);
+    if (!correction && !addCountryAliases && !reviewedAliases) return prompt;
 
     let answers = prompt.answers;
     if (correction) {
@@ -56,6 +60,12 @@ export function applyCatalogCorrections(prompts: Prompt[]): Prompt[] {
       const alias = manifest.countryAliases;
       answers = answers.map(answer => answer.answer === alias.canonical
         ? withIdentity(answer, alias.aliases, alias.entityId) : answer);
+    }
+    if (reviewedAliases) {
+      answers = answers.map(answer => {
+        const alias = reviewedAliases.get(answer.answer);
+        return alias ? withIdentity(answer, alias.aliases, alias.entityId) : answer;
+      });
     }
 
     return {

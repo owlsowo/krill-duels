@@ -12,6 +12,7 @@ const gasId = 'archive-name-a-gas';
 const birdId = 'archive-name-a-bird-that-cannot-fly';
 const museumId = 'archive-name-a-famous-museum';
 const countryId = 'archive-name-a-country-whose-english-name-contains-j-k-or-v';
+const shipId = 'archive-name-a-famous-ship-real-or-fictional';
 
 describe('reviewed historical catalog overlay', () => {
   it('is deterministic and idempotent and preserves the raw catalog and untouched objects', () => {
@@ -20,7 +21,11 @@ describe('reviewed historical catalog overlay', () => {
     expect(again).toEqual(corrected);
     expect(applyCatalogCorrections(corrected)).toEqual(corrected);
     expect(JSON.stringify(historical)).toBe(original);
-    const touched = new Set([...manifest.corrections.map(c => c.promptId), ...manifest.countryAliases.promptIds]);
+    const touched = new Set([
+      ...manifest.corrections.map(c => c.promptId),
+      ...manifest.countryAliases.promptIds,
+      ...manifest.answerAliases.map(c => c.promptId),
+    ]);
     for (const prompt of historical) {
       if (!touched.has(prompt.id)) expect(find(prompt.id)).toBe(prompt);
     }
@@ -120,6 +125,87 @@ describe('reviewed historical catalog overlay', () => {
     const [unchanged] = applyCatalogCorrections([spellingQuestion]);
     expect(unchanged).toBe(spellingQuestion);
     expect(new AnswerIndex(unchanged).match('USA')).toBeNull();
+  });
+
+  it('gives every documented answer alias its existing canonical identity and unchanged score', () => {
+    expect(manifest.answerAliases.length).toBeGreaterThan(0);
+    expect(new Set(manifest.answerAliases.map(change => change.promptId)).size).toBe(manifest.answerAliases.length);
+    for (const change of manifest.answerAliases) {
+      const before = find(change.promptId, historical);
+      const after = find(change.promptId);
+      expect(before, change.promptId).toBeDefined();
+      expect(after, change.promptId).toBeDefined();
+      expect(change.answers.length).toBeGreaterThan(0);
+      expect(new Set(change.answers.map(answer => answer.canonical)).size).toBe(change.answers.length);
+      const index = new AnswerIndex(after);
+      for (const entry of change.answers) {
+        const original = before.answers.find(answer => answer.answer === entry.canonical);
+        const canonical = after.answers.find(answer => answer.answer === entry.canonical);
+        expect(original, `${change.promptId}: ${entry.canonical}`).toBeDefined();
+        expect(canonical, `${change.promptId}: ${entry.canonical}`).toBeDefined();
+        expect(canonical!.score).toBe(original!.score);
+        expect(canonical!.entityId).toBe(entry.entityId);
+        expect(entry.entityId.trim()).not.toBe('');
+        expect(entry.reason.trim()).not.toBe('');
+        expect(entry.sources.length).toBeGreaterThan(0);
+        for (const source of entry.sources) expect(new URL(source).protocol).toBe('https:');
+        expect(entry.aliases.length).toBeGreaterThan(0);
+        for (const alias of entry.aliases) {
+          expect(alias.trim()).not.toBe('');
+          expect(index.match(alias), `${change.promptId}: ${alias}`).toBe(canonical);
+          expect(index.match(`  ${alias.toUpperCase()}  `)).toBe(canonical);
+          expect(index.suggest(alias)).toEqual([]);
+        }
+      }
+      if (!manifest.corrections.some(correction => correction.promptId === change.promptId)) {
+        expect(after.answers).toHaveLength(before.answers.length);
+        expect(after.answers.map(answer => [answer.answer, answer.score]))
+          .toEqual(before.answers.map(answer => [answer.answer, answer.score]));
+        expect(after.prompt).toBe(before.prompt);
+        expect(after.scoring).toBe('historical');
+      }
+    }
+  });
+
+  it('accepts documented Ship of Theseus names at the original 15 points without rewriting the archive', () => {
+    const before = find(shipId, historical);
+    const after = find(shipId);
+    const rawAnswer = before.answers.find(answer => answer.answer === "Theseus's ship")!;
+    expect(rawAnswer).toMatchObject({ answer: "Theseus's ship", aliases: [], score: 15 });
+    const index = new AnswerIndex(after);
+    const canonical = index.match("Theseus's ship");
+    expect(canonical).toMatchObject({ answer: "Theseus's ship", score: 15 });
+    for (const name of ['Ship of Theseus', 'The Ship of Theseus', "Theseus' ship", 'Theseus’ ship', '  THE SHIP OF THESEUS  ']) {
+      expect(index.match(name)).toBe(canonical);
+      expect(index.suggest(name)).toEqual([]);
+    }
+    expect(after.scoring).toBe('historical');
+    expect(after.answers).toHaveLength(before.answers.length);
+    expect(rawAnswer.aliases).toEqual([]);
+    expect(new AnswerIndex(before).match('Ship of Theseus')).toBeNull();
+  });
+
+  it('rejects short fragments, unrelated guesses and arbitrary word reordering', () => {
+    const index = new AnswerIndex(find(shipId));
+    for (const guess of ['Theseus', 'Ship', 'Ship of Perseus', 'ship Theseus of', 'of Theseus ship']) {
+      expect(index.match(guess), guess).toBeNull();
+      expect(index.suggest(guess), guess).toEqual([]);
+    }
+  });
+
+  it('keeps ship aliases local so they do not bypass another question’s name or letter rule', () => {
+    const spellingQuestion: Prompt = {
+      id: 'unreviewed-ship-spelling-question', category: 'Test', prompt: 'Name a ship whose English name begins with T',
+      source: 'https://example.org', answers: [{ answer: "Theseus's ship", aliases: [], score: 15 }],
+    };
+    const [unchanged] = applyCatalogCorrections([spellingQuestion]);
+    expect(unchanged).toBe(spellingQuestion);
+    const index = new AnswerIndex(unchanged);
+    expect(index.match("Theseus's ship")?.score).toBe(15);
+    expect(index.match('Ship of Theseus')).toBeNull();
+    expect(index.match('The Ship of Theseus')).toBeNull();
+    expect(index.match("Theseus' ship")).toBeNull();
+    expect(index.match('ship Theseus of')).toBeNull();
   });
 
   it('matches the public removal, merge, score, source and version record exactly', () => {

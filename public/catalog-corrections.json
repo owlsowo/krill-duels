@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "reviewed-2026-09-15.1",
+  "version": "reviewed-2026-09-15.2",
   "reviewedAt": "2026-09-15",
   "scope": "A versioned overlay for identified archive defects. The raw catalog and data-provenance.json remain unchanged. This is not a claim that every historical answer or rarity tier has been fact-checked.",
   "scorePolicy": "Retain historical scores unless a documented duplicate-entity or indistinguishable-label merge requires one score. For a merged answer use the lower recorded score, avoiding a spelling or historical-name bonus. These are reviewed game-design choices, not measured popularity estimates.",
@@ -1476,5 +1476,80 @@
       "https://unstats.un.org/unsd/methodology/m49/overview",
       "https://www.who.int/data/gho/data/countries/country-details/GHO/united-states-of-america?countryProfileId=5360f948-9917-4b8d-bea3-b3e593d10897"
     ]
-  }
+  },
+  "answerAliases": [
+    {
+      "promptId": "archive-name-a-famous-ship-real-or-fictional",
+      "answers": [
+        {
+          "canonical": "Theseus's ship",
+          "aliases": [
+            "Ship of Theseus",
+            "Theseus' ship"
+          ],
+          "entityId": "ship:theseus",
+          "reason": "The established Ship of Theseus name and the alternate possessive spelling identify the existing answer. Retain its historical score of 15.",
+          "sources": [
+            "https://plato.stanford.edu/entries/identity-relative/"
+          ]
+        },
+        {
+          "canonical": "QE2",
+          "aliases": [
+            "Queen Elizabeth 2"
+          ],
+          "entityId": "ship:qe2",
+          "reason": "The ship’s official operator uses QE2 and Queen Elizabeth 2 for the same vessel. The numeral is required to distinguish other ships. Retain the existing historical score.",
+          "sources": [
+            "https://www.qe2.com/"
+          ]
+        },
+        {
+          "canonical": "USS Constitution",
+          "aliases": [
+            "Constitution",
+            "Old Ironsides"
+          ],
+          "entityId": "ship:uss-constitution",
+          "reason": "The US Navy identifies Constitution as the vessel and Old Ironsides as its established nickname. Retain the existing historical score.",
+          "sources": [
+            "https://www.history.navy.mil/browse-by-topic/ships/original-frigates/uss-constitution-americas-ship-of-state/background-for-media/brief-history.html"
+          ]
+        },
+        {
+          "canonical": "Graf Spee",
+          "aliases": [
+            "Admiral Graf Spee"
+          ],
+          "entityId": "ship:admiral-graf-spee",
+          "reason": "Imperial War Museums uses both Admiral Graf Spee and Graf Spee for the same ship. Retain the existing historical score.",
+          "sources": [
+            "https://www.iwm.org.uk/sites/default/files/files/2023-10/spies_large_print_guide.pdf"
+          ]
+        },
+        {
+          "canonical": "Titanic",
+          "aliases": [
+            "RMS Titanic"
+          ],
+          "entityId": "ship:titanic",
+          "reason": "Royal Museums Greenwich identifies Titanic using its RMS prefix. Retain the existing historical score.",
+          "sources": [
+            "https://www.rmg.co.uk/collections/research-guides/research-guide-d-rms-titanic"
+          ]
+        },
+        {
+          "canonical": "Bounty",
+          "aliases": [
+            "HMS Bounty"
+          ],
+          "entityId": "ship:bounty",
+          "reason": "Royal Museums Greenwich records the vessel as HMS Bounty. Retain the existing historical score.",
+          "sources": [
+            "https://www.rmg.co.uk/collections/objects/rmgc-object-63871"
+          ]
+        }
+      ]
+    }
+  ]
 }
