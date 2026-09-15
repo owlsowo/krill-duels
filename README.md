@@ -19,11 +19,15 @@ Choose **Solo practice** to play immediately, or **Create duel** to set your rul
 - **Spelling suggestions:** an unrecognized answer can offer up to three close spellings from the current question. Select a suggestion, then press **Lock in** to confirm; the timer keeps running. For example, `alluminum` can suggest `Aluminum` (or `Aluminium` when that is the archive spelling). Suggestions run locally, handle small typos and adjacent letter swaps, and do not change scoring or automatically submit an answer. Very short or unrelated guesses receive no suggestions.
 - **Solo practice** uses the selected timer, tracks total points, and shows answer scores immediately. Skip or time out for zero points, then advance when ready. Complete the bank without repeats, or return to setup whenever you like; no room or live connection is required after the site loads.
 
-### Context hints
+### Answer hints
 
-**Every playable question** has three authored context hints that become more specific as you reveal them. The Hint button sits directly below the question in both solo and duels, with the next cost beneath it. Hints explain the subject and give memory cues without printing accepted answer names. They are bundled with the game, so using a hint makes no request to an external content service.
+**Every playable question** has three spelling hints pointing to one accepted answer. The first shows word lengths and roughly 40% of the letters; the second reveals roughly 70%; the third leaves only one character to fill in. All three guide the same answer, so each purchase adds usable information. For example, one film clue progresses from `Bo____ Ro____` to `Bott__ Rock__` to `Bottl_ Rocket`. You can still submit any accepted answer.
+
+The Hint button sits directly below the question in both solo and duels, with the next cost beneath it. The selected answer's score is visible before you buy. Targets score 30 or 60 points; hints do not steer players to 85- or 100-point jackpots. This score is the existing catalog score, not a bonus. Letter clues are bundled with the game and work offline. Only purchased letters enter the visible page, accessibility text, and agent status.
 
 In a duel, each player's first hint costs **5% of starting HP**, their second costs **10%**, their third **15%**, and so on, rounded up to whole HP. At 300 starting HP, the first three purchases cost **15, 30, and 45 HP**. The button shows the next price, and a purchase must leave you with at least 1 HP. Each new question starts at hint one, but your purchase count—and therefore the next price—continues through the match. **Play again** resets the price. Solo hints are free.
+
+Hints can help recover an answer but are not always profitable: buying all three initially costs 90 HP. Compare the shown score and next price, especially later in the match. Independent rare answers retain their scoring advantage.
 
 ## Questions and provenance
 

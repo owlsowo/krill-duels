@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import context from '../data/prompt-hints.json';
 import { PROMPTS, promptById } from '../src/data';
 import { PracticeSession } from '../src/practice';
-import { DuelEngine } from '../src/duel-engine';
+import { DuelEngine, scoreAnswer } from '../src/duel-engine';
 import { normalize } from '../src/match';
-import { getPromptHints, hintCost } from '../src/hints';
+import { answerPatterns, getHintGuide, getPromptHints, hintCost } from '../src/hints';
 import { hintMarkup } from '../src/hint-display';
 
-describe('reviewed context hints', () => {
+describe('actionable answer hints', () => {
   it('covers the entire playable bank with three hints, without missing or obsolete IDs', () => {
     expect(context.questions.map(q => q.promptId).sort()).toEqual(PROMPTS.map(q => q.id).sort());
     for (const prompt of PROMPTS) expect(getPromptHints(prompt.id), prompt.id).toHaveLength(3);
@@ -38,37 +38,56 @@ describe('reviewed context hints', () => {
     }
   });
 
-  it('has three distinct, sourced hints for known questions', () => {
+  it('guides every question toward a valid mid-scoring answer rather than an obscure jackpot', () => {
     expect(new Set(context.questions.map(q => q.promptId)).size).toBe(context.questions.length);
     expect(context.reviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     for (const item of context.questions) {
-      expect(promptById(item.promptId), item.promptId).toBeTruthy();
-      expect(item.hints).toHaveLength(3);
-      expect(new Set(item.hints).size).toBe(3);
-      for (const hint of item.hints) {
-        expect(hint.trim().length).toBeGreaterThan(20);
-        expect(hint.length).toBeLessThanOrEqual(230);
-      }
-      expect(item.sources.length).toBeGreaterThan(0);
-      for (const source of item.sources) expect(new URL(source).protocol).toBe('https:');
+      const prompt = promptById(item.promptId)!;
+      const guide = getHintGuide(item.promptId)!;
+      const result = scoreAnswer(item.promptId, item.target);
+      expect(result.answer, item.promptId).toBe(item.target);
+      expect(result.points, item.promptId).toBe(guide.score);
+      expect(guide.score, item.promptId).toBeGreaterThanOrEqual(30);
+      expect(guide.score, item.promptId).toBeLessThanOrEqual(60);
+      expect(normalize(prompt.prompt).includes(normalize(item.target)), item.promptId).toBe(false);
+      expect(new Set(guide.patterns).size, item.promptId).toBe(3);
     }
   });
 
-  it('does not name accepted answers or aliases in any hint', () => {
+  it('adds correct letters to the same answer at every level, ending with just one missing character', () => {
     for (const item of context.questions) {
-      const prompt = promptById(item.promptId)!;
-      const question = ` ${normalize(prompt.prompt)} `;
-      const hints = item.hints.map(hint => ` ${normalize(hint)} `);
-      for (const answer of prompt.answers) {
-        for (const name of [answer.answer, ...answer.aliases]) {
-          const key = normalize(name);
-          // A title already present in the question (e.g. Harry Potter) isn't
-          // newly disclosed. Single-character names still need editorial review.
-          if (key.length < 2 || question.includes(` ${key} `)) continue;
-          expect(hints.some(hint => hint.includes(` ${key} `)), `${item.promptId}: ${name}`).toBe(false);
+      const answer = Array.from(item.target.normalize('NFC'));
+      const guide = getHintGuide(item.promptId)!;
+      let previous: string[] | null = null;
+      let blanks = answer.filter(character => /[\p{L}\p{N}]/u.test(character)).length;
+      for (const pattern of guide.patterns) {
+        const characters = Array.from(pattern);
+        expect(characters.length, item.promptId).toBe(answer.length);
+        const remaining = characters.filter(character => character === '_').length;
+        expect(remaining, item.promptId).toBeLessThan(blanks);
+        expect(remaining, item.promptId).toBeGreaterThan(0);
+        for (let i = 0; i < answer.length; i++) {
+          if (characters[i] !== '_') expect(characters[i], item.promptId).toBe(answer[i]);
+          if (previous && previous[i] !== '_') expect(characters[i], item.promptId).toBe(previous[i]);
+          if (!/[\p{L}\p{N}]/u.test(answer[i])) expect(characters[i], item.promptId).toBe(answer[i]);
         }
+        previous = characters;
+        blanks = remaining;
       }
+      expect(blanks, item.promptId).toBe(1);
     }
+  });
+
+  it('handles accents, digits, apostrophes and short answers without giving away the whole target', () => {
+    for (const answer of ['Café', 'Björk', '24K Magic', "A Bug’s Life", '東京大学', 'BOTTLE ROCKET']) {
+      const patterns = answerPatterns(answer);
+      expect(new Set(patterns).size).toBe(3);
+      expect(patterns[2].match(/_/g)).toHaveLength(1);
+      expect(patterns[2]).not.toBe(answer);
+    }
+    expect(answerPatterns('Cafe\u0301')).toEqual(answerPatterns('Café'));
+    expect(answerPatterns('42')).toEqual([]);
+    expect(answerPatterns('')).toEqual([]);
   });
 
   it('charges another 5% of starting HP per use, rounding damage upward', () => {
@@ -79,15 +98,17 @@ describe('reviewed context hints', () => {
 
   it('only renders unlocked hints, with the next cost beneath the button', () => {
     const id = 'archive-name-a-film-directed-by-wes-anderson';
-    const hints = getPromptHints(id);
+    const guide = getHintGuide(id)!;
     const initial = hintMarkup(id, 0, { cost: 15, hp: 300 });
     expect(initial).toContain('</button><small id="hint-cost">Next hint: 15 HP damage</small>');
-    for (const hint of hints) expect(initial).not.toContain(hint);
+    expect(initial).toContain(`${guide.score}-point answer`);
+    expect(initial).not.toContain('class="hint-pattern"');
     const next = hintMarkup(id, 1, { cost: 30, hp: 285 });
-    expect(next).toContain('Better hint');
-    expect(next).toContain(hints[0]);
-    expect(next).not.toContain(hints[1]);
-    expect(next).not.toContain(hints[2]);
+    expect(next).toContain('More letters');
+    for (const word of guide.patterns[0].split(' ')) expect(next).toContain(`>${word}</span>`);
+    expect(next).not.toContain('Bottle Rocket');
+    expect(next).not.toContain('Bottl_');
+    expect(next).not.toContain('Rock__');
     const done = hintMarkup(id, 3, { cost: 60, hp: 210 });
     expect(done).toContain('disabled>All hints shown');
     expect(done).not.toContain('60 HP');
