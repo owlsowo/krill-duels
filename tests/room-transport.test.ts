@@ -1,4 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest';
+// This checks build-mode routing, independent of network behavior and the large
+// catalog. The transport suites exercise those implementations separately.
+vi.mock('../src/http-room', () => ({ DuelRoom: class HttpRoom {}, roomFromHash: () => null }));
+vi.mock('../src/network', () => ({ DuelRoom: class PeerRoom {} }));
 afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 it('keeps GitHub Pages on the existing browser room transport', async () => {
   vi.stubEnv('MODE', 'production'); vi.resetModules();

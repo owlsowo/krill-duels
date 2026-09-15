@@ -1,6 +1,10 @@
 import catalog from './catalog.json';
+import curated from './curated.json';
+import { applyCatalogCorrections } from './catalog-corrections';
 import type { Prompt } from './types';
-export const PROMPTS: Prompt[] = catalog;
+export const ARCHIVE_PROMPTS: Prompt[] = applyCatalogCorrections(catalog);
+export const CURATED_PROMPTS: Prompt[] = curated as Prompt[];
+export const PROMPTS: Prompt[] = [...ARCHIVE_PROMPTS, ...CURATED_PROMPTS];
 export const PROMPT_IDS = PROMPTS.map(p => p.id);
 export const promptById = (id: string): Prompt | undefined => PROMPTS.find(p => p.id === id);
 // Same bytes on both browsers: mixed releases are rejected before a room can start.
