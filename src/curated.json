@@ -1152,7 +1152,9 @@
         "aliases": [
           "UK",
           "Great Britain",
-          "Britain"
+          "Britain",
+          "U.K.",
+          "United Kingdom of Great Britain and Northern Ireland"
         ],
         "entityId": "Q145",
         "score": 10
@@ -1162,7 +1164,9 @@
         "aliases": [
           "USA",
           "US",
-          "United States of America"
+          "United States of America",
+          "U.S.",
+          "U.S.A."
         ],
         "entityId": "Q30",
         "score": 10

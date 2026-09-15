@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "reviewed-2026-09-15.2",
+  "version": "reviewed-2026-09-15.3",
   "reviewedAt": "2026-09-15",
   "scope": "A versioned overlay for identified archive defects. The raw catalog and data-provenance.json remain unchanged. This is not a claim that every historical answer or rarity tier has been fact-checked.",
   "scorePolicy": "Retain historical scores unless a documented duplicate-entity or indistinguishable-label merge requires one score. For a merged answer use the lower recorded score, avoiding a spelling or historical-name bonus. These are reviewed game-design choices, not measured popularity estimates.",
@@ -1547,6 +1547,2991 @@
           "reason": "Royal Museums Greenwich records the vessel as HMS Bounty. Retain the existing historical score.",
           "sources": [
             "https://www.rmg.co.uk/collections/objects/rmgc-object-63871"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-whose-national-flag-has-exactly-two-colors",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-in-africa",
+      "answers": [
+        {
+          "canonical": "Cabo Verde",
+          "aliases": [
+            "Cape Verde"
+          ],
+          "entityId": "Q1011",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://unstats.un.org/unsd/methodology/m49/"
+          ]
+        },
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Ivory Coast",
+          "aliases": [
+            "Côte d’Ivoire"
+          ],
+          "entityId": "Q1008",
+          "reason": "Established alternative country name.",
+          "sources": [
+            "https://unstats.un.org/unsd/methodology/m49/",
+            "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1184338/Ivory_Coast_factfile.pdf"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-in-oceania",
+      "answers": [
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-in-asia",
+      "answers": [
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        },
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "South Korea",
+          "aliases": [
+            "Republic of Korea"
+          ],
+          "entityId": "Q884",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-modern-country-that-alexander-the-great-s-empire-reached",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-in-eastern-europe",
+      "answers": [
+        {
+          "canonical": "Czech Republic",
+          "aliases": [
+            "Czechia"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-whose-flag-includes-at-least-one-star",
+      "answers": [
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        },
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-island-country",
+      "answers": [
+        {
+          "canonical": "Cabo Verde",
+          "aliases": [
+            "Cape Verde"
+          ],
+          "entityId": "Q1011",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://unstats.un.org/unsd/methodology/m49/"
+          ]
+        },
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-shares-a-land-border-with-germany",
+      "answers": [
+        {
+          "canonical": "Czechia",
+          "aliases": [
+            "Czech Republic"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-a-coastline",
+      "answers": [
+        {
+          "canonical": "Ivory Coast",
+          "aliases": [
+            "Côte d’Ivoire"
+          ],
+          "entityId": "Q1008",
+          "reason": "Established alternative country name.",
+          "sources": [
+            "https://unstats.un.org/unsd/methodology/m49/",
+            "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1184338/Ivory_Coast_factfile.pdf"
+          ]
+        },
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "South Korea",
+          "aliases": [
+            "Republic of Korea"
+          ],
+          "entityId": "Q884",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-where-english-is-an-official-language",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-european-country",
+      "answers": [
+        {
+          "canonical": "Czech Republic",
+          "aliases": [
+            "Czechia"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        },
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-celebrates-an-independence-day",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Ivory Coast",
+          "aliases": [
+            "Côte d’Ivoire"
+          ],
+          "entityId": "Q1008",
+          "reason": "Established alternative country name.",
+          "sources": [
+            "https://unstats.un.org/unsd/methodology/m49/",
+            "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1184338/Ivory_Coast_factfile.pdf"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "Czech Republic",
+          "aliases": [
+            "Czechia"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        },
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "South Korea",
+          "aliases": [
+            "Republic of Korea"
+          ],
+          "entityId": "Q884",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-fought-in-world-war-ii",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "Soviet Union",
+          "aliases": [
+            "USSR",
+            "U.S.S.R.",
+            "Union of Soviet Socialist Republics"
+          ],
+          "entityId": "Q15180",
+          "reason": "Formal historical state name and abbreviation.",
+          "sources": [
+            "https://history.state.gov/countries/soviet-union"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-smaller-than-belgium-by-area",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-was-an-ally-of-the-soviet-union-during-the-cold-war",
+      "answers": [
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-has-territories-or-dependencies",
+      "answers": [
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-an-official-state-religion",
+      "answers": [
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-borders-more-than-five-other-countries",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-or-territory-with-the-union-jack-on-its-flag",
+      "answers": [
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-famous-museum",
+      "answers": [
+        {
+          "canonical": "Victoria and Albert Museum",
+          "aliases": [
+            "V&A",
+            "V&A Museum"
+          ],
+          "entityId": "Q213322",
+          "reason": "Institution’s official abbreviation.",
+          "sources": [
+            "https://www.vam.ac.uk/info/privacy-notice",
+            "https://www.vam.ac.uk/articles/building-the-museum"
+          ]
+        },
+        {
+          "canonical": "MoMA",
+          "aliases": [
+            "Museum of Modern Art"
+          ],
+          "entityId": "Q188740",
+          "reason": "Institution’s official full name.",
+          "sources": [
+            "https://www.moma.org/about/mission-statement/"
+          ]
+        },
+        {
+          "canonical": "The Met",
+          "aliases": [
+            "Metropolitan Museum of Art"
+          ],
+          "entityId": "Q160236",
+          "reason": "Institution’s official full name.",
+          "sources": [
+            "https://www.metmuseum.org/about-the-met"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-where-christianity-is-the-majority-religion",
+      "answers": [
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-more-than-100-million-people",
+      "answers": [
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-a-crescent-on-its-flag",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-was-once-part-of-the-british-empire",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-a-coastline-on-the-indian-ocean",
+      "answers": [
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-bigger-than-mexico-by-area",
+      "answers": [
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-sovereign-country-whose-flag-contains-both-red-and-white",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "Czechia",
+          "aliases": [
+            "Czech Republic"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        },
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "South Korea",
+          "aliases": [
+            "Republic of Korea"
+          ],
+          "entityId": "Q884",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-team-that-played-in-the-2026-fifa-world-cup",
+      "answers": [
+        {
+          "canonical": "Czechia",
+          "aliases": [
+            "Czech Republic"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        },
+        {
+          "canonical": "Ivory Coast",
+          "aliases": [
+            "Côte d’Ivoire"
+          ],
+          "entityId": "Q1008",
+          "reason": "Established alternative country name.",
+          "sources": [
+            "https://unstats.un.org/unsd/methodology/m49/",
+            "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1184338/Ivory_Coast_factfile.pdf"
+          ]
+        },
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "South Korea",
+          "aliases": [
+            "Republic of Korea"
+          ],
+          "entityId": "Q884",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-shares-a-land-or-maritime-border-with-russia",
+      "answers": [
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-no-longer-exists",
+      "answers": [
+        {
+          "canonical": "Soviet Union",
+          "aliases": [
+            "USSR",
+            "U.S.S.R.",
+            "Union of Soviet Socialist Republics"
+          ],
+          "entityId": "Q15180",
+          "reason": "Formal historical state name and abbreviation.",
+          "sources": [
+            "https://history.state.gov/countries/soviet-union"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-has-hosted-the-fifa-world-cup",
+      "answers": [
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "South Korea",
+          "aliases": [
+            "Republic of Korea"
+          ],
+          "entityId": "Q884",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-in-the-middle-east",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-a-monarchy",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "United Arab Emirates",
+          "aliases": [
+            "UAE",
+            "U.A.E."
+          ],
+          "entityId": "Q878",
+          "reason": "Officially used abbreviation.",
+          "sources": [
+            "https://u.ae/en/about-the-uae/the-seven-emirates"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-in-the-european-union",
+      "answers": [
+        {
+          "canonical": "Czechia",
+          "aliases": [
+            "Czech Republic"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-whose-flag-uses-all-three-of-red-white-and-blue-and-no-other-colors",
+      "answers": [
+        {
+          "canonical": "North Korea",
+          "aliases": [
+            "Democratic People's Republic of Korea",
+            "DPRK"
+          ],
+          "entityId": "Q423",
+          "reason": "Official state title and abbreviation.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/world/north-korea/news"
+          ]
+        },
+        {
+          "canonical": "Czechia",
+          "aliases": [
+            "Czech Republic"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        },
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-that-drives-on-the-left",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Timor-Leste",
+          "aliases": [
+            "East Timor"
+          ],
+          "entityId": "Q574",
+          "reason": "Established English country name.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        },
+        {
+          "canonical": "United Kingdom",
+          "aliases": [
+            "UK",
+            "U.K.",
+            "United Kingdom of Great Britain and Northern Ireland"
+          ],
+          "entityId": "Q145",
+          "reason": "Official abbreviation and full state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use",
+            "https://www.gov.uk/government/publications/toponymic-guidelines/toponymic-guidelines-for-map-and-other-editors-united-kingdom-of-great-britain-and-northern-ireland--2"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-former-republic-of-the-soviet-union",
+      "answers": [
+        {
+          "canonical": "Russia",
+          "aliases": [
+            "Russian Federation"
+          ],
+          "entityId": "Q159",
+          "reason": "Official state title.",
+          "sources": [
+            "https://www.gov.uk/government/publications/country-names/country-names-the-permanent-committee-on-geographical-names-for-british-official-use"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-country-with-a-mediterranean-coastline",
+      "answers": [
+        {
+          "canonical": "Turkey",
+          "aliases": [
+            "Türkiye"
+          ],
+          "entityId": "Q43",
+          "reason": "Official alternative country name.",
+          "sources": [
+            "https://turkiye.un.org/en/184798-turkeys-name-changed-t%C3%BCrkiye"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-landlocked-country",
+      "answers": [
+        {
+          "canonical": "Eswatini",
+          "aliases": [
+            "Swaziland"
+          ],
+          "entityId": "Q1050",
+          "reason": "Former name of the same state.",
+          "sources": [
+            "https://www.un.org/en/about-us/member-states/eswatini"
+          ]
+        },
+        {
+          "canonical": "Czech Republic",
+          "aliases": [
+            "Czechia"
+          ],
+          "entityId": "Q213",
+          "reason": "Official short and formal country names.",
+          "sources": [
+            "https://ungegn.un.org/dashboard/countries/details?id=203"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-chemical-element-lighter-than-iron",
+      "answers": [
+        {
+          "canonical": "Aluminum",
+          "aliases": [
+            "Aluminium"
+          ],
+          "entityId": "Q663",
+          "reason": "Established English spelling of the same element; this prompt tests atomic mass, not its spelling.",
+          "sources": [
+            "https://periodic-table.rsc.org/element/13/Aluminium"
+          ]
+        },
+        {
+          "canonical": "Sulfur",
+          "aliases": [
+            "Sulphur"
+          ],
+          "entityId": "Q682",
+          "reason": "NIST lists sulphur as the same chemical substance. Retain the existing score.",
+          "sources": [
+            "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7704349&Mask=2C"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-nba-team",
+      "answers": [
+        {
+          "canonical": "Los Angeles Clippers",
+          "aliases": [
+            "LA Clippers"
+          ],
+          "entityId": "Q976396",
+          "reason": "Official team naming; retain the existing score.",
+          "sources": [
+            "https://www.nba.com/clippers?p=t&u=330904"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-rock-or-mineral",
+      "answers": [
+        {
+          "canonical": "Sulfur",
+          "aliases": [
+            "Sulphur"
+          ],
+          "entityId": "Q682",
+          "reason": "NIST lists sulphur as the same chemical substance. Retain the existing score.",
+          "sources": [
+            "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7704349&Mask=2C"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-pizza-topping",
+      "answers": [
+        {
+          "canonical": "Eggplant",
+          "aliases": [
+            "Aubergine",
+            "Brinjal"
+          ],
+          "entityId": "Q7540",
+          "reason": "RHS identifies these as the same edible plant. Keep the existing canonical answer and score.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/aubergines/grow-your-own"
+          ]
+        },
+        {
+          "canonical": "Zucchini",
+          "aliases": [
+            "Courgette"
+          ],
+          "entityId": "Q7533",
+          "reason": "RHS documents the regional names for the same squash. Keep the existing score.",
+          "sources": [
+            "https://www.rhs.org.uk/advice/grow-your-own/features/fascinating-facts-and-figures-courgettes"
+          ]
+        },
+        {
+          "canonical": "Arugula",
+          "aliases": [
+            "Rocket",
+            "Roquette"
+          ],
+          "entityId": "Q5395935",
+          "reason": "RHS documents the culinary common names. This does not alias the distinct London rocket row.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/rocket/grow-your-own"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-herb-or-spice",
+      "answers": [
+        {
+          "canonical": "Cilantro",
+          "aliases": [
+            "Coriander",
+            "Coriander leaves",
+            "Fresh coriander"
+          ],
+          "entityId": "Q41611",
+          "reason": "RHS identifies coriander and cilantro. The broad herb-or-spice prompt has no separate coriander row.",
+          "sources": [
+            "https://www.rhs.org.uk/herbs/coriander/grow-your-own"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-leafy-green",
+      "answers": [
+        {
+          "canonical": "Arugula",
+          "aliases": [
+            "Rocket",
+            "Roquette"
+          ],
+          "entityId": "Q5395935",
+          "reason": "RHS documents the culinary common names. This does not alias the distinct London rocket row.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/rocket/grow-your-own"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-legume",
+      "answers": [
+        {
+          "canonical": "Chickpea",
+          "aliases": [
+            "Garbanzo bean",
+            "Garbanzo"
+          ],
+          "entityId": "Q81375",
+          "reason": "University extension identifies garbanzo beans as chickpeas. Retain the existing score.",
+          "sources": [
+            "https://www.extension.umd.edu/resource/cooking-beans"
+          ]
+        },
+        {
+          "canonical": "Fava bean",
+          "aliases": [
+            "Broad bean",
+            "Faba bean"
+          ],
+          "entityId": "Q131342",
+          "reason": "RHS and USDA identify broad, faba, and fava beans as Vicia faba.",
+          "sources": [
+            "https://www.rhs.org.uk/getmedia/374eca4c-5993-486b-9b8f-9db1dc35597e/Show-Garden-Garden-of-the-Future_1.pdf?ext=.pdf",
+            "https://www.nrcs.usda.gov/plantmaterials/capmcpg13528.pdf"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-that-can-top-40-mph-65-km-h",
+      "answers": [
+        {
+          "canonical": "Cougar",
+          "aliases": [
+            "Puma",
+            "Mountain lion"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-black-and-white-mammal-or-bird",
+      "answers": [
+        {
+          "canonical": "Orca",
+          "aliases": [
+            "Killer whale"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-aquatic-mammal",
+      "answers": [
+        {
+          "canonical": "Hippopotamus",
+          "aliases": [
+            "Hippo"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        },
+        {
+          "canonical": "Orca",
+          "aliases": [
+            "Killer whale"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-carnivorous-mammal",
+      "answers": [
+        {
+          "canonical": "Cougar",
+          "aliases": [
+            "Puma",
+            "Mountain lion"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        },
+        {
+          "canonical": "Orca",
+          "aliases": [
+            "Killer whale"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-that-lives-in-the-arctic-or-antarctica",
+      "answers": [
+        {
+          "canonical": "Orca",
+          "aliases": [
+            "Killer whale"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-mammal-or-reptile-that-lives-in-the-desert",
+      "answers": [
+        {
+          "canonical": "Mountain lion",
+          "aliases": [
+            "Cougar",
+            "Puma"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-living-mammal-native-to-africa",
+      "answers": [
+        {
+          "canonical": "Hippopotamus",
+          "aliases": [
+            "Hippo"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        },
+        {
+          "canonical": "Killer whale",
+          "aliases": [
+            "Orca"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-known-for-camouflage",
+      "answers": [
+        {
+          "canonical": "Cougar",
+          "aliases": [
+            "Puma",
+            "Mountain lion"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-vegetable",
+      "answers": [
+        {
+          "canonical": "Eggplant",
+          "aliases": [
+            "Aubergine",
+            "Brinjal"
+          ],
+          "entityId": "Q7540",
+          "reason": "RHS identifies these as the same edible plant. Keep the existing canonical answer and score.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/aubergines/grow-your-own"
+          ]
+        },
+        {
+          "canonical": "Zucchini",
+          "aliases": [
+            "Courgette"
+          ],
+          "entityId": "Q7533",
+          "reason": "RHS documents the regional names for the same squash. Keep the existing score.",
+          "sources": [
+            "https://www.rhs.org.uk/advice/grow-your-own/features/fascinating-facts-and-figures-courgettes"
+          ]
+        },
+        {
+          "canonical": "Arugula",
+          "aliases": [
+            "Rocket",
+            "Roquette"
+          ],
+          "entityId": "Q5395935",
+          "reason": "RHS documents the culinary common names. This does not alias the distinct London rocket row.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/rocket/grow-your-own"
+          ]
+        },
+        {
+          "canonical": "Rutabaga",
+          "aliases": [
+            "Swede",
+            "Swedish turnip"
+          ],
+          "entityId": "Q158464",
+          "reason": "RHS lists these names for rutabaga; plain turnip remains a separate answer.",
+          "sources": [
+            "https://www.rhs.org.uk/plants/139381/brassica-napus-napobrassica-group/details"
+          ]
+        },
+        {
+          "canonical": "Fava bean",
+          "aliases": [
+            "Broad bean",
+            "Faba bean"
+          ],
+          "entityId": "Q131342",
+          "reason": "RHS and USDA identify broad, faba, and fava beans as Vicia faba.",
+          "sources": [
+            "https://www.rhs.org.uk/getmedia/374eca4c-5993-486b-9b8f-9db1dc35597e/Show-Garden-Garden-of-the-Future_1.pdf?ext=.pdf",
+            "https://www.nrcs.usda.gov/plantmaterials/capmcpg13528.pdf"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-fruit",
+      "answers": [
+        {
+          "canonical": "Eggplant",
+          "aliases": [
+            "Aubergine",
+            "Brinjal"
+          ],
+          "entityId": "Q7540",
+          "reason": "RHS identifies these as the same edible plant. Keep the existing canonical answer and score.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/aubergines/grow-your-own"
+          ]
+        },
+        {
+          "canonical": "Zucchini",
+          "aliases": [
+            "Courgette"
+          ],
+          "entityId": "Q7533",
+          "reason": "RHS documents the regional names for the same squash. Keep the existing score.",
+          "sources": [
+            "https://www.rhs.org.uk/advice/grow-your-own/features/fascinating-facts-and-figures-courgettes"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-berry",
+      "answers": [
+        {
+          "canonical": "Eggplant",
+          "aliases": [
+            "Aubergine",
+            "Brinjal"
+          ],
+          "entityId": "Q7540",
+          "reason": "RHS identifies these as the same edible plant. Keep the existing canonical answer and score.",
+          "sources": [
+            "https://www.rhs.org.uk/vegetables/aubergines/grow-your-own"
+          ]
+        },
+        {
+          "canonical": "Zucchini",
+          "aliases": [
+            "Courgette"
+          ],
+          "entityId": "Q7533",
+          "reason": "RHS documents the regional names for the same squash. Keep the existing score.",
+          "sources": [
+            "https://www.rhs.org.uk/advice/grow-your-own/features/fascinating-facts-and-figures-courgettes"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-that-lives-in-groups",
+      "answers": [
+        {
+          "canonical": "Hippo",
+          "aliases": [
+            "Hippopotamus"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        },
+        {
+          "canonical": "Orca",
+          "aliases": [
+            "Killer whale"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-that-is-a-herbivore",
+      "answers": [
+        {
+          "canonical": "Hippopotamus",
+          "aliases": [
+            "Hippo"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-that-lives-in-the-jungle",
+      "answers": [
+        {
+          "canonical": "Puma",
+          "aliases": [
+            "Cougar",
+            "Mountain lion"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-premier-league-club",
+      "answers": [
+        {
+          "canonical": "Manchester United",
+          "aliases": [
+            "Man Utd",
+            "Man United",
+            "Manchester United FC",
+            "Manchester United Football Club"
+          ],
+          "entityId": "Q18656",
+          "reason": "Official club sources use these abbreviated/full names. Bare United or Manchester would be ambiguous.",
+          "sources": [
+            "https://www.manutd.com/en?tid=1697099911855",
+            "https://www.mancity.com/",
+            "https://assets.manutd.com/AssetPicker/images/0/0/20/237/1371615/United-MarriottBonvoy-PlayonthePitch-Comp-TandCs-12Sept24-FINAL30091727710880675.pdf"
+          ]
+        },
+        {
+          "canonical": "Manchester City",
+          "aliases": [
+            "Man City",
+            "Manchester City FC",
+            "Manchester City Football Club"
+          ],
+          "entityId": "Q50602",
+          "reason": "The club uses Man City and Manchester City FC. Do not add ambiguous City or Manchester.",
+          "sources": [
+            "https://www.mancity.com/"
+          ]
+        },
+        {
+          "canonical": "Tottenham Hotspur",
+          "aliases": [
+            "Spurs",
+            "Tottenham Hotspur FC",
+            "Tottenham Hotspur Football Club"
+          ],
+          "entityId": "Q18741",
+          "reason": "The club uses Spurs; the Premier League question excludes the unrelated San Antonio basketball team.",
+          "sources": [
+            "https://www.tottenhamhotspur.com/?lang=en",
+            "https://www.tottenhamhotspur.com/media/arvpmrev/ossc_brand_playbook_20.pdf?mobile=true"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-nocturnal-animal",
+      "answers": [
+        {
+          "canonical": "Hippopotamus",
+          "aliases": [
+            "Hippo"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        },
+        {
+          "canonical": "Cougar",
+          "aliases": [
+            "Puma",
+            "Mountain lion"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-threatened-with-extinction",
+      "answers": [
+        {
+          "canonical": "Hippopotamus",
+          "aliases": [
+            "Hippo"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-human-hormone",
+      "answers": [
+        {
+          "canonical": "Adrenaline",
+          "aliases": [
+            "Epinephrine"
+          ],
+          "entityId": "Q132621",
+          "reason": "The Society for Endocrinology explicitly lists epinephrine as an alternative name for adrenaline.",
+          "sources": [
+            "https://www.yourhormones.info/hormones/Adrenaline/"
+          ]
+        },
+        {
+          "canonical": "Norepinephrine",
+          "aliases": [
+            "Noradrenaline"
+          ],
+          "entityId": "Q186242",
+          "reason": "NCI identifies noradrenaline as the same hormone. It remains distinct from adrenaline.",
+          "sources": [
+            "https://www.cancer.gov/publications/dictionaries/cancer-terms/def/norepinephrine"
+          ]
+        },
+        {
+          "canonical": "Estrogen",
+          "aliases": [
+            "Oestrogen"
+          ],
+          "entityId": "Q277954",
+          "reason": "The UK government terminology review explicitly identifies estrogen/oestrogen as spelling variants.",
+          "sources": [
+            "https://assets.publishing.service.gov.uk/media/5a81fea640f0b62305b91eab/Report-CHM-EWG-HPTs_FINAL.pdf"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-an-animal-whose-name-starts-with-h",
+      "answers": [
+        {
+          "canonical": "Hippopotamus",
+          "aliases": [
+            "Hippo"
+          ],
+          "entityId": "Q34505",
+          "reason": "San Diego Zoo uses both names. Both also satisfy the starts-with-H prompt.",
+          "sources": [
+            "https://animals.sandiegozoo.org/animals/hippo"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-soccer-club-that-has-won-the-european-cup-or-champions-league",
+      "answers": [
+        {
+          "canonical": "Manchester United",
+          "aliases": [
+            "Man Utd",
+            "Man United",
+            "Manchester United FC",
+            "Manchester United Football Club"
+          ],
+          "entityId": "Q18656",
+          "reason": "Official club sources use these abbreviated/full names. Bare United or Manchester would be ambiguous.",
+          "sources": [
+            "https://www.manutd.com/en?tid=1697099911855",
+            "https://www.mancity.com/",
+            "https://assets.manutd.com/AssetPicker/images/0/0/20/237/1371615/United-MarriottBonvoy-PlayonthePitch-Comp-TandCs-12Sept24-FINAL30091727710880675.pdf"
+          ]
+        },
+        {
+          "canonical": "Manchester City",
+          "aliases": [
+            "Man City",
+            "Manchester City FC",
+            "Manchester City Football Club"
+          ],
+          "entityId": "Q50602",
+          "reason": "The club uses Man City and Manchester City FC. Do not add ambiguous City or Manchester.",
+          "sources": [
+            "https://www.mancity.com/"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-whale-species",
+      "answers": [
+        {
+          "canonical": "Orca",
+          "aliases": [
+            "Killer whale"
+          ],
+          "entityId": "Q26843",
+          "reason": "NOAA identifies these as the same animal; fictional characters and vessels are excluded.",
+          "sources": [
+            "https://www.fisheries.noaa.gov/species/killer-whale"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-species-of-wild-cat",
+      "answers": [
+        {
+          "canonical": "Cougar",
+          "aliases": [
+            "Puma",
+            "Mountain lion"
+          ],
+          "entityId": "Q35255",
+          "reason": "National Park Service identifies these as the same cat; preserve each question’s existing score.",
+          "sources": [
+            "https://www.nps.gov/brca/learn/nature/mountainlion.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-root-vegetable",
+      "answers": [
+        {
+          "canonical": "Rutabaga",
+          "aliases": [
+            "Swede",
+            "Swedish turnip"
+          ],
+          "entityId": "Q158464",
+          "reason": "RHS lists these names for rutabaga; plain turnip remains a separate answer.",
+          "sources": [
+            "https://www.rhs.org.uk/plants/139381/brassica-napus-napobrassica-group/details"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-chemical-element-whose-name-ends-in-ium",
+      "answers": [
+        {
+          "canonical": "Cesium",
+          "aliases": [
+            "Caesium"
+          ],
+          "entityId": "Q1108",
+          "reason": "NIST lists both spellings for element Cs; both end in the required -ium suffix.",
+          "sources": [
+            "https://webbook.nist.gov/cgi/cbook.cgi?Name=cesium"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-video-game-console",
+      "answers": [
+        {
+          "canonical": "Nintendo Entertainment System",
+          "aliases": [
+            "NES"
+          ],
+          "entityId": "console:nintendo-entertainment-system",
+          "reason": "Nintendo explicitly abbreviates Nintendo Entertainment System as NES; the existing console retains its historical score.",
+          "sources": [
+            "https://www.nintendo.com/us/about/"
+          ]
+        },
+        {
+          "canonical": "Super Nintendo",
+          "aliases": [
+            "Super Nintendo Entertainment System",
+            "SNES",
+            "Super NES"
+          ],
+          "entityId": "console:super-nintendo-entertainment-system",
+          "reason": "Nintendo uses Super Nintendo, the expanded system name, SNES and Super NES for this console. This adds names without merging regional hardware variants.",
+          "sources": [
+            "https://www.nintendo.com/en-gb/Hardware/Nintendo-History/Super-Nintendo/Super-Nintendo-627040.html",
+            "https://www.nintendo.com/en-gb/games/oms/snes-classic/index.html",
+            "https://www.nintendo.com/us/about/"
+          ]
+        },
+        {
+          "canonical": "PlayStation",
+          "aliases": [
+            "PS1"
+          ],
+          "entityId": "console:sony-playstation-1994",
+          "reason": "Sony identifies the original 1994 PlayStation and labels its welcome sequence PS1. The abbreviation refers to the existing first-generation console; no PSX or later model is included.",
+          "sources": [
+            "https://www.playstation.com/en-us/playstation-history/1994-ps-one/"
+          ]
+        },
+        {
+          "canonical": "PlayStation 3",
+          "aliases": [
+            "PS3"
+          ],
+          "entityId": "console:sony-playstation-3",
+          "reason": "Sony explicitly pairs PlayStation 3 with the PS3 abbreviation in its hardware press release.",
+          "sources": [
+            "https://www.sony.com/SonyInfo/IR/news/20120110E.pdf"
+          ]
+        },
+        {
+          "canonical": "PlayStation Portable",
+          "aliases": [
+            "PSP"
+          ],
+          "entityId": "console:sony-playstation-portable",
+          "reason": "Sony explicitly pairs PSP with PlayStation Portable in its hardware press release.",
+          "sources": [
+            "https://www.sony.com/SonyInfo/IR/news/20120110E.pdf"
+          ]
+        },
+        {
+          "canonical": "PlayStation Vita",
+          "aliases": [
+            "PS Vita"
+          ],
+          "entityId": "console:sony-playstation-vita",
+          "reason": "Sony explicitly pairs PlayStation Vita with PS Vita in its hardware press release.",
+          "sources": [
+            "https://www.sony.com/SonyInfo/IR/news/20120110E.pdf"
+          ]
+        },
+        {
+          "canonical": "Sega Genesis",
+          "aliases": [
+            "Sega Mega Drive",
+            "Mega Drive"
+          ],
+          "entityId": "console:sega-mega-drive-genesis",
+          "reason": "Sega identifies Mega Drive as the hardware marketed in North America as Genesis. Both are established regional names for the accepted console.",
+          "sources": [
+            "https://www.sega.jp/history/companyTimeline/en/",
+            "https://www.sega.jp/history/hard/megadrive/index.html"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-walt-disney-animation-studios-feature-film",
+      "answers": [
+        {
+          "canonical": "Zootopia",
+          "aliases": [
+            "Zootropolis"
+          ],
+          "entityId": "film:zootopia-2016",
+          "reason": "Disney US and UK pages identify the same 2016 animated film, cast and story under Zootopia and Zootropolis respectively.",
+          "sources": [
+            "https://movies.disney.com/zootopia",
+            "https://www.disney.co.uk/movies/zootropolis"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-movie-starring-samuel-l-jackson",
+      "answers": [
+        {
+          "canonical": "The Avengers",
+          "aliases": [
+            "Avengers Assemble",
+            "Marvel Avengers Assemble",
+            "Marvel's The Avengers"
+          ],
+          "entityId": "film:the-avengers-2012",
+          "reason": "The BBFC groups UK Marvel Avengers Assemble, international Marvel's The Avengers and Avengers Assemble trailers under the same Joss Whedon film with Samuel L. Jackson. These aliases are restricted to movie questions, excluding the similarly titled animated series.",
+          "sources": [
+            "https://www.bbfc.co.uk/release/marvel-avengers-assemble-q29sbgvjdglvbjpwwc00mjg4ndy"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-marvel-cinematic-universe-movie",
+      "answers": [
+        {
+          "canonical": "The Avengers",
+          "aliases": [
+            "Avengers Assemble",
+            "Marvel Avengers Assemble",
+            "Marvel's The Avengers"
+          ],
+          "entityId": "film:the-avengers-2012",
+          "reason": "The BBFC groups UK Marvel Avengers Assemble, international Marvel's The Avengers and Avengers Assemble trailers under the same Joss Whedon film with Samuel L. Jackson. These aliases are restricted to movie questions, excluding the similarly titled animated series.",
+          "sources": [
+            "https://www.bbfc.co.uk/release/marvel-avengers-assemble-q29sbgvjdglvbjpwwc00mjg4ndy"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-movie-starring-harrison-ford",
+      "answers": [
+        {
+          "canonical": "Raiders of the Lost Ark",
+          "aliases": [
+            "Indiana Jones and the Raiders of the Lost Ark"
+          ],
+          "entityId": "film:raiders-of-the-lost-ark-1981",
+          "reason": "Lucasfilm identifies the 1981 Spielberg/Harrison Ford film with the expanded Indiana Jones title and as Raiders of the Lost Ark. The two archive prompts use different canonical titles and retain their own existing scores.",
+          "sources": [
+            "https://www.lucasfilm.com/productions/raiders-of-the-lost-ark/"
+          ]
+        },
+        {
+          "canonical": "Star Wars",
+          "aliases": [
+            "A New Hope",
+            "Star Wars: A New Hope",
+            "Star Wars: Episode IV - A New Hope"
+          ],
+          "entityId": "film:star-wars-a-new-hope-1977",
+          "reason": "The official Star Wars film page identifies the 1977 Harrison Ford film as A New Hope / Episode IV. This mapping is limited to the film question; the separate Star Wars arcade-game answer is a different entity.",
+          "sources": [
+            "https://www.starwars.com/films/star-wars-episode-iv-a-new-hope"
+          ]
+        },
+        {
+          "canonical": "The Empire Strikes Back",
+          "aliases": [
+            "Star Wars: The Empire Strikes Back",
+            "Star Wars: Episode V - The Empire Strikes Back"
+          ],
+          "entityId": "film:the-empire-strikes-back-1980",
+          "reason": "The official film page uses the Star Wars prefix and Episode V designation for the existing film title.",
+          "sources": [
+            "https://www.starwars.com/films/star-wars-episode-v-the-empire-strikes-back"
+          ]
+        },
+        {
+          "canonical": "Return of the Jedi",
+          "aliases": [
+            "Star Wars: Return of the Jedi",
+            "Star Wars: Episode VI - Return of the Jedi"
+          ],
+          "entityId": "film:return-of-the-jedi-1983",
+          "reason": "The official film page uses the Star Wars prefix and Episode VI designation for the existing film title.",
+          "sources": [
+            "https://www.starwars.com/films/star-wars-episode-vi-return-of-the-jedi"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-steven-spielberg-movie",
+      "answers": [
+        {
+          "canonical": "Indiana Jones and the Raiders of the Lost Ark",
+          "aliases": [
+            "Raiders of the Lost Ark"
+          ],
+          "entityId": "film:raiders-of-the-lost-ark-1981",
+          "reason": "Lucasfilm identifies the 1981 Spielberg/Harrison Ford film with the expanded Indiana Jones title and as Raiders of the Lost Ark. The two archive prompts use different canonical titles and retain their own existing scores.",
+          "sources": [
+            "https://www.lucasfilm.com/productions/raiders-of-the-lost-ark/"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-harry-potter-character",
+      "answers": [
+        {
+          "canonical": "Dumbledore",
+          "aliases": [
+            "Albus Dumbledore"
+          ],
+          "entityId": "character:harry-potter-albus-dumbledore",
+          "reason": "The official encyclopedia identifies Albus and Aberforth as separate brothers. Albus Dumbledore expands the existing Dumbledore row; Aberforth remains a distinct answer. No new ambiguous surname-only alias is introduced.",
+          "sources": [
+            "https://www.harrypotter.com/fact-file/magical-miscellany/dumbledores"
+          ]
+        },
+        {
+          "canonical": "Aberforth",
+          "aliases": [
+            "Aberforth Dumbledore"
+          ],
+          "entityId": "character:harry-potter-aberforth-dumbledore",
+          "reason": "The official encyclopedia gives Aberforth Dumbledore as the full name of Albus's brother. This expands the existing Aberforth row without merging the brothers.",
+          "sources": [
+            "https://www.harrypotter.com/fact-file/magical-miscellany/dumbledores"
+          ]
+        },
+        {
+          "canonical": "Hagrid",
+          "aliases": [
+            "Rubeus Hagrid"
+          ],
+          "entityId": "character:harry-potter-rubeus-hagrid",
+          "reason": "The official Hogwarts and cast pages give Rubeus Hagrid as the full name of the existing Hagrid character.",
+          "sources": [
+            "https://www.harrypotter.com/fact-file/locations/hogwarts",
+            "https://www.harrypotter.com/news/hogwarts-staff-members-confirmed-for-harry-potter-hbo-series"
+          ]
+        },
+        {
+          "canonical": "Mad-Eye Moody",
+          "aliases": [
+            "Alastor Moody",
+            "Alastor 'Mad-Eye' Moody"
+          ],
+          "entityId": "character:harry-potter-alastor-moody",
+          "reason": "The official character encyclopedia names Alastor Mad-Eye Moody and explains the eye-based nickname. This does not alias his impersonator Barty Crouch Jr.",
+          "sources": [
+            "https://www.harrypotter.com/fact-file/characters-and-pets/alastor-mad-eye-moody"
+          ]
+        },
+        {
+          "canonical": "Quirrell",
+          "aliases": [
+            "Quirinus Quirrell",
+            "Professor Quirrell"
+          ],
+          "entityId": "character:harry-potter-quirinus-quirrell",
+          "reason": "The official character encyclopedia explicitly uses Quirinus Quirrell and Professor Quirrell for the accepted character.",
+          "sources": [
+            "https://www.harrypotter.com/fact-file/characters-and-pets/quirinus-quirrell"
+          ]
+        },
+        {
+          "canonical": "Voldemort",
+          "aliases": [
+            "Lord Voldemort",
+            "Tom Marvolo Riddle",
+            "He-Who-Must-Not-Be-Named"
+          ],
+          "entityId": "character:harry-potter-lord-voldemort",
+          "reason": "The official encyclopedia gives Voldemort's birth name Tom Marvolo Riddle, his Lord title and the euphemistic name. The unqualified Tom Riddle is excluded because his father shares it.",
+          "sources": [
+            "https://www.harrypotter.com/fact-file/characters-and-pets/lord-voldemort",
+            "https://www.harrypotter.com/features/history-of-voldemorts-horcruxes"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-microsoft-application",
+      "answers": [
+        {
+          "canonical": "Microsoft Word",
+          "aliases": [
+            "Word"
+          ],
+          "entityId": "software:microsoft-word",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Excel",
+          "aliases": [
+            "Excel"
+          ],
+          "entityId": "software:microsoft-excel",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft PowerPoint",
+          "aliases": [
+            "PowerPoint"
+          ],
+          "entityId": "software:microsoft-powerpoint",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Outlook",
+          "aliases": [
+            "Outlook"
+          ],
+          "entityId": "software:microsoft-outlook",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft OneNote",
+          "aliases": [
+            "OneNote"
+          ],
+          "entityId": "software:microsoft-onenote",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft OneDrive",
+          "aliases": [
+            "OneDrive"
+          ],
+          "entityId": "software:microsoft-onedrive",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Teams",
+          "aliases": [
+            "Teams"
+          ],
+          "entityId": "software:microsoft-teams",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Access",
+          "aliases": [
+            "Access"
+          ],
+          "entityId": "software:microsoft-access",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Visio",
+          "aliases": [
+            "Visio"
+          ],
+          "entityId": "software:microsoft-visio",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Project",
+          "aliases": [
+            "Project"
+          ],
+          "entityId": "software:microsoft-project",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft SharePoint",
+          "aliases": [
+            "SharePoint"
+          ],
+          "entityId": "software:microsoft-sharepoint",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Edge",
+          "aliases": [
+            "Edge"
+          ],
+          "entityId": "software:microsoft-edge",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Forms",
+          "aliases": [
+            "Forms"
+          ],
+          "entityId": "software:microsoft-forms",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Bookings",
+          "aliases": [
+            "Bookings"
+          ],
+          "entityId": "software:microsoft-bookings",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Lists",
+          "aliases": [
+            "Lists"
+          ],
+          "entityId": "software:microsoft-lists",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Loop",
+          "aliases": [
+            "Loop"
+          ],
+          "entityId": "software:microsoft-loop",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Planner",
+          "aliases": [
+            "Planner"
+          ],
+          "entityId": "software:microsoft-planner",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Power Apps",
+          "aliases": [
+            "Power Apps"
+          ],
+          "entityId": "software:microsoft-power-apps",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Power Automate",
+          "aliases": [
+            "Power Automate"
+          ],
+          "entityId": "software:microsoft-power-automate",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Power BI",
+          "aliases": [
+            "Power BI"
+          ],
+          "entityId": "software:microsoft-power-bi",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft To Do",
+          "aliases": [
+            "To Do"
+          ],
+          "entityId": "software:microsoft-to-do",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Sway",
+          "aliases": [
+            "Sway"
+          ],
+          "entityId": "software:microsoft-sway",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Whiteboard",
+          "aliases": [
+            "Whiteboard"
+          ],
+          "entityId": "software:microsoft-whiteboard",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Intune",
+          "aliases": [
+            "Intune"
+          ],
+          "entityId": "software:microsoft-intune",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Editor",
+          "aliases": [
+            "Editor"
+          ],
+          "entityId": "software:microsoft-editor",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Places",
+          "aliases": [
+            "Places"
+          ],
+          "entityId": "software:microsoft-places",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Viva",
+          "aliases": [
+            "Viva"
+          ],
+          "entityId": "software:microsoft-viva",
+          "reason": "Microsoft lists this product using the shorter name on its official applications page; it uniquely identifies the existing answer in this question. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/microsoft-365/products-apps-services"
+          ]
+        },
+        {
+          "canonical": "Microsoft Paint",
+          "aliases": [
+            "Paint"
+          ],
+          "entityId": "software:microsoft-paint",
+          "reason": "Microsoft uses Paint as the app name. Retain the existing historical score.",
+          "sources": [
+            "https://www.microsoft.com/en-us/windows/paint"
+          ]
+        },
+        {
+          "canonical": "Microsoft Notepad",
+          "aliases": [
+            "Notepad",
+            "Windows Notepad"
+          ],
+          "entityId": "software:microsoft-notepad",
+          "reason": "Microsoft support uses Notepad and its Store listing uses Windows Notepad for the same text editor. Retain the existing historical score.",
+          "sources": [
+            "https://support.microsoft.com/en-us/windows/apps/help-in-notepad",
+            "https://apps.microsoft.com/detail/9msmlrh6lzf3"
+          ]
+        },
+        {
+          "canonical": "Visual Studio Code",
+          "aliases": [
+            "VS Code",
+            "VSCode"
+          ],
+          "entityId": "software:vscode",
+          "reason": "The official Visual Studio Code documentation uses the VS Code short name; the joined spelling represents the same abbreviation. Retain the existing historical score.",
+          "sources": [
+            "https://code.visualstudio.com/docs"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-programming-language",
+      "answers": [
+        {
+          "canonical": "JavaScript",
+          "aliases": [
+            "JS"
+          ],
+          "entityId": "language:javascript",
+          "reason": "Mozilla documentation explicitly gives JS as the abbreviation for JavaScript. Retain the existing historical score.",
+          "sources": [
+            "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+          ]
+        },
+        {
+          "canonical": "TypeScript",
+          "aliases": [
+            "TS"
+          ],
+          "entityId": "language:typescript",
+          "reason": "The official TypeScript documentation uses TS for the language. Retain the existing historical score.",
+          "sources": [
+            "https://www.typescriptlang.org/docs/handbook/"
+          ]
+        },
+        {
+          "canonical": "Go",
+          "aliases": [
+            "Golang"
+          ],
+          "entityId": "language:go",
+          "reason": "The official Go FAQ identifies Golang as a common alternative name while retaining Go as the official name. Retain the existing historical score.",
+          "sources": [
+            "https://go.dev/doc/faq#go_or_golang"
+          ]
+        },
+        {
+          "canonical": "C#",
+          "aliases": [
+            "C sharp",
+            "Csharp"
+          ],
+          "entityId": "language:csharp",
+          "reason": "Microsoft gives C sharp as the spoken name of C#; joined and spaced transcriptions name the same language. Retain the existing historical score.",
+          "sources": [
+            "https://dotnet.microsoft.com/en-us/languages"
+          ]
+        },
+        {
+          "canonical": "F#",
+          "aliases": [
+            "F sharp",
+            "Fsharp"
+          ],
+          "entityId": "language:fsharp",
+          "reason": "Microsoft gives F sharp as the spoken name of F#; joined and spaced transcriptions name the same language. Retain the existing historical score.",
+          "sources": [
+            "https://dotnet.microsoft.com/en-us/languages"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-computer-operating-system",
+      "answers": [
+        {
+          "canonical": "Mint",
+          "aliases": [
+            "Linux Mint"
+          ],
+          "entityId": "software:linux-mint",
+          "reason": "The Linux Mint project uses the full distribution name for the operating system listed as Mint. Retain the existing historical score.",
+          "sources": [
+            "https://linuxmint.com/"
+          ]
+        },
+        {
+          "canonical": "Chrome OS",
+          "aliases": [
+            "ChromeOS",
+            "Google ChromeOS",
+            "Google Chrome OS"
+          ],
+          "entityId": "software:chromeos",
+          "reason": "Chromium project documentation uses Google ChromeOS for Google’s operating system; the space variation is a branding spelling. ChromiumOS is a different project and is not an alias. Retain the existing historical score.",
+          "sources": [
+            "https://www.chromium.org/chromium-os/developer-library/reference/development/chromium-os-faq/"
+          ]
+        }
+      ]
+    },
+    {
+      "promptId": "archive-name-a-google-product",
+      "answers": [
+        {
+          "canonical": "Google Drive",
+          "aliases": [
+            "Drive"
+          ],
+          "entityId": "software:google-drive",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Docs",
+          "aliases": [
+            "Docs"
+          ],
+          "entityId": "software:google-docs",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Sheets",
+          "aliases": [
+            "Sheets"
+          ],
+          "entityId": "software:google-sheets",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Slides",
+          "aliases": [
+            "Slides"
+          ],
+          "entityId": "software:google-slides",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Calendar",
+          "aliases": [
+            "Calendar"
+          ],
+          "entityId": "software:google-calendar",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Meet",
+          "aliases": [
+            "Meet"
+          ],
+          "entityId": "software:google-meet",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Chat",
+          "aliases": [
+            "Chat"
+          ],
+          "entityId": "software:google-chat",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Forms",
+          "aliases": [
+            "Forms"
+          ],
+          "entityId": "software:google-forms",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "Google Sites",
+          "aliases": [
+            "Sites"
+          ],
+          "entityId": "software:google-sites",
+          "reason": "Google Workspace lists this product using the shorter name. It uniquely identifies the existing answer in the Google-product question; retain its historical score.",
+          "sources": [
+            "https://workspace.google.com/"
+          ]
+        },
+        {
+          "canonical": "ChromeOS",
+          "aliases": [
+            "Chrome OS",
+            "Google ChromeOS",
+            "Google Chrome OS"
+          ],
+          "entityId": "software:chromeos",
+          "reason": "The joined and spaced ChromeOS product name identifies the same operating system; ChromiumOS remains distinct. Retain the historical score.",
+          "sources": [
+            "https://www.chromium.org/chromium-os/developer-library/reference/development/chromium-os-faq/"
+          ]
+        },
+        {
+          "canonical": "Google Chrome",
+          "aliases": [
+            "Chrome"
+          ],
+          "entityId": "software:chrome",
+          "reason": "The Chromium project distinguishes Google Chrome browser from Chromium and uses the Chrome short name. Retain the historical score.",
+          "sources": [
+            "https://www.chromium.org/chromium-os/developer-library/reference/development/chromium-os-faq/"
           ]
         }
       ]

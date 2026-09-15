@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scoringVersion": "enwiki-human-2025-median-rank-v1",
-  "inputsSha256": "60de5c8ef19d50b7e7f8e16cfc5f960ce0a752d4a9d8b75e0e9638551e0f65c4",
+  "inputsSha256": "7fefb81fca9bd6e58a4eb5caf59733e2f273123b0a70b6b708a1583f42cc83d7",
   "cacheSha256": "637cacac231384176eb28230d2631277d5227fcf9f4df20768ed5d1d8af8552a",
   "policy": {
     "version": "enwiki-human-2025-median-rank-v1",
