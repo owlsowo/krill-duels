@@ -3,6 +3,7 @@ import { DuelRoom } from '../src/network';
 import { PROMPTS, promptById } from '../src/data';
 import type { DuelSettings } from '../src/settings';
 import type { DuelEngine } from '../src/duel-engine';
+import * as hints from '../src/hints';
 
 const transport = vi.hoisted(() => {
   type Handler = (...args: any[]) => void;
@@ -101,6 +102,29 @@ beforeEach(() => {
 afterEach(() => { rooms.forEach(r => r.dispose(false)); rooms = []; transport.peers.clear(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 describe('two-player protocol', () => {
+  it('charges host-owned hints per player and acknowledges guest duplicate requests without charging twice', async () => {
+    vi.spyOn(hints, 'getPromptHints').mockReturnValue(['Context', 'More context', 'Deeper context']);
+    const { host, guest } = await pair();
+    const before = structuredClone(guest.state!);
+    expect(await host.hint()).toBe(true); await flush();
+    const first = guest.hint(), duplicate = guest.hint();
+    expect(first).toBe(duplicate);
+    expect(guest.state!.hintLevels).toEqual([1, 0]);
+    expect(await first).toBe(true); await flush();
+    expect(guest.state).toMatchObject({ hp: [285, 285], hintUses: [1, 1], hintLevels: [1, 1] });
+    const guestChannel = transport.peers.get(`kd-${host.room}`)!.channels.at(-1)!.other;
+    guestChannel.send({ type: 'hint', matchId: before.matchId, round: before.round, expectedHintLevel: 0 });
+    await flush();
+    expect(host.state!.hp).toEqual([285, 285]);
+    expect(await guest.hint()).toBe(true); await flush();
+    expect(host.state).toMatchObject({ hp: [285, 255], hintUses: [1, 2], hintLevels: [1, 2] });
+    await guest.submit(''); await flush();
+    expect(await guest.hint()).toBe(false);
+    expect(host.state!.hp).toEqual([285, 255]);
+    guestChannel.send({ type: 'hint', matchId: 'old-match', round: before.round, expectedHintLevel: 2 });
+    await flush();
+    expect(host.state!.hintUses).toEqual([1, 2]);
+  });
   it('uses a transport that supports long match histories beyond the JSON message limit', async () => {
     const {host,guest} = await pair();
     const current = structuredClone(host.state!);

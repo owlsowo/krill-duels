@@ -3,7 +3,7 @@ import { safeName, type DuelState, type Seat } from './duel-engine';
 import { DEFAULT_SETTINGS, type DuelSettings } from './settings';
 
 type Callbacks = { change: (state: DuelState) => void; status: (message: string) => void; error: (message: string) => void };
-type Command = { action: 'create' | 'join' | 'poll' | 'ready' | 'answer' | 'leave'; [key: string]: unknown };
+type Command = { action: 'create' | 'join' | 'poll' | 'ready' | 'answer' | 'hint' | 'leave'; [key: string]: unknown };
 interface Reply { protocol: number; revision: number; state: DuelState; accepted: boolean }
 export const roomFromHash = (): string | null => {
   const id = new URLSearchParams(location.hash.slice(1)).get('room');
@@ -34,6 +34,7 @@ export class DuelRoom {
   private failureSince: number | null = null;
   private readyPending = false;
   private answerPending = false;
+  private hintPending: Promise<boolean> | null = null;
   private lastStatus = '';
   private now(): number { return Date.now(); }
 
@@ -47,7 +48,7 @@ export class DuelRoom {
   }
   get invite(): string { return `${location.origin}${location.pathname}#room=${this.room}`; }
   diagnostics(): object {
-    return { app: 'krill-duels', protocol: 3, transport: 'https', role: this.seat === 0 ? 'host' : 'guest',
+    return { app: 'krill-duels', protocol: 4, transport: 'https', role: this.seat === 0 ? 'host' : 'guest',
       stage: this.stage, attempts: this.attempts, accepted: this.opened,
       connection: this.stage === 'connected' ? 'connected' : this.stage, lastError: this.lastError };
   }
@@ -62,7 +63,7 @@ export class DuelRoom {
   async open(): Promise<void> {
     if (!this.alive || this.version) return;
     this.stage = 'connecting';
-    this.version = `krill-https-3:${await catalogVersion()}`;
+    this.version = `krill-https-4:${await catalogVersion()}`;
     if (!this.alive) return;
     await this.enqueue(() => this.exchange({ action: this.seat === 0 ? 'create' : 'join', name: this.name, settings: this.settings }));
     this.schedule();
@@ -77,7 +78,7 @@ export class DuelRoom {
   }
   private accept(reply: Reply, start: number, end: number): void {
     if (!this.alive || reply.revision <= this.revision) return;
-    if (reply.protocol !== 3 || !Number.isSafeInteger(reply.revision) || !reply.state || !Number.isFinite(reply.state.now)) {
+    if (reply.protocol !== 4 || !Number.isSafeInteger(reply.revision) || !reply.state || !Number.isFinite(reply.state.now)) {
       throw new RoomError('The room returned an unexpected response. Both refresh and try again.', 'invalid-response', true);
     }
     this.revision = reply.revision;
@@ -108,7 +109,7 @@ export class DuelRoom {
     try {
       const { reply, start, end } = await this.request(c);
       this.accept(reply, start, end);
-      return reply.accepted;
+      return this.alive && reply.accepted;
     } catch (cause) {
       if (!this.alive) return false;
       const fault = cause instanceof RoomError ? cause : new RoomError('Connection interrupted. Trying to reconnect…', 'request-failed', false);
@@ -139,6 +140,17 @@ export class DuelRoom {
     this.answerPending = true;
     try { return await this.enqueue(() => this.exchange({ action: 'answer', matchId: s.matchId, round: s.round, input })); }
     finally { this.answerPending = false; }
+  }
+  hint(): Promise<boolean> {
+    if (this.hintPending) return this.hintPending;
+    const s = this.state;
+    if (!this.alive || !s?.connected || s.phase !== 'question' || this.answerPending || s.committed[this.seat] ||
+        this.now() - (this.hostClockOffset ?? 0) >= s.deadline) return Promise.resolve(false);
+    // Capture the level before joining the request queue. Retrying this command
+    // after a lost response can only acknowledge the same purchase.
+    const command: Command = { action: 'hint', matchId: s.matchId, round: s.round, expectedHintLevel: s.hintLevels[this.seat] };
+    this.hintPending = this.enqueue(() => this.exchange(command)).finally(() => { this.hintPending = null; });
+    return this.hintPending;
   }
   dispose(notify = true): void {
     if (!this.alive) return;

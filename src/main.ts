@@ -9,6 +9,9 @@ import { AnswerIndex } from './match';
 import type { Prompt } from './types';
 import { scoreLabel, scoringLabel, scoringExplanation } from './scoring-description';
 import { DuelRoom, roomFromHash, HTTPS_ROOMS } from './room';
+import { getPromptHints, hintCost } from './hints';
+import { hintMarkup } from './hint-display';
+import { clockMarkup, duelRemaining, duelTimer, questionTimer, timerMarkup, type TimerDisplay } from './timer-display';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 const esc = (s: unknown): string => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]!);
@@ -26,13 +29,15 @@ let answerHint = '';
 let answerSuggestions: string[] = [];
 let joining = false;
 let submitting = false;
+let hintPending: object | null = null;
+let hintMessage = '';
 let offset = 0;
 let lastKey = '';
 let announced = '';
 let savedName = 'Player';
 try { savedName = localStorage.getItem('krill-duels:name') || 'Player'; } catch { /* Preferences are optional. */ }
 
-app.innerHTML = `<div class="ocean" aria-hidden="true"></div><div class="shell"><header class="masthead"><a class="wordmark" href="${location.pathname}">KRILL<span>DUELS</span></a><span class="edition">RARE-ANSWER BATTLES</span><button class="quiet" data-action="help">How to play</button></header><div id="screen"></div><footer><span>Independent fan game · historical and estimated scores</span><a href="https://krillionanswers.com/data-sources/" target="_blank" rel="noopener">Archive source ↗</a><a href="https://github.com/owlsowo/krill-duels" target="_blank" rel="noopener">Source code ↗</a></footer></div><div id="announcement" class="sr-only" role="status" aria-live="polite"></div><dialog id="help"><button class="close" data-action="close-help" aria-label="Close instructions">×</button><div class="eyebrow">HOW TO PLAY</div><h2>Make your answer count.</h2><ol><li>Create a duel and send the invite link to a friend.</li><li>Choose HP, answer time, and damage rules when creating a duel. Both players press Ready to get the same random question.</li><li>Rare answers earn more points. The score difference damages the lower scorer’s HP.</li><li>With increasing damage enabled, damage doubles at round 5 and triples at round 8. Reach 0 HP and you’re out.</li></ol><p>Solo practice uses the same questions and scores, without an opponent. In duels, questions don’t repeat within a room, including when you press Play again. After the whole bank is used, the next game starts a fresh shuffle. Both players need to keep their tabs open during a duel. No Krillion purchase or extension is needed.</p><p class="fine">Each question shows its scoring method. Historical scores are editorial grades; reviewed questions correct known answer-list errors. New questions use estimated familiarity from 2025 English Wikipedia readership, relative to the other accepted answers. News and language can affect that estimate. Equivalent names share a score where reviewed aliases are available; small spelling mistakes can offer a suggestion. Unlisted answers can be retried before time expires. This is casual play between friends.</p><button class="primary" data-action="close-help">Got it</button></dialog>`;
+app.innerHTML = `<div class="ocean" aria-hidden="true"></div><div class="shell"><header class="masthead"><a class="wordmark" href="${location.pathname}">KRILL<span>DUELS</span></a><span class="edition">RARE-ANSWER BATTLES</span><button class="quiet" data-action="help">How to play</button></header><div id="screen"></div><footer><span>Independent fan game · historical and estimated scores</span><a href="https://krillionanswers.com/data-sources/" target="_blank" rel="noopener">Archive source ↗</a><a href="https://github.com/owlsowo/krill-duels" target="_blank" rel="noopener">Source code ↗</a></footer></div><div id="announcement" class="sr-only" role="status" aria-live="polite"></div><dialog id="help"><button class="close" data-action="close-help" aria-label="Close instructions">×</button><div class="eyebrow">HOW TO PLAY</div><h2>Make your answer count.</h2><ol><li>Create a duel and send the invite link to a friend.</li><li>Choose HP, answer time, and damage rules when creating a duel. Both players press Ready to get the same random question.</li><li>Rare answers earn more points. The score difference damages the lower scorer’s HP.</li><li>With increasing damage enabled, damage doubles at round 5 and triples at round 8. Reach 0 HP and you’re out.</li></ol><p>Some questions offer up to three context hints. Press Hint, then Better hint for more detail. The next cost is shown beneath the button: 5%, 10%, 15% of starting HP and so on, increasing with every hint you buy in that match. Costs reset on Play again. You must have HP left after buying a hint. The timer keeps running. Hints are free in solo practice.</p><p>Solo practice uses the same questions and scores, without an opponent. In duels, questions don’t repeat within a room, including when you press Play again. After the whole bank is used, the next game starts a fresh shuffle. Both players need to keep their tabs open during a duel. No Krillion purchase or extension is needed.</p><p class="fine">Each question shows its scoring method. Historical scores are editorial grades; reviewed questions correct known answer-list errors. New questions use estimated familiarity from 2025 English Wikipedia readership, relative to the other accepted answers. News and language can affect that estimate. Equivalent names share a score where reviewed aliases are available; small spelling mistakes can offer a suggestion. Unlisted answers can be retried before time expires. This is casual play between friends.</p><button class="primary" data-action="close-help">Got it</button></dialog>`;
 const screen = document.querySelector<HTMLElement>('#screen')!;
 
 function announce(message: string): void {
@@ -61,7 +66,7 @@ function playerCard(name: string, hp: number, side: number, detail: string): str
 
 function render(force = false): void {
   if (practice) { renderPractice(force); return; }
-  const key = state ? JSON.stringify([state.matchId,state.phase,state.round,state.hp,state.ready,state.committed,state.connected,state.history.length,status,error,submitting,answerHint,answerSuggestions]) : `${joining}|${status}|${error}|${roomFromHash()}`;
+  const key = state ? JSON.stringify([state.matchId,state.phase,state.round,state.hp,state.ready,state.committed,state.connected,state.history.length,state.hintUses,state.hintLevels,status,error,submitting,!!hintPending,hintMessage,answerHint,answerSuggestions]) : `${joining}|${status}|${error}|${roomFromHash()}`;
   if (!force && key === lastKey) return;
   lastKey = key;
   const currentInput = screen.querySelector<HTMLInputElement>('#answer');
@@ -92,7 +97,8 @@ function render(force = false): void {
     content = `<div class="countdown-content"><span class="eyebrow">ROUND ${s.round} · ${roundFactor(s)}× DAMAGE</span><h1>Get ready.</h1><div id="countdown" class="big-count" aria-live="off">3</div><p>A new question. A chance to turn the tide.</p></div>`;
   } else if (s.phase === 'question' || s.phase === 'reveal') {
     const locked = s.committed[mySeat] || s.phase === 'reveal' || submitting;
-    content = `<div class="question-top"><span class="eyebrow">${esc(prompt?.category || 'TRIVIA')}</span><div class="clock"><span id="seconds">${s.settings.questionSeconds}</span><small>SEC</small></div></div><h1 class="question">${esc(prompt?.prompt)}</h1>${questionNotes(prompt)}<div class="timer-track" aria-hidden="true"><div id="timer-fill"></div></div><form id="answer-form"><label for="answer">${locked ? 'YOUR ANSWER IS LOCKED' : 'YOUR ANSWER'}</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…" ${locked || frozen ? 'disabled' : ''}><button class="primary" type="submit" ${locked || frozen ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock in →'}</button></div><div class="answer-foot"><span id="answer-hint" ${answerHint ? 'role="alert"' : ''}>${esc(answerHint || (s.phase === 'reveal' ? 'Revealing both answers…' : locked ? 'Waiting for the other answer…' : 'Press Enter to lock in. Rarer answers score higher.'))}</span>${!locked ? `<button class="quiet" type="button" data-action="skip" ${frozen ? 'disabled' : ''}>Skip</button>` : ''}</div>${suggestionButtons(locked || frozen)}</form>`;
+    const timer = duelTimer(s, Date.now(), offset);
+    content = `<div class="question-top"><span class="eyebrow">${esc(prompt?.category || 'TRIVIA')}</span>${clockMarkup(timer)}</div><h1 class="question">${esc(prompt?.prompt)}</h1>${questionNotes(prompt)}${timerMarkup(timer)}<form id="answer-form"><label for="answer">${locked ? 'YOUR ANSWER IS LOCKED' : 'YOUR ANSWER'}</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…" ${locked || frozen ? 'disabled' : ''}><button class="primary" type="submit" ${locked || frozen ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock in →'}</button></div><div class="answer-foot"><span id="answer-hint" ${answerHint ? 'role="alert"' : ''}>${esc(answerHint || (s.phase === 'reveal' ? 'Revealing both answers…' : locked ? 'Waiting for the other answer…' : 'Press Enter to lock in. Rarer answers score higher.'))}</span>${!locked ? `<button class="quiet" type="button" data-action="skip" ${frozen ? 'disabled' : ''}>Skip</button>` : ''}</div>${suggestionButtons(locked || frozen)}</form>${hintMarkup(s.promptId!, s.hintLevels[mySeat], { cost:hintCost(s.settings.startingHp,s.hintUses[mySeat]), hp:s.hp[mySeat], disabled:locked || frozen || timer.seconds === 0, pending:!!hintPending, message:hintMessage })}`;
   } else {
     const finished = s.phase === 'finished';
     const headline = finished ? s.winner === null ? 'An even match.' : s.winner === mySeat ? 'You win.' : 'You’re sunk.' : last?.loser === null ? 'No damage.' : last?.loser === mySeat ? 'That one hurt.' : 'Direct hit.';
@@ -128,7 +134,8 @@ async function connect(): Promise<void> {
       if (room !== next) return;
       if (HTTPS_ROOMS && next.seat === 0 && !state) history.replaceState(null, '', next.invite);
       const changedRound = value.matchId !== state?.matchId || value.round !== state?.round;
-      if (changedRound) { answerHint = ''; answerSuggestions = []; submitting = false; }
+      if (state && value.hintLevels[next.seat] > state.hintLevels[next.seat]) hintMessage = '';
+      if (changedRound) { answerHint = ''; answerSuggestions = []; submitting = false; hintPending = null; hintMessage = ''; }
       offset = next.hostClockOffset ?? Date.now() - value.now;
       state = value; joining = false; error = ''; render();
     },
@@ -163,29 +170,50 @@ async function submit(skip: boolean): Promise<void> {
   } catch { submitting = false; answerHint = 'Could not lock that answer. Try again.'; render(); }
 }
 
+async function requestHint(): Promise<void> {
+  if (practice) {
+    if (practice.tick()) { render(); return; }
+    practice.hint(); render(); return;
+  }
+  if (!room || !state || hintPending || submitting || state.phase !== 'question' ||
+      !state.connected || state.committed[room.seat] || duelRemaining(state, Date.now(), offset) === 0) return;
+  const seat = room.seat;
+  if (state.hintLevels[seat] >= getPromptHints(state.promptId!).length ||
+      hintCost(state.settings.startingHp, state.hintUses[seat]) >= state.hp[seat]) return;
+  const currentRoom = room;
+  const request = {};
+  const matchId = state.matchId, round = state.round;
+  hintPending = request; hintMessage = ''; render();
+  let message = '';
+  try {
+    if (!await currentRoom.hint()) message = 'Could not confirm the hint. Reconnect to refresh your HP and hints.';
+  } catch { message = 'Could not confirm the hint. Reconnect to refresh your HP and hints.'; }
+  if (hintPending !== request || room !== currentRoom || state?.matchId !== matchId || state?.round !== round) return;
+  hintPending = null; hintMessage = message; render();
+}
+
 function paintClock(): void {
   if (practice) {
     if (practice.tick()) { answerHint = ''; answerSuggestions = []; render(); }
     const p = practice.snapshot();
-    updateClock(p.phase === 'question' ? Math.max(0,p.deadline-Date.now()) : 0,p.questionSeconds*1000);
+    updateClock(questionTimer(p.phase, p.deadline, p.questionSeconds, Date.now()));
     return;
   }
   if (!state) return;
-  const reference = !state.connected && state.reconnectUntil ? state.reconnectUntil - 30_000 : Date.now() - offset;
-  const remaining = Math.max(0, state.deadline - reference);
-  const seconds = screen.querySelector('#seconds');
-  const fill = screen.querySelector<HTMLElement>('#timer-fill');
-  if (seconds) seconds.textContent = state.phase === 'reveal' ? '0' : String(Math.ceil(remaining / 1000));
-  if (fill) fill.style.width = `${state.phase === 'reveal' ? 0 : Math.min(100,remaining/(state.settings.questionSeconds*1000)*100)}%`;
+  const now = Date.now();
+  const remaining = duelRemaining(state, now, offset);
+  updateClock(duelTimer(state, now, offset));
   const countdown = screen.querySelector('#countdown');
   if (countdown) countdown.textContent = String(Math.max(1,Math.ceil(remaining/1000)));
   if (state.phase === 'question' && remaining === 0) {
     const input = screen.querySelector<HTMLInputElement>('#answer'); if (input) input.disabled = true;
+    const hintButton = screen.querySelector<HTMLButtonElement>('[data-action=hint]'); if (hintButton) hintButton.disabled = true;
   }
 }
 
 function home(): void {
   room?.dispose(); room = null; practice = null; state = null; error = ''; status = ''; joining = false; answerHint = ''; answerSuggestions = []; submitting = false;
+  hintPending = null; hintMessage = '';
   history.replaceState(null,'',location.pathname); lastKey = ''; render();
 }
 
@@ -195,6 +223,7 @@ app.addEventListener('click', async event => {
   if (action === 'close-help') (document.querySelector('#help') as HTMLDialogElement).close();
   if (action === 'ready') { answerHint = ''; answerSuggestions = []; submitting = false; room?.ready(); }
   if (action === 'skip') void submit(true);
+  if (action === 'hint') void requestHint();
   if (action === 'use-suggestion') {
     const chosen = (event.target as Element).closest<HTMLElement>('[data-answer]')?.dataset.answer;
     const input = screen.querySelector<HTMLInputElement>('#answer');
@@ -253,7 +282,7 @@ render();
 
 // Optional agent access uses the same controls and state as the visible game.
 import { installGameTools, type ModelContext } from './agent-tools';
-const visibleStatus = () => practice ? ({mode:'solo',...practice.snapshot(),error:answerHint || null}) : ({ mode:'duel', settings:state?.settings ?? settings, status, error: error || answerHint || null, phase: state?.phase ?? (joining ? 'connecting' : 'home'), round: state?.round ?? 0, hp: state?.hp, players: state?.names, invite: room?.invite, ready: state?.ready, question: state?.phase === 'question' ? promptById(state.promptId!)?.prompt : null, answerLocked: state ? state.committed[room?.seat ?? 0] : false });
+const visibleStatus = () => practice ? ({mode:'solo',...practice.snapshot(),hints:getPromptHints(practice.snapshot().promptId).slice(0,practice.snapshot().hintLevel),error:answerHint || null}) : ({ mode:'duel', settings:state?.settings ?? settings, status, error: error || answerHint || null, phase: state?.phase ?? (joining ? 'connecting' : 'home'), round: state?.round ?? 0, hp: state?.hp, players: state?.names, hints:state?.promptId ? getPromptHints(state.promptId).slice(0,state.hintLevels[room?.seat ?? 0]) : [], hintCost:state ? hintCost(state.settings.startingHp,state.hintUses[room?.seat ?? 0]) : null, invite: room?.invite, ready: state?.ready, question: state?.phase === 'question' ? promptById(state.promptId!)?.prompt : null, answerLocked: state ? state.committed[room?.seat ?? 0] : false });
 const removeGameTools = installGameTools((document as Document & { modelContext?: ModelContext }).modelContext, {
   status: visibleStatus,
   configure: value => {
@@ -306,6 +335,7 @@ async function startPlay(): Promise<void> {
 }
 function startPractice(): void {
   readSettings(); room?.dispose(); room = null; state = null; joining = false; submitting = false; error = ''; status = ''; answerHint = ''; answerSuggestions = [];
+  hintPending = null; hintMessage = '';
   practice = new PracticeSession(settings.questionSeconds); lastKey = ''; render(true);
 }
 
@@ -322,7 +352,7 @@ function answerSheet(promptId: string): string {
 function renderPractice(force = false): void {
   if (!practice) return;
   const p = practice.snapshot();
-  const key = `solo|${p.phase}|${p.round}|${p.total}|${answerHint}|${JSON.stringify(answerSuggestions)}`;
+  const key = `solo|${p.phase}|${p.round}|${p.total}|${p.hintLevel}|${answerHint}|${JSON.stringify(answerSuggestions)}`;
   if (!force && key === lastKey) return;
   lastKey = key;
   const oldInput = screen.querySelector<HTMLInputElement>('#answer');
@@ -331,14 +361,15 @@ function renderPractice(force = false): void {
   const selection = oldInput?.selectionStart;
   const prompt = promptById(p.promptId)!;
   const last = p.history.at(-1);
+  const timer = questionTimer(p.phase, p.deadline, p.questionSeconds, Date.now());
   const content = p.phase === 'question'
-    ? `<div class="question-top"><span class="eyebrow">${esc(prompt.category)}</span><div class="clock"><span id="seconds">${p.questionSeconds}</span><small>SEC</small></div></div><h1 class="question">${esc(prompt.prompt)}</h1>${questionNotes(prompt)}<div class="timer-track" aria-hidden="true"><div id="timer-fill"></div></div><form id="answer-form"><label for="answer">YOUR ANSWER</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…"><button class="primary" type="submit">Lock in →</button></div><div class="answer-foot"><span ${answerHint?'role="alert"':''}>${esc(answerHint || 'Rarer answers score higher. Press Enter to lock in.')}</span><button class="quiet" type="button" data-action="skip">Skip</button></div>${suggestionButtons()}</form>`
+    ? `<div class="question-top"><span class="eyebrow">${esc(prompt.category)}</span>${clockMarkup(timer)}</div><h1 class="question">${esc(prompt.prompt)}</h1>${questionNotes(prompt)}${timerMarkup(timer)}<form id="answer-form"><label for="answer">YOUR ANSWER</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…"><button class="primary" type="submit">Lock in →</button></div><div class="answer-foot"><span ${answerHint?'role="alert"':''}>${esc(answerHint || 'Rarer answers score higher. Press Enter to lock in.')}</span><button class="quiet" type="button" data-action="skip">Skip</button></div>${suggestionButtons()}</form>${hintMarkup(p.promptId,p.hintLevel,{cost:null,disabled:timer.seconds === 0})}`
     : `<div class="result-head"><span class="eyebrow">${p.phase==='finished'?'PRACTICE COMPLETE':`QUESTION ${p.round} RESULTS`}</span><h1>${p.phase==='finished'?'Bank completed.':last!.points>=85?'Rare find.':last!.points?'Points on the board.':'Keep exploring.'}</h1><p>${p.phase==='finished'?`${p.total.toLocaleString()} points across ${p.questionCount} questions.`:'Review your answer, then try the next random question.'}</p></div><p class="result-prompt">${esc(prompt.prompt)}</p><div class="answer-result solo-result player-0"><strong>${last!.points}<small> pts</small></strong><h2>${esc(last!.answer || (last!.input?`“${last!.input}”`:'No answer'))}</h2><span class="rarity score-${last!.points}">${esc(scoreLabel(last!.points, prompt))}</span></div><button class="primary" data-action="practice-next">${p.phase==='finished'?'New practice run →':'Next random question →'}</button>${answerSheet(p.promptId)}`;
   screen.innerHTML = `<section class="match practice"><div class="match-heading"><span class="eyebrow">SOLO PRACTICE</span><button class="quiet" data-action="home">Back to setup</button></div><div class="practice-stats"><div><span>Question</span><strong>${p.round}<small> / ${p.questionCount}</small></strong></div><div><span>Total points</span><strong>${p.total.toLocaleString()}</strong></div><div><span>Answer time</span><strong>${p.questionSeconds}<small> sec</small></strong></div></div><section class="arena ${p.phase}">${content}</section><p class="fine">Each question appears once per run. Both modes use the same scores.</p></section>`;
   bindForms();
   const input = screen.querySelector<HTMLInputElement>('#answer');
   if (input) { input.value = value; if (focused || !oldInput) input.focus({preventScroll:true}); if (selection !== null && selection !== undefined) input.setSelectionRange(selection,selection); }
-  updateClock(Math.max(0,p.deadline-Date.now()),p.questionSeconds*1000);
+  updateClock(questionTimer(p.phase, p.deadline, p.questionSeconds, Date.now()));
   announce(p.phase==='question'?`Question ${p.round}. ${prompt.prompt}. ${p.questionSeconds} seconds.`:`${last!.points} points. Total ${p.total} points.`);
 }
 
@@ -355,11 +386,11 @@ function submitPractice(skip: boolean): void {
   }
   answerHint = ''; answerSuggestions = []; practice.submit(skip?'':input); render();
 }
-function updateClock(remaining: number, duration: number): void {
+function updateClock(timer: TimerDisplay): void {
   const seconds = screen.querySelector('#seconds');
   const fill = screen.querySelector<HTMLElement>('#timer-fill');
-  if (seconds) seconds.textContent = String(Math.ceil(remaining/1000));
-  if (fill) fill.style.width = `${Math.min(100,Math.max(0,remaining/duration*100))}%`;
+  if (seconds) seconds.textContent = String(timer.seconds);
+  if (fill) fill.style.width = `${timer.percent}%`;
 }
 
 function nextPracticeRound(): void {

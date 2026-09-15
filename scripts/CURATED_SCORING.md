@@ -1,6 +1,6 @@
 # Reviewed questions and estimated scores
 
-The extra question inputs are hand-reviewed factual sets in `data/curated-questions.json`. Each answer names a Wikidata entity and an English Wikipedia article. Factual references establish membership; Wikipedia traffic only estimates relative familiarity for scoring.
+The extra question inputs are hand-reviewed factual sets in `data/curated-questions.json` and reviewed packs in `data/question-packs/*.json`. The original sets load first, followed by packs in filename order. Each answer names a Wikidata entity and an English Wikipedia article. Factual references establish membership; Wikipedia traffic only estimates relative familiarity for scoring. [Catalog maintenance](../CATALOG_MAINTENANCE.md) explains pack review, scaffolding and validation; draft packs never become playable automatically.
 
 ## Reproduce without network access
 
@@ -19,7 +19,7 @@ To obtain missing source evidence after reviewing new inputs:
 node scripts/build-curated.mjs --fetch
 ```
 
-Fetches are sequential, separated by at least 250 ms, limited to 500 distinct input articles, and checkpointed after each verified article. Cached records are reused. Transient failures receive at most three attempts; HTTP errors and incomplete results never become zero counts. To deliberately replace an observation, remove its cached record and fetch again, then review the output diff. Do not edit raw counts to make a build pass.
+Fetches are sequential, separated by at least 250 ms, limited to **500 articles with missing evidence** and at most 1,000 uncached API records per run, and checkpointed after each verified article. Already cached articles do not consume the missing-article limit, so a growing bank can reuse its frozen evidence. Cached records are validated and reused. Transient failures receive at most three attempts per record; HTTP errors and incomplete results never become zero counts. To deliberately replace an observation, remove its cached record and fetch again, then review the output diff. Do not edit raw counts to make a build pass.
 
 ## Frozen method
 
@@ -33,7 +33,7 @@ Version: `enwiki-human-2025-median-rank-v1`.
 
 If any answer lacks valid identity or complete metrics, the entire build fails. A failed fetch or missing month is never interpreted as an unpopular answer. Complete series containing actual zero observations are valid; an all-zero question still receives the all-equal treatment.
 
-The cache retains the exact API responses, source URLs, and retrieval timestamps. The public provenance records factual sources, canonical titles, resolved identities and redirect chains, twelve raw monthly counts per answer, medians, ranks, assigned points, formula, version, source-data hashes, and limitations. Stable cached inputs produce byte-identical outputs.
+The cache retains the exact API responses, source URLs, and retrieval timestamps. The public provenance records factual sources, canonical titles, resolved identities and redirect chains, twelve raw monthly counts per answer, medians, ranks, assigned points, formula, version, source-data hashes, input-file hashes, pack membership, and limitations. Stable cached inputs produce byte-identical outputs.
 
 ## What the estimate means
 
@@ -48,4 +48,4 @@ Source documentation:
 - [Action API redirect resolution](https://www.mediawiki.org/wiki/API:Query#Resolving_redirects)
 - [API access and CC0 data license](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/documentation/access-policy.html)
 
-Tests: `npx vitest run tests/curated-scoring.test.mjs` covers ties, all-equal metrics, spikes, identity mismatches, redirects, missing/duplicated months, wrong traffic filters, malformed counts, and deterministic provenance.
+Tests: `npx vitest run tests/curated-scoring.test.mjs tests/question-packs.test.mjs tests/catalog.test.ts` covers ties, all-equal metrics, spikes, identity mismatches, redirects, missing/duplicated months, wrong traffic filters, malformed counts, deterministic provenance, pack ordering, draft rejection, global collisions, expansion bounds, cached fetch budgets and NASA membership/aliases.

@@ -2043,5 +2043,156 @@
         "score": 100
       }
     ]
+  },
+  {
+    "id": "curated-apollo-moon-landings",
+    "category": "space",
+    "prompt": "Name an Apollo mission that landed astronauts on the Moon",
+    "source": "https://www.nasa.gov/the-apollo-program/",
+    "sourceDate": "2026-09-15",
+    "rules": "The six successful crewed lunar landing missions in the Apollo program, 1969–1972. Mission names or numbers count; lunar-orbit-only and aborted landing missions do not.",
+    "reviewedAt": "2026-09-15",
+    "scoring": "estimated",
+    "scoringVersion": "enwiki-human-2025-median-rank-v1",
+    "answers": [
+      {
+        "answer": "Apollo 11",
+        "aliases": [
+          "11"
+        ],
+        "entityId": "Q43653",
+        "score": 10
+      },
+      {
+        "answer": "Apollo 12",
+        "aliases": [
+          "12"
+        ],
+        "entityId": "Q188433",
+        "score": 30
+      },
+      {
+        "answer": "Apollo 14",
+        "aliases": [
+          "14"
+        ],
+        "entityId": "Q178871",
+        "score": 60
+      },
+      {
+        "answer": "Apollo 15",
+        "aliases": [
+          "15"
+        ],
+        "entityId": "Q194068",
+        "score": 85
+      },
+      {
+        "answer": "Apollo 16",
+        "aliases": [
+          "16"
+        ],
+        "entityId": "Q188168",
+        "score": 100
+      },
+      {
+        "answer": "Apollo 17",
+        "aliases": [
+          "17"
+        ],
+        "entityId": "Q180971",
+        "score": 10
+      }
+    ]
+  },
+  {
+    "id": "curated-mercury-seven",
+    "category": "space",
+    "prompt": "Name one of NASA’s original Mercury Seven astronauts",
+    "source": "https://www.nasa.gov/history/mercury-seven-astronaut-biographies/",
+    "sourceDate": "2026-09-15",
+    "rules": "The seven astronauts selected for Project Mercury in April 1959, whether or not they later flew a Mercury mission. Common names, formal names and unambiguous surnames count.",
+    "reviewedAt": "2026-09-15",
+    "scoring": "estimated",
+    "scoringVersion": "enwiki-human-2025-median-rank-v1",
+    "answers": [
+      {
+        "answer": "Scott Carpenter",
+        "aliases": [
+          "Carpenter",
+          "Malcolm Scott Carpenter",
+          "M. Scott Carpenter"
+        ],
+        "entityId": "Q335503",
+        "score": 100
+      },
+      {
+        "answer": "Gordon Cooper",
+        "aliases": [
+          "Cooper",
+          "Leroy Gordon Cooper",
+          "Leroy Gordon Cooper Jr.",
+          "L. Gordon Cooper Jr."
+        ],
+        "entityId": "Q312833",
+        "score": 60
+      },
+      {
+        "answer": "John Glenn",
+        "aliases": [
+          "Glenn",
+          "John Herschel Glenn",
+          "John Herschel Glenn Jr.",
+          "John H. Glenn Jr."
+        ],
+        "entityId": "Q182642",
+        "score": 10
+      },
+      {
+        "answer": "Gus Grissom",
+        "aliases": [
+          "Grissom",
+          "Virgil Grissom",
+          "Virgil Ivan Grissom",
+          "Virgil I. Grissom"
+        ],
+        "entityId": "Q110879",
+        "score": 10
+      },
+      {
+        "answer": "Wally Schirra",
+        "aliases": [
+          "Schirra",
+          "Walter Schirra",
+          "Walter Marty Schirra",
+          "Walter Marty Schirra Jr.",
+          "Walter M. Schirra Jr."
+        ],
+        "entityId": "Q110450",
+        "score": 85
+      },
+      {
+        "answer": "Alan Shepard",
+        "aliases": [
+          "Shepard",
+          "Alan Bartlett Shepard",
+          "Alan Bartlett Shepard Jr.",
+          "Alan B. Shepard Jr."
+        ],
+        "entityId": "Q174979",
+        "score": 30
+      },
+      {
+        "answer": "Deke Slayton",
+        "aliases": [
+          "Slayton",
+          "Donald Slayton",
+          "Donald Kent Slayton",
+          "Donald K. Slayton"
+        ],
+        "entityId": "Q336810",
+        "score": 60
+      }
+    ]
   }
 ]

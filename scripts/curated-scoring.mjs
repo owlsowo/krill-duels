@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 
 export const YEAR = 2025;
+export const MAX_REVIEWED_QUESTIONS = 2000;
 export const SCORING_VERSION = 'enwiki-human-2025-median-rank-v1';
 export const MONTHS = Array.from({ length: 12 }, (_, index) => `${YEAR}${String(index + 1).padStart(2, '0')}0100`);
 export const POLICY = {
@@ -32,7 +33,7 @@ export const POLICY = {
 };
 
 export const normalizeTitle = value => value.replaceAll('_', ' ').trim();
-const normalizeAnswer = value => value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+export const normalizeAnswer = value => value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 export const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
@@ -47,9 +48,11 @@ export function pageviewsUrl(article) {
 }
 
 export function validateInputs(questions) {
-  assert(Array.isArray(questions) && questions.length > 0 && questions.length <= 40, 'Expected 1–40 reviewed questions.');
+  assert(Array.isArray(questions) && questions.length > 0 && questions.length <= MAX_REVIEWED_QUESTIONS, `Expected 1–${MAX_REVIEWED_QUESTIONS} reviewed questions.`);
   const ids = new Set(), prompts = new Set();
   for (const question of questions) {
+    assert(question && typeof question === 'object' && !Array.isArray(question), 'Invalid question object.');
+    assert(question.status === undefined || question.status === 'reviewed', `${question.id}: draft or unreviewed question cannot be built`);
     assert(typeof question.id === 'string' && /^curated-[a-z0-9-]+$/.test(question.id) && !ids.has(question.id), `Invalid or duplicate question ID: ${question.id}`);
     ids.add(question.id);
     for (const field of ['category', 'prompt', 'rules']) assert(typeof question[field] === 'string' && question[field].trim(), `${question.id}: missing ${field}`);
@@ -74,6 +77,15 @@ export function validateInputs(questions) {
     }
   }
   return questions;
+}
+
+/** Count absent evidence, not the growing collection of already cached articles. */
+export function missingArticleCount(questions, cache) {
+  const answers = new Map(questions.flatMap(question => question.answers).map(answer => [normalizeTitle(answer.article), answer]));
+  return [...answers].filter(([key, answer]) => {
+    const resolution = cache.resolutions?.[key];
+    return !resolution || !cache.pageviews?.[resolveIdentity(answer, resolution).title];
+  }).length;
 }
 
 export function resolveIdentity(answer, record) {

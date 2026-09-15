@@ -14,11 +14,11 @@ export interface Statement {
 }
 export interface Database { prepare(sql: string): Statement }
 export interface Environment { DB: Database; ASSETS: { fetch(request: Request): Promise<Response> } }
-type Action = 'create' | 'join' | 'poll' | 'ready' | 'answer' | 'leave';
+type Action = 'create' | 'join' | 'poll' | 'ready' | 'answer' | 'hint' | 'leave';
 interface Command {
   action: Action; room: string; seat: Seat; version: string;
   name?: string; settings?: DuelSettings;
-  matchId?: string; round?: number; phase?: Phase; input?: string;
+  matchId?: string; round?: number; phase?: Phase; input?: string; expectedHintLevel?: number;
 }
 interface Draft { matchId: string; round: number; input: string; salt: string }
 interface StoredRoom { engine: StoredEngine; drafts: [Draft | null, Draft | null]; left: [boolean, boolean] }
@@ -27,7 +27,7 @@ interface Row {
   revision: number; host_seen: number; guest_seen: number; expires: number;
 }
 let versionPromise: Promise<string> | undefined;
-export const protocolVersion = (): Promise<string> => versionPromise ??= catalogVersion().then(v => `krill-https-3:${v}`);
+export const protocolVersion = (): Promise<string> => versionPromise ??= catalogVersion().then(v => `krill-https-4:${v}`);
 class ApiError extends Error { constructor(readonly status: number, readonly code: string, message: string) { super(message); } }
 const error = (status: number, code: string, message: string): never => { throw new ApiError(status, code, message); };
 const json = (body: unknown, status = 200): Response => Response.json(body, { status, headers: {
@@ -52,12 +52,13 @@ async function command(request: Request): Promise<Command> {
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
   let c: Command;
   try { c = JSON.parse(new TextDecoder().decode(bytes)); } catch { return error(400, 'bad-request', 'The room request was incomplete.'); }
-  if (!c || !['create', 'join', 'poll', 'ready', 'answer', 'leave'].includes(c.action) ||
+  if (!c || !['create', 'join', 'poll', 'ready', 'answer', 'hint', 'leave'].includes(c.action) ||
       !/^[a-f0-9]{24}$/.test(c.room) || ![0, 1].includes(c.seat) || typeof c.version !== 'string' ||
       (c.name !== undefined && (typeof c.name !== 'string' || c.name.length > 100)) ||
       (c.action === 'create' && (c.seat !== 0 || !validSettings(c.settings))) ||
       (c.action === 'join' && c.seat !== 1) ||
-      (['ready', 'answer'].includes(c.action) && (typeof c.matchId !== 'string' || c.matchId.length > 50 || !Number.isInteger(c.round))) ||
+      (['ready', 'answer', 'hint'].includes(c.action) && (typeof c.matchId !== 'string' || c.matchId.length > 50 || !Number.isInteger(c.round))) ||
+      (c.action === 'hint' && (!Number.isInteger(c.expectedHintLevel) || c.expectedHintLevel! < 0 || c.expectedHintLevel! >= 3)) ||
       (c.action === 'answer' && (typeof c.input !== 'string' || c.input.length > 160))) {
     error(400, 'bad-request', 'Please refresh the game and try again.');
   }
@@ -135,6 +136,8 @@ async function execute(db: Database, c: Command, token: string, now: number): Pr
     let accepted = false;
     if (c.action === 'ready' && current && c.phase === s.phase) {
       engine.ready(c.seat, now);
+    } else if (c.action === 'hint' && current) {
+      accepted = engine.hint(c.seat, s.matchId, s.round, c.expectedHintLevel!, now);
     } else if (c.action === 'answer' && current) {
       const previous = saved.drafts[c.seat];
       // A lost HTTP response can be retried safely; it never replaces a lock.
@@ -154,7 +157,7 @@ async function execute(db: Database, c: Command, token: string, now: number): Pr
     saved.engine = engine.store(now);
     const updated = await db.prepare('UPDATE rooms SET guest = ?, payload = ?, revision = revision + 1, host_seen = ?, guest_seen = ?, expires = ? WHERE id = ? AND revision = ?')
       .bind(row.guest, JSON.stringify(saved), row.host_seen, row.guest_seen, now + ROOM_TTL_MS, row.id, row.revision).run();
-    if (updated.meta.changes === 1) return json({ protocol: 3, revision: row.revision + 1, state: engine.snapshot(now), accepted });
+    if (updated.meta.changes === 1) return json({ protocol: 4, revision: row.revision + 1, state: engine.snapshot(now), accepted });
   }
   return error(503, 'room-busy', 'The room is catching up. Trying again…');
 }

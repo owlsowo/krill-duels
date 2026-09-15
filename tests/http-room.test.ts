@@ -6,7 +6,7 @@ const callback = () => ({ change: vi.fn(), status: vi.fn(), error: vi.fn() });
 const engine = new DuelEngine('Host');
 let rooms: DuelRoom[];
 const room = (id: string | null = null, cb = callback()) => { const r = new DuelRoom('Tester', id, cb); rooms.push(r); return r; };
-const reply = (revision: number, state = engine.snapshot(Date.now())) => Response.json({ protocol: 3, revision, state, accepted: true });
+const reply = (revision: number, state = engine.snapshot(Date.now()), accepted = true) => Response.json({ protocol: 4, revision, state, accepted });
 beforeEach(() => {
   rooms = []; storage.clear();
   vi.stubGlobal('location', { origin: 'https://game.example', pathname: '/', hash: '' });
@@ -20,7 +20,7 @@ it('uses only same-origin HTTP and shares safe diagnostics', async () => {
   expect(url).toBe('/api/duel'); expect(init.method).toBe('POST');
   expect(init.headers.Authorization).toMatch(/^Bearer [a-f0-9]{32}$/);
   expect(r.hostClockOffset).not.toBeNull();
-  expect(r.diagnostics()).toMatchObject({ transport: 'https', protocol: 3, accepted: true });
+  expect(r.diagnostics()).toMatchObject({ transport: 'https', protocol: 4, accepted: true });
   expect(JSON.stringify(r.diagnostics())).not.toContain(r.room);
   expect(JSON.stringify(r.diagnostics())).not.toContain(init.headers.Authorization.slice(7));
 });
@@ -62,4 +62,27 @@ it('cancellation aborts a pending request and suppresses later callbacks', async
   r.dispose(false); expect(signal?.aborted).toBe(true);
   release!(reply(1)); await opening;
   expect(cb.change).not.toHaveBeenCalled(); expect(cb.error).not.toHaveBeenCalled();
+});
+it('waits for authoritative hint acceptance, coalesces double clicks, and sends the expected level', async () => {
+  const now = Date.now(), e = new DuelEngine('Host');
+  e.join('Guest', now); e.ready(0, now); e.ready(1, now); e.tick(now + 3000);
+  const initial = e.snapshot(now + 3000);
+  let release!: (value: Response) => void;
+  const fetch = vi.fn().mockResolvedValueOnce(reply(1, initial))
+    .mockImplementationOnce(() => new Promise<Response>(resolve => { release = resolve; }));
+  vi.stubGlobal('fetch', fetch);
+  const r = room(); await r.open();
+  const first = r.hint(), duplicate = r.hint();
+  expect(first).toBe(duplicate);
+  await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+  expect(JSON.parse(fetch.mock.calls[1][1].body)).toMatchObject({ action: 'hint', matchId: initial.matchId, round: initial.round, expectedHintLevel: 0 });
+  expect(r.state!.hintLevels).toEqual([0, 0]);
+  const accepted = { ...initial, hp: [285, 300] as [number, number], hintUses: [1, 0] as [number, number], hintLevels: [1, 0] as [number, number] };
+  release(reply(2, accepted));
+  expect(await first).toBe(true);
+  expect(r.state!.hp).toEqual([285, 300]);
+  fetch.mockResolvedValueOnce(reply(3, accepted, false));
+  expect(await r.hint()).toBe(false);
+  expect(JSON.parse(fetch.mock.calls[2][1].body).expectedHintLevel).toBe(1);
+  expect(r.state!.hintLevels).toEqual([1, 0]);
 });

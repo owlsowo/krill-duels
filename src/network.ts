@@ -13,6 +13,8 @@ const RETRY_DELAY_MS = 2_000;
 type Draft = { matchId: string; round: number; promptId: string; input: string; salt: string; hash: string };
 type Callbacks = { change: (state: DuelState) => void; status: (message: string) => void; error: (message: string) => void };
 type Packet = Record<string, unknown>;
+type HintPurchase = { matchId: string; round: number; expectedHintLevel: number; sentAt: number;
+  promise: Promise<boolean>; resolve: (accepted: boolean) => void; timer: ReturnType<typeof setTimeout> };
 export const roomFromHash = (): string | null => {
   const id = new URLSearchParams(location.hash.slice(1)).get('room');
   return id && /^[a-f0-9]{24}$/.test(id) ? id : null;
@@ -57,6 +59,7 @@ export class DuelRoom {
   private revealing = false;
   private sending = false;
   private hostRevealedKey = '';
+  private hintPending: HintPurchase | null = null;
 
   constructor(private name: string, room: string | null, private callbacks: Callbacks, settings: DuelSettings = DEFAULT_SETTINGS) {
     this.name = safeName(name);
@@ -78,7 +81,7 @@ export class DuelRoom {
   diagnostics(): object {
     const pc = this.conn?.peerConnection;
     return {
-      app: 'krill-duels', protocol: 2, role: this.seat === 0 ? 'host' : 'guest', stage: this.stage,
+      app: 'krill-duels', protocol: 3, role: this.seat === 0 ? 'host' : 'guest', stage: this.stage,
       signaling: this.peer?.destroyed ? 'closed' : this.peer?.open ? 'open' : this.peer?.disconnected ? 'disconnected' : 'connecting',
       attempts: this.retryAttempts, dataChannel: this.conn?.open ? 'open' : 'closed', accepted: this.accepted,
       ice: pc?.iceConnectionState ?? this.lastIce, connection: pc?.connectionState ?? this.lastConnection,
@@ -94,7 +97,7 @@ export class DuelRoom {
     this.interval = window.setInterval(() => this.tick(), 250);
     this.callbacks.status(this.seat === 0 ? 'Opening your room…' : 'Joining your friend…');
     try {
-      this.version = `krill-duels-2:${await catalogVersion()}`;
+      this.version = `krill-duels-3:${await catalogVersion()}`;
     } catch {
       this.fail('Could not prepare the game. Refresh the page and try again.');
       return;
@@ -201,6 +204,10 @@ export class DuelRoom {
         this.stage = 'connected';
         if (!wasAccepted) this.callbacks.status('Connected');
         this.receive(packet.state as DuelState);
+      } else if (packet.type === 'hint-result' && typeof packet.accepted === 'boolean') {
+        const pending = this.hintPending;
+        if (pending && packet.matchId === pending.matchId && packet.round === pending.round &&
+            packet.expectedHintLevel === pending.expectedHintLevel) this.finishHint(packet.accepted);
       } else if (packet.type === 'pong' && typeof packet.sent === 'number' && typeof packet.now === 'number') {
         const arrived = Date.now();
         const rtt = arrived - packet.sent;
@@ -265,6 +272,14 @@ export class DuelRoom {
         return;
       }
       const current = this.engine!.snapshot(Date.now());
+      if (packet.type === 'hint' && typeof packet.matchId === 'string' && typeof packet.round === 'number' &&
+          typeof packet.expectedHintLevel === 'number') {
+        const accepted = this.engine!.hint(1, packet.matchId, packet.round, packet.expectedHintLevel, Date.now());
+        this.publish();
+        this.send({ type: 'hint-result', matchId: packet.matchId, round: packet.round,
+          expectedHintLevel: packet.expectedHintLevel, accepted });
+        return;
+      }
       if (packet.matchId !== current.matchId || packet.round !== current.round) return;
       if (packet.type === 'ready' && packet.phase === current.phase) {
         this.engine!.ready(1, Date.now()); this.publish();
@@ -316,6 +331,41 @@ export class DuelRoom {
     } finally { this.sending = false; }
   }
 
+  hint(): Promise<boolean> {
+    if (this.hintPending) return this.hintPending.promise;
+    const s = this.state;
+    if (!this.alive || !s?.connected || s.phase !== 'question' || s.committed[this.seat] || this.sending ||
+        this.draft?.matchId === s.matchId && this.draft.round === s.round ||
+        Date.now() - (this.hostClockOffset ?? 0) >= s.deadline) return Promise.resolve(false);
+    if (this.engine) {
+      const accepted = this.engine.hint(0, s.matchId, s.round, s.hintLevels[0], Date.now());
+      this.publish();
+      return Promise.resolve(accepted);
+    }
+    if (!this.accepted || !this.conn?.open) return Promise.resolve(false);
+    let resolve!: (accepted: boolean) => void;
+    const promise = new Promise<boolean>(done => { resolve = done; });
+    this.hintPending = { matchId: s.matchId, round: s.round, expectedHintLevel: s.hintLevels[1],
+      sentAt: Date.now(), promise, resolve, timer: setTimeout(() => this.finishHint(false), 6000) };
+    this.sendHint();
+    return promise;
+  }
+
+  private sendHint(): void {
+    const p = this.hintPending;
+    if (!p || !this.accepted || !this.conn?.open) return;
+    p.sentAt = Date.now();
+    this.send({ type: 'hint', matchId: p.matchId, round: p.round, expectedHintLevel: p.expectedHintLevel });
+  }
+
+  private finishHint(accepted: boolean): void {
+    const pending = this.hintPending;
+    if (!pending) return;
+    this.hintPending = null;
+    clearTimeout(pending.timer);
+    pending.resolve(accepted);
+  }
+
   private receive(state: DuelState): void {
     if (!this.alive) return;
     this.hostClockOffset ??= Date.now() - state.now;
@@ -332,6 +382,12 @@ export class DuelRoom {
       }
     }
     this.state = state;
+    const pendingHint = this.hintPending;
+    if (pendingHint) {
+      if (state.matchId !== pendingHint.matchId || state.round !== pendingHint.round) this.finishHint(false);
+      else if (state.hintLevels[this.seat] > pendingHint.expectedHintLevel) this.finishHint(true);
+      else if (state.phase !== 'question' || state.committed[this.seat]) this.finishHint(false);
+    }
     if (this.draft && (this.draft.matchId !== state.matchId || this.draft.round !== state.round || ['result', 'finished'].includes(state.phase))) {
       this.draft = null;
       storageRemove(`kd-answer-${this.room}`);
@@ -413,6 +469,7 @@ export class DuelRoom {
   private tick(): void {
     if (!this.alive) return;
     const now = Date.now();
+    if (this.hintPending && now - this.hintPending.sentAt >= 1000) this.sendHint();
     // Keep an established game alive even if signaling drops. Discovery is only
     // needed for a new data channel, and reconnect() can throw during retries.
     if (this.peer?.disconnected && !this.peer.destroyed && now >= this.nextServiceRetry) {
@@ -486,6 +543,8 @@ export class DuelRoom {
       (s.promptId === null || typeof s.promptId === 'string' && !!promptById(s.promptId)) &&
       Array.isArray(s.names) && s.names.length === 2 && s.names.every(n => typeof n === 'string' && n.length <= 24) &&
       Array.isArray(s.hp) && s.hp.length === 2 && s.hp.every(h => Number.isFinite(h) && h >= 0 && h <= s.settings.startingHp) &&
+      Array.isArray(s.hintUses) && s.hintUses.length === 2 && s.hintUses.every(n => Number.isSafeInteger(n) && n >= 0 && n <= PROMPT_IDS.length * 3) &&
+      Array.isArray(s.hintLevels) && s.hintLevels.length === 2 && s.hintLevels.every((n, seat) => Number.isInteger(n) && n >= 0 && n <= 3 && n <= s.hintUses[seat]) &&
       Array.isArray(s.ready) && s.ready.length === 2 && s.ready.every(b => typeof b === 'boolean') &&
       Array.isArray(s.committed) && s.committed.length === 2 && s.committed.every(b => typeof b === 'boolean') &&
       Array.isArray(s.hashes) && s.hashes.length === 2 && s.hashes.every(h => h === null || typeof h === 'string' && /^[a-f0-9]{64}$/.test(h)) &&
@@ -504,6 +563,7 @@ export class DuelRoom {
     if (!this.alive) return;
     if (notify) this.send(this.seat === 0 ? { type: 'ended' } : { type: 'leave', matchId: this.state?.matchId, round: this.state?.round });
     this.alive = false;
+    this.finishHint(false);
     this.accepted = false;
     if (this.stage !== 'failed') this.stage = 'closed';
     clearInterval(this.interval);

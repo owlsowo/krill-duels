@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "scoringVersion": "enwiki-human-2025-median-rank-v1",
-  "inputsSha256": "7fefb81fca9bd6e58a4eb5caf59733e2f273123b0a70b6b708a1583f42cc83d7",
-  "cacheSha256": "637cacac231384176eb28230d2631277d5227fcf9f4df20768ed5d1d8af8552a",
+  "inputsSha256": "8777231c9ae47941f2645fe4956dd116c691b20fc1a54e6fe90a972849f22e8b",
+  "cacheSha256": "65ce874dab6c9cd51a99aea2c5340df4cd6fee956dc250698c8ea5d7c1cfa730",
   "policy": {
     "version": "enwiki-human-2025-median-rank-v1",
     "label": "Estimated points from relative Wikipedia readership",
@@ -18085,6 +18085,1012 @@
           "score": 100,
           "rarityRank": 1
         }
+      ]
+    },
+    {
+      "id": "curated-apollo-moon-landings",
+      "category": "space",
+      "prompt": "Name an Apollo mission that landed astronauts on the Moon",
+      "rules": "The six successful crewed lunar landing missions in the Apollo program, 1969–1972. Mission names or numbers count; lunar-orbit-only and aborted landing missions do not.",
+      "reviewedAt": "2026-09-15",
+      "sources": [
+        {
+          "title": "NASA — The Apollo Program",
+          "url": "https://www.nasa.gov/the-apollo-program/",
+          "retrievedAt": "2026-09-15"
+        }
+      ],
+      "answers": [
+        {
+          "answer": "Apollo 11",
+          "entityId": "Q43653",
+          "requestedArticle": "Apollo_11",
+          "canonicalArticle": "Apollo 11",
+          "articleUrl": "https://en.wikipedia.org/wiki/Apollo_11",
+          "medianMonthlyViews": 126486.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 164476
+            },
+            {
+              "month": "2025-02",
+              "views": 130169
+            },
+            {
+              "month": "2025-03",
+              "views": 152062
+            },
+            {
+              "month": "2025-04",
+              "views": 122754
+            },
+            {
+              "month": "2025-05",
+              "views": 114688
+            },
+            {
+              "month": "2025-06",
+              "views": 107948
+            },
+            {
+              "month": "2025-07",
+              "views": 167248
+            },
+            {
+              "month": "2025-08",
+              "views": 138986
+            },
+            {
+              "month": "2025-09",
+              "views": 109424
+            },
+            {
+              "month": "2025-10",
+              "views": 129200
+            },
+            {
+              "month": "2025-11",
+              "views": 123773
+            },
+            {
+              "month": "2025-12",
+              "views": 116735
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Apollo+11",
+            "retrievedAt": "2026-09-15T20:32:09.610Z",
+            "title": "Apollo 11",
+            "entityId": "Q43653",
+            "pageId": 662,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Apollo_11/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:10.070Z"
+          },
+          "score": 10,
+          "rarityRank": 0
+        },
+        {
+          "answer": "Apollo 12",
+          "entityId": "Q188433",
+          "requestedArticle": "Apollo_12",
+          "canonicalArticle": "Apollo 12",
+          "articleUrl": "https://en.wikipedia.org/wiki/Apollo_12",
+          "medianMonthlyViews": 17799,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 22277
+            },
+            {
+              "month": "2025-02",
+              "views": 17593
+            },
+            {
+              "month": "2025-03",
+              "views": 21172
+            },
+            {
+              "month": "2025-04",
+              "views": 18526
+            },
+            {
+              "month": "2025-05",
+              "views": 13718
+            },
+            {
+              "month": "2025-06",
+              "views": 13417
+            },
+            {
+              "month": "2025-07",
+              "views": 16618
+            },
+            {
+              "month": "2025-08",
+              "views": 26074
+            },
+            {
+              "month": "2025-09",
+              "views": 14857
+            },
+            {
+              "month": "2025-10",
+              "views": 15376
+            },
+            {
+              "month": "2025-11",
+              "views": 26796
+            },
+            {
+              "month": "2025-12",
+              "views": 18005
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Apollo+12",
+            "retrievedAt": "2026-09-15T20:32:10.546Z",
+            "title": "Apollo 12",
+            "entityId": "Q188433",
+            "pageId": 1967,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Apollo_12/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:10.848Z"
+          },
+          "score": 30,
+          "rarityRank": 0.4
+        },
+        {
+          "answer": "Apollo 14",
+          "entityId": "Q178871",
+          "requestedArticle": "Apollo_14",
+          "canonicalArticle": "Apollo 14",
+          "articleUrl": "https://en.wikipedia.org/wiki/Apollo_14",
+          "medianMonthlyViews": 13584,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 16130
+            },
+            {
+              "month": "2025-02",
+              "views": 14123
+            },
+            {
+              "month": "2025-03",
+              "views": 15710
+            },
+            {
+              "month": "2025-04",
+              "views": 14299
+            },
+            {
+              "month": "2025-05",
+              "views": 10694
+            },
+            {
+              "month": "2025-06",
+              "views": 10303
+            },
+            {
+              "month": "2025-07",
+              "views": 11594
+            },
+            {
+              "month": "2025-08",
+              "views": 20522
+            },
+            {
+              "month": "2025-09",
+              "views": 11403
+            },
+            {
+              "month": "2025-10",
+              "views": 11935
+            },
+            {
+              "month": "2025-11",
+              "views": 13521
+            },
+            {
+              "month": "2025-12",
+              "views": 13647
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Apollo+14",
+            "retrievedAt": "2026-09-15T20:32:11.216Z",
+            "title": "Apollo 14",
+            "entityId": "Q178871",
+            "pageId": 1968,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Apollo_14/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:11.589Z"
+          },
+          "score": 60,
+          "rarityRank": 0.6
+        },
+        {
+          "answer": "Apollo 15",
+          "entityId": "Q194068",
+          "requestedArticle": "Apollo_15",
+          "canonicalArticle": "Apollo 15",
+          "articleUrl": "https://en.wikipedia.org/wiki/Apollo_15",
+          "medianMonthlyViews": 13298.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 15327
+            },
+            {
+              "month": "2025-02",
+              "views": 12620
+            },
+            {
+              "month": "2025-03",
+              "views": 22623
+            },
+            {
+              "month": "2025-04",
+              "views": 14252
+            },
+            {
+              "month": "2025-05",
+              "views": 20428
+            },
+            {
+              "month": "2025-06",
+              "views": 11902
+            },
+            {
+              "month": "2025-07",
+              "views": 13977
+            },
+            {
+              "month": "2025-08",
+              "views": 18676
+            },
+            {
+              "month": "2025-09",
+              "views": 12381
+            },
+            {
+              "month": "2025-10",
+              "views": 11962
+            },
+            {
+              "month": "2025-11",
+              "views": 12061
+            },
+            {
+              "month": "2025-12",
+              "views": 12166
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Apollo+15",
+            "retrievedAt": "2026-09-15T20:32:11.942Z",
+            "title": "Apollo 15",
+            "entityId": "Q194068",
+            "pageId": 1969,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Apollo_15/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:12.346Z"
+          },
+          "score": 85,
+          "rarityRank": 0.8
+        },
+        {
+          "answer": "Apollo 16",
+          "entityId": "Q188168",
+          "requestedArticle": "Apollo_16",
+          "canonicalArticle": "Apollo 16",
+          "articleUrl": "https://en.wikipedia.org/wiki/Apollo_16",
+          "medianMonthlyViews": 11771,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 13266
+            },
+            {
+              "month": "2025-02",
+              "views": 10122
+            },
+            {
+              "month": "2025-03",
+              "views": 13122
+            },
+            {
+              "month": "2025-04",
+              "views": 13524
+            },
+            {
+              "month": "2025-05",
+              "views": 8764
+            },
+            {
+              "month": "2025-06",
+              "views": 8291
+            },
+            {
+              "month": "2025-07",
+              "views": 9841
+            },
+            {
+              "month": "2025-08",
+              "views": 17204
+            },
+            {
+              "month": "2025-09",
+              "views": 9866
+            },
+            {
+              "month": "2025-10",
+              "views": 10471
+            },
+            {
+              "month": "2025-11",
+              "views": 13071
+            },
+            {
+              "month": "2025-12",
+              "views": 24640
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Apollo+16",
+            "retrievedAt": "2026-09-15T20:32:12.696Z",
+            "title": "Apollo 16",
+            "entityId": "Q188168",
+            "pageId": 1970,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Apollo_16/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:12.996Z"
+          },
+          "score": 100,
+          "rarityRank": 1
+        },
+        {
+          "answer": "Apollo 17",
+          "entityId": "Q180971",
+          "requestedArticle": "Apollo_17",
+          "canonicalArticle": "Apollo 17",
+          "articleUrl": "https://en.wikipedia.org/wiki/Apollo_17",
+          "medianMonthlyViews": 25826.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 28592
+            },
+            {
+              "month": "2025-02",
+              "views": 24916
+            },
+            {
+              "month": "2025-03",
+              "views": 32833
+            },
+            {
+              "month": "2025-04",
+              "views": 25873
+            },
+            {
+              "month": "2025-05",
+              "views": 21159
+            },
+            {
+              "month": "2025-06",
+              "views": 19723
+            },
+            {
+              "month": "2025-07",
+              "views": 22335
+            },
+            {
+              "month": "2025-08",
+              "views": 34080
+            },
+            {
+              "month": "2025-09",
+              "views": 25977
+            },
+            {
+              "month": "2025-10",
+              "views": 25131
+            },
+            {
+              "month": "2025-11",
+              "views": 25780
+            },
+            {
+              "month": "2025-12",
+              "views": 43034
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Apollo+17",
+            "retrievedAt": "2026-09-15T20:32:13.366Z",
+            "title": "Apollo 17",
+            "entityId": "Q180971",
+            "pageId": 1971,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Apollo_17/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:13.725Z"
+          },
+          "score": 10,
+          "rarityRank": 0.2
+        }
+      ]
+    },
+    {
+      "id": "curated-mercury-seven",
+      "category": "space",
+      "prompt": "Name one of NASA’s original Mercury Seven astronauts",
+      "rules": "The seven astronauts selected for Project Mercury in April 1959, whether or not they later flew a Mercury mission. Common names, formal names and unambiguous surnames count.",
+      "reviewedAt": "2026-09-15",
+      "sources": [
+        {
+          "title": "NASA — Mercury Seven Astronaut Biographies",
+          "url": "https://www.nasa.gov/history/mercury-seven-astronaut-biographies/",
+          "retrievedAt": "2026-09-15"
+        },
+        {
+          "title": "NASA — 60 Years Ago: NASA Introduces Mercury 7 Astronauts",
+          "url": "https://www.nasa.gov/history/60-years-ago-nasa-introduces-mercury-7-astronauts/",
+          "retrievedAt": "2026-09-15"
+        }
+      ],
+      "answers": [
+        {
+          "answer": "Scott Carpenter",
+          "entityId": "Q335503",
+          "requestedArticle": "Scott_Carpenter",
+          "canonicalArticle": "Scott Carpenter",
+          "articleUrl": "https://en.wikipedia.org/wiki/Scott_Carpenter",
+          "medianMonthlyViews": 7145.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 6947
+            },
+            {
+              "month": "2025-02",
+              "views": 5908
+            },
+            {
+              "month": "2025-03",
+              "views": 7344
+            },
+            {
+              "month": "2025-04",
+              "views": 7926
+            },
+            {
+              "month": "2025-05",
+              "views": 8298
+            },
+            {
+              "month": "2025-06",
+              "views": 56235
+            },
+            {
+              "month": "2025-07",
+              "views": 8591
+            },
+            {
+              "month": "2025-08",
+              "views": 9830
+            },
+            {
+              "month": "2025-09",
+              "views": 6161
+            },
+            {
+              "month": "2025-10",
+              "views": 5839
+            },
+            {
+              "month": "2025-11",
+              "views": 5805
+            },
+            {
+              "month": "2025-12",
+              "views": 6651
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Scott+Carpenter",
+            "retrievedAt": "2026-09-15T20:32:14.102Z",
+            "title": "Scott Carpenter",
+            "entityId": "Q335503",
+            "pageId": 331379,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Scott_Carpenter/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:14.417Z"
+          },
+          "score": 100,
+          "rarityRank": 1
+        },
+        {
+          "answer": "Gordon Cooper",
+          "entityId": "Q312833",
+          "requestedArticle": "Gordon_Cooper",
+          "canonicalArticle": "Gordon Cooper",
+          "articleUrl": "https://en.wikipedia.org/wiki/Gordon_Cooper",
+          "medianMonthlyViews": 11072,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 11624
+            },
+            {
+              "month": "2025-02",
+              "views": 9165
+            },
+            {
+              "month": "2025-03",
+              "views": 11036
+            },
+            {
+              "month": "2025-04",
+              "views": 11108
+            },
+            {
+              "month": "2025-05",
+              "views": 10172
+            },
+            {
+              "month": "2025-06",
+              "views": 14795
+            },
+            {
+              "month": "2025-07",
+              "views": 13255
+            },
+            {
+              "month": "2025-08",
+              "views": 15150
+            },
+            {
+              "month": "2025-09",
+              "views": 10012
+            },
+            {
+              "month": "2025-10",
+              "views": 8652
+            },
+            {
+              "month": "2025-11",
+              "views": 8957
+            },
+            {
+              "month": "2025-12",
+              "views": 11185
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Gordon+Cooper",
+            "retrievedAt": "2026-09-15T20:32:14.793Z",
+            "title": "Gordon Cooper",
+            "entityId": "Q312833",
+            "pageId": 331785,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Gordon_Cooper/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:15.137Z"
+          },
+          "score": 60,
+          "rarityRank": 0.6666666666666666
+        },
+        {
+          "answer": "John Glenn",
+          "entityId": "Q182642",
+          "requestedArticle": "John_Glenn",
+          "canonicalArticle": "John Glenn",
+          "articleUrl": "https://en.wikipedia.org/wiki/John_Glenn",
+          "medianMonthlyViews": 56680.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 68634
+            },
+            {
+              "month": "2025-02",
+              "views": 59897
+            },
+            {
+              "month": "2025-03",
+              "views": 70472
+            },
+            {
+              "month": "2025-04",
+              "views": 62797
+            },
+            {
+              "month": "2025-05",
+              "views": 45659
+            },
+            {
+              "month": "2025-06",
+              "views": 48556
+            },
+            {
+              "month": "2025-07",
+              "views": 64119
+            },
+            {
+              "month": "2025-08",
+              "views": 58518
+            },
+            {
+              "month": "2025-09",
+              "views": 43633
+            },
+            {
+              "month": "2025-10",
+              "views": 46462
+            },
+            {
+              "month": "2025-11",
+              "views": 51603
+            },
+            {
+              "month": "2025-12",
+              "views": 54843
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=John+Glenn",
+            "retrievedAt": "2026-09-15T20:32:15.527Z",
+            "title": "John Glenn",
+            "entityId": "Q182642",
+            "pageId": 58702,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/John_Glenn/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:15.833Z"
+          },
+          "score": 10,
+          "rarityRank": 0
+        },
+        {
+          "answer": "Gus Grissom",
+          "entityId": "Q110879",
+          "requestedArticle": "Gus_Grissom",
+          "canonicalArticle": "Gus Grissom",
+          "articleUrl": "https://en.wikipedia.org/wiki/Gus_Grissom",
+          "medianMonthlyViews": 33696.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 38512
+            },
+            {
+              "month": "2025-02",
+              "views": 30733
+            },
+            {
+              "month": "2025-03",
+              "views": 41244
+            },
+            {
+              "month": "2025-04",
+              "views": 39200
+            },
+            {
+              "month": "2025-05",
+              "views": 31869
+            },
+            {
+              "month": "2025-06",
+              "views": 34637
+            },
+            {
+              "month": "2025-07",
+              "views": 37663
+            },
+            {
+              "month": "2025-08",
+              "views": 38415
+            },
+            {
+              "month": "2025-09",
+              "views": 22422
+            },
+            {
+              "month": "2025-10",
+              "views": 23632
+            },
+            {
+              "month": "2025-11",
+              "views": 24827
+            },
+            {
+              "month": "2025-12",
+              "views": 32756
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Gus+Grissom",
+            "retrievedAt": "2026-09-15T20:32:16.202Z",
+            "title": "Gus Grissom",
+            "entityId": "Q110879",
+            "pageId": 36592,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Gus_Grissom/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:16.494Z"
+          },
+          "score": 10,
+          "rarityRank": 0.16666666666666666
+        },
+        {
+          "answer": "Wally Schirra",
+          "entityId": "Q110450",
+          "requestedArticle": "Wally_Schirra",
+          "canonicalArticle": "Wally Schirra",
+          "articleUrl": "https://en.wikipedia.org/wiki/Wally_Schirra",
+          "medianMonthlyViews": 9739,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 8556
+            },
+            {
+              "month": "2025-02",
+              "views": 7458
+            },
+            {
+              "month": "2025-03",
+              "views": 12504
+            },
+            {
+              "month": "2025-04",
+              "views": 9994
+            },
+            {
+              "month": "2025-05",
+              "views": 8764
+            },
+            {
+              "month": "2025-06",
+              "views": 9732
+            },
+            {
+              "month": "2025-07",
+              "views": 9746
+            },
+            {
+              "month": "2025-08",
+              "views": 15038
+            },
+            {
+              "month": "2025-09",
+              "views": 7646
+            },
+            {
+              "month": "2025-10",
+              "views": 8123
+            },
+            {
+              "month": "2025-11",
+              "views": 10775
+            },
+            {
+              "month": "2025-12",
+              "views": 10364
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Wally+Schirra",
+            "retrievedAt": "2026-09-15T20:32:16.900Z",
+            "title": "Wally Schirra",
+            "entityId": "Q110450",
+            "pageId": 331463,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Wally_Schirra/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:17.210Z"
+          },
+          "score": 85,
+          "rarityRank": 0.8333333333333334
+        },
+        {
+          "answer": "Alan Shepard",
+          "entityId": "Q174979",
+          "requestedArticle": "Alan_Shepard",
+          "canonicalArticle": "Alan Shepard",
+          "articleUrl": "https://en.wikipedia.org/wiki/Alan_Shepard",
+          "medianMonthlyViews": 31462,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 34199
+            },
+            {
+              "month": "2025-02",
+              "views": 30877
+            },
+            {
+              "month": "2025-03",
+              "views": 38939
+            },
+            {
+              "month": "2025-04",
+              "views": 76641
+            },
+            {
+              "month": "2025-05",
+              "views": 32047
+            },
+            {
+              "month": "2025-06",
+              "views": 30202
+            },
+            {
+              "month": "2025-07",
+              "views": 33394
+            },
+            {
+              "month": "2025-08",
+              "views": 40278
+            },
+            {
+              "month": "2025-09",
+              "views": 26008
+            },
+            {
+              "month": "2025-10",
+              "views": 24783
+            },
+            {
+              "month": "2025-11",
+              "views": 27141
+            },
+            {
+              "month": "2025-12",
+              "views": 29609
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Alan+Shepard",
+            "retrievedAt": "2026-09-15T20:32:17.535Z",
+            "title": "Alan Shepard",
+            "entityId": "Q174979",
+            "pageId": 63727,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Alan_Shepard/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:17.922Z"
+          },
+          "score": 30,
+          "rarityRank": 0.3333333333333333
+        },
+        {
+          "answer": "Deke Slayton",
+          "entityId": "Q336810",
+          "requestedArticle": "Deke_Slayton",
+          "canonicalArticle": "Deke Slayton",
+          "articleUrl": "https://en.wikipedia.org/wiki/Deke_Slayton",
+          "medianMonthlyViews": 13250.5,
+          "monthly": [
+            {
+              "month": "2025-01",
+              "views": 15594
+            },
+            {
+              "month": "2025-02",
+              "views": 12773
+            },
+            {
+              "month": "2025-03",
+              "views": 20602
+            },
+            {
+              "month": "2025-04",
+              "views": 14606
+            },
+            {
+              "month": "2025-05",
+              "views": 10807
+            },
+            {
+              "month": "2025-06",
+              "views": 13728
+            },
+            {
+              "month": "2025-07",
+              "views": 15280
+            },
+            {
+              "month": "2025-08",
+              "views": 19120
+            },
+            {
+              "month": "2025-09",
+              "views": 10731
+            },
+            {
+              "month": "2025-10",
+              "views": 10366
+            },
+            {
+              "month": "2025-11",
+              "views": 10688
+            },
+            {
+              "month": "2025-12",
+              "views": 11931
+            }
+          ],
+          "resolution": {
+            "sourceUrl": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&redirects=1&prop=pageprops&ppprop=wikibase_item%7Cdisambiguation&titles=Deke+Slayton",
+            "retrievedAt": "2026-09-15T20:32:18.254Z",
+            "title": "Deke Slayton",
+            "entityId": "Q336810",
+            "pageId": 331454,
+            "redirects": [],
+            "normalized": []
+          },
+          "pageviews": {
+            "sourceUrl": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/Deke_Slayton/monthly/2025010100/2025123100",
+            "retrievedAt": "2026-09-15T20:32:18.562Z"
+          },
+          "score": 60,
+          "rarityRank": 0.5
+        }
+      ]
+    }
+  ],
+  "inputFiles": [
+    {
+      "path": "data/curated-questions.json",
+      "sha256": "7fefb81fca9bd6e58a4eb5caf59733e2f273123b0a70b6b708a1583f42cc83d7"
+    },
+    {
+      "path": "data/question-packs/nasa-history.json",
+      "sha256": "6f0847d2af2a314361fece3a2d66816452676dfed148832a76a0f730f2b9876f"
+    }
+  ],
+  "packs": [
+    {
+      "id": "nasa-history",
+      "title": "NASA: Apollo landings and Mercury Seven",
+      "questionIds": [
+        "curated-apollo-moon-landings",
+        "curated-mercury-seven"
       ]
     }
   ]
