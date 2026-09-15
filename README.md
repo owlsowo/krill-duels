@@ -21,7 +21,7 @@ Choose **Solo practice** to play immediately, or **Create duel** to set your rul
 
 ### Context hints
 
-**41 questions** have up to three hand-reviewed hints that become more specific as you reveal them. The hints explain useful context; they are not generated from accepted answer names. Other questions remain playable without hints.
+**Every playable question** has three authored context hints that become more specific as you reveal them. The Hint button sits directly below the question in both solo and duels, with the next cost beneath it. Hints explain the subject and give memory cues without printing accepted answer names. They are bundled with the game, so using a hint makes no request to an external content service.
 
 In a duel, each player's first hint costs **5% of starting HP**, their second costs **10%**, their third **15%**, and so on, rounded up to whole HP. At 300 starting HP, the first three purchases cost **15, 30, and 45 HP**. The button shows the next price, and a purchase must leave you with at least 1 HP. Each new question starts at hint one, but your purchase count—and therefore the next price—continues through the match. **Play again** resets the price. Solo hints are free.
 

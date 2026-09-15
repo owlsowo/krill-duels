@@ -65,7 +65,7 @@ Commit the reviewed input changes in `data/curated-questions.json` or `data/ques
 
 ## Reviewed context hints
 
-`data/prompt-hints.json` separately supplies up to three progressively more specific context hints for selected questions. Write useful background or narrowing context from reliable factual sources; never generate clues by exposing answer names, prefixes or sampled answer lists. `tests/hints.test.ts` rejects literal accepted-name leaks. That mechanical check cannot assess whether a clue is useful, progressively specific or an indirect giveaway, so manual review remains required. Questions without reviewed hints remain playable. Hint content participates in the exact catalog hash used by both players.
+`data/prompt-hints.json` supplies exactly three progressively more specific context hints for every playable question. New question packs must include corresponding entries in this hint file before release. Write useful background or narrowing context from reliable factual sources; never generate clues by exposing answer names, prefixes or sampled answer lists. `tests/hints.test.ts` rejects literal accepted-name leaks. That mechanical check cannot assess whether a clue is useful, progressively specific or an indirect giveaway, so manual review remains required. The regression suite requires full catalog coverage and checks that every actual question renders and unlocks all three levels in both practice and duels. Hint content participates in the exact catalog hash used by both players.
 
 ## Future calibration
 
