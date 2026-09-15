@@ -47,6 +47,8 @@ export interface StoredEngine {
   state: DuelState;
   order: string[];
   pool: string[];
+  /** Absent in rooms saved before session-wide question rotation. */
+  nextPromptIndex?: number;
   hashes: [string | null, string | null];
   answers: [string | null, string | null];
   pausedAt: number | null;
@@ -70,6 +72,7 @@ export function scoreAnswer(promptId: string, input: string): RoundResult {
 export class DuelEngine {
   private state: DuelState;
   private order: string[];
+  private nextPromptIndex = 0;
   private hashes: [string | null, string | null] = [null, null];
   private answers: [string | null, string | null] = [null, null];
   private pausedAt: number | null = null;
@@ -93,7 +96,7 @@ export class DuelEngine {
   }
 
   store(now = this.state.now): StoredEngine {
-    return structuredClone({ schema: 1, state: { ...this.state, now }, order: this.order, pool: this.pool,
+    return structuredClone({ schema: 1, state: { ...this.state, now }, order: this.order, pool: this.pool, nextPromptIndex: this.nextPromptIndex,
       hashes: this.hashes, answers: this.answers, pausedAt: this.pausedAt });
   }
 
@@ -102,6 +105,13 @@ export class DuelEngine {
     const engine = new DuelEngine(saved.state.names[0], saved.state.matchId, saved.pool, saved.state.settings);
     engine.state = structuredClone(saved.state);
     engine.order = [...saved.order];
+    // Older rooms indexed questions by the current match's round. A countdown
+    // (including one interrupted by forfeiture) has not exposed its question yet.
+    engine.nextPromptIndex = saved.nextPromptIndex ?? (saved.state.promptId === null
+      ? Math.max(0, saved.state.round - 1) : saved.state.round);
+    if (!Number.isInteger(engine.nextPromptIndex) || engine.nextPromptIndex < 0 || engine.nextPromptIndex > engine.order.length) {
+      throw new Error('Invalid saved question position');
+    }
     engine.hashes = [...saved.hashes];
     engine.answers = [...saved.answers];
     engine.pausedAt = saved.pausedAt;
@@ -137,10 +147,17 @@ export class DuelEngine {
     this.state.ready[seat] = true;
     if (!this.state.ready.every(Boolean)) return;
     if (this.state.phase === 'finished') {
-      const next = new DuelEngine(this.state.names[0], crypto.randomUUID(), this.pool, this.state.settings);
-      next.join(this.state.names[1], now);
-      this.state = next.state;
-      this.order = next.order;
+      this.state = {
+        ...this.state, matchId: crypto.randomUUID(), round: 0, promptId: null,
+        hp: [this.state.settings.startingHp, this.state.settings.startingHp],
+        history: [], winner: null, reason: '', reconnectUntil: null,
+      };
+      this.pausedAt = null;
+      // A rematch resets the battle, while the room keeps its unused questions.
+      if (this.nextPromptIndex === this.order.length) {
+        this.order = shuffled(this.pool);
+        this.nextPromptIndex = 0;
+      }
     }
     this.state.round += 1;
     this.state.promptId = null;
@@ -183,7 +200,7 @@ export class DuelEngine {
     if (now < this.state.deadline) return;
     if (this.state.phase === 'countdown') {
       this.state.phase = 'question';
-      this.state.promptId = this.order[this.state.round - 1];
+      this.state.promptId = this.order[this.nextPromptIndex++];
       this.state.deadline = now + this.state.settings.questionSeconds * 1000;
     } else if (this.state.phase === 'question') this.beginReveal(now);
     else if (this.state.phase === 'reveal') this.resolve();
@@ -218,10 +235,10 @@ export class DuelEngine {
     this.state.phase = 'result';
     this.state.deadline = 0;
     this.state.ready = [false, false];
-    if (this.state.hp.includes(0) || this.state.round >= this.order.length) {
+    if (this.state.hp.includes(0) || this.nextPromptIndex >= this.order.length) {
       const diff = this.state.hp[0] - this.state.hp[1];
       this.state.winner = this.state.hp.includes(0) ? (diff > 0 ? 0 : 1) : null;
-      this.state.reason = this.state.hp.includes(0) ? 'Knockout!' : 'Every question played without a knockout. It’s a draw.';
+      this.state.reason = this.state.hp.includes(0) ? 'Knockout!' : 'Every question in this room has been played. It’s a draw; play again to start a fresh shuffle.';
       this.state.phase = 'finished';
     }
   }

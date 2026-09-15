@@ -57,8 +57,8 @@ function begin(room: DuelEngine, start = (room.snapshot(0).round + 1) * 100_000)
   return state;
 }
 
-async function committed(room: DuelEngine, hostInput = 'Gem', guestInput = 'Common') {
-  const question = begin(room);
+async function committed(room: DuelEngine, hostInput = 'Gem', guestInput = 'Common', start?: number) {
+  const question = begin(room, start);
   const salts = [`host-salt-${question.round}`, `guest-salt-${question.round}`] as const;
   const inputs = [hostInput, guestInput] as const;
   const hashes = await Promise.all(([0, 1] as const).map(seat =>
@@ -69,8 +69,8 @@ async function committed(room: DuelEngine, hostInput = 'Gem', guestInput = 'Comm
   return { question, inputs, salts, hashes };
 }
 
-async function play(room: DuelEngine, hostInput = 'Common', guestInput = 'Common') {
-  const round = await committed(room, hostInput, guestInput);
+async function play(room: DuelEngine, hostInput = 'Common', guestInput = 'Common', start?: number) {
+  const round = await committed(room, hostInput, guestInput, start);
   const { question, inputs, salts } = round;
   expect(await room.reveal(0, question.matchId, question.round, inputs[0], salts[0], question.now + 3)).toBe(true);
   expect(await room.reveal(1, question.matchId, question.round, inputs[1], salts[1], question.now + 4)).toBe(true);
@@ -284,6 +284,127 @@ describe('continuous rounds, HP, and unique questions', () => {
     expect(frozen).toEqual(original);
     expect([...result].sort()).toEqual([...original].sort());
     expect(new Set(result).size).toBe(original.length);
+  });
+});
+
+describe('question rotation across rematches in one room', () => {
+  function sessionRoom(pool = fixture.ids.slice(0, 6)): DuelEngine {
+    // Keep reshuffles deterministic: restarting the whole bank after an early
+    // finish would always repeat its first question and fail these regressions.
+    vi.spyOn(crypto, 'getRandomValues').mockImplementation(value => value);
+    const room = new DuelEngine('Host', 'session-fixture', pool, {
+      startingHp: 100, questionSeconds: 25, damageScaling: false,
+    });
+    room.join('Friend', 0);
+    return room;
+  }
+
+  function persisted(room: DuelEngine, now: number): DuelEngine {
+    return DuelEngine.restore(JSON.parse(JSON.stringify(room.store(now))));
+  }
+
+  it('continues with an unused question after an early knockout while resetting match state', async () => {
+    const room = sessionRoom();
+    const order = room.store().order;
+    const first = await play(room, 'Gem', '', 100_000);
+    expect(first).toMatchObject({ phase: 'finished', round: 1, hp: [100, 0], winner: 0 });
+    expect(first.history[0].promptId).toBe(order[0]);
+
+    room.ready(0, 200_000);
+    expect(room.snapshot(200_000)).toMatchObject({ phase: 'finished', matchId: first.matchId });
+    room.ready(1, 200_000);
+    const reset = room.snapshot(200_000);
+    expect(reset.matchId).not.toBe(first.matchId);
+    expect(reset).toMatchObject({ phase: 'countdown', round: 1, promptId: null, hp: [100, 100], history: [], hashes: [null, null], committed: [false, false] });
+    room.tick(reset.deadline);
+    expect(room.snapshot(reset.deadline).promptId).toBe(order[1]);
+    expect(room.snapshot(reset.deadline)).not.toHaveProperty('order');
+    expect(room.snapshot(reset.deadline)).not.toHaveProperty('nextPromptIndex');
+  });
+
+  it('preserves an unseen countdown question but consumes a shown question even without a result', () => {
+    let room = sessionRoom();
+    const order = room.store().order;
+    room.ready(0, 1000); room.ready(1, 1000);
+    room.tick(3999);
+    expect(room.snapshot(3999)).toMatchObject({ phase: 'countdown', promptId: null, history: [] });
+    room = persisted(room, 3999);
+    room.forfeit(1);
+    const shown = begin(room, 10_000);
+    expect(shown.promptId).toBe(order[0]);
+    room.tick(shown.now + 1); room.tick(shown.now + 2);
+    room = persisted(room, shown.now + 2);
+    room.forfeit(0);
+    expect(room.snapshot(shown.now + 2).history).toEqual([]);
+    const next = begin(room, 20_000);
+    expect(next.promptId).toBe(order[1]);
+  });
+
+  it('uses the full bank across several matches, then permits a complete new cycle', async () => {
+    let room = sessionRoom();
+    const order = room.store().order;
+    const seen: string[] = [];
+    let now = 0;
+    const round = async (host = 'Common', guest = 'Common') => {
+      now += 100_000;
+      const result = await play(room, host, guest, now);
+      seen.push(result.history.at(-1)!.promptId);
+      room = persisted(room, now + 10_000);
+      return result;
+    };
+
+    // One-question knockout, then a two-question match ended by a forfeit.
+    expect((await round('Gem', '')).phase).toBe('finished');
+    expect((await round()).phase).toBe('result');
+    expect((await round()).phase).toBe('result');
+    room.forfeit(1);
+    room = persisted(room, now + 20_000);
+
+    // Only three unseen questions remain. Exhaustion must use the room's bank
+    // position, not this rematch's round number or its reset result history.
+    expect((await round()).phase).toBe('result');
+    expect((await round()).phase).toBe('result');
+    const exhausted = await round();
+    expect(exhausted).toMatchObject({ phase: 'finished', round: 3, winner: null, hp: [100, 100] });
+    expect(exhausted.history).toHaveLength(3);
+    expect(seen).toEqual(order);
+    expect(new Set(seen).size).toBe(order.length);
+
+    const firstMatchId = exhausted.matchId;
+    for (let index = 0; index < order.length; index++) {
+      const result = await round();
+      expect(result.matchId).not.toBe(firstMatchId);
+      expect(result.phase).toBe(index === order.length - 1 ? 'finished' : 'result');
+    }
+    expect(seen.slice(order.length).sort()).toEqual([...order].sort());
+    expect(new Set(seen.slice(order.length)).size).toBe(order.length);
+  });
+
+  it('starts a fresh cycle after forfeiting the final shown question', () => {
+    let room = sessionRoom(fixture.ids.slice(0, 1));
+    const shown = begin(room, 100_000);
+    room.forfeit(1);
+    room = persisted(room, shown.now + 1);
+    const replay = begin(room, 200_000);
+    expect(replay.promptId).toBe(shown.promptId);
+    expect(replay.matchId).not.toBe(shown.matchId);
+    room.tick(replay.deadline);
+    expect(room.snapshot(replay.deadline)).toMatchObject({ phase: 'finished', winner: null });
+    expect(room.snapshot(replay.deadline).history).toHaveLength(1);
+  });
+
+  it.each(['countdown', 'question'] as const)('restores legacy storage in %s without replaying shown questions', async phase => {
+    const room = sessionRoom();
+    const order = room.store().order;
+    await play(room, 'Common', 'Common', 100_000);
+    room.ready(0, 200_000); room.ready(1, 200_000);
+    if (phase === 'question') room.tick(203_000);
+    const legacy = room.store(203_000);
+    delete (legacy as typeof legacy & { nextPromptIndex?: number }).nextPromptIndex;
+    const restored = DuelEngine.restore(JSON.parse(JSON.stringify(legacy)));
+    restored.forfeit(1);
+    const next = begin(restored, 300_000);
+    expect(next.promptId).toBe(order[phase === 'question' ? 2 : 1]);
   });
 });
 
