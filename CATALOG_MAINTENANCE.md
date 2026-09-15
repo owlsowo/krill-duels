@@ -63,9 +63,13 @@ npm run build
 
 Commit the reviewed input changes in `data/curated-questions.json` or `data/question-packs/`, `data/pageviews-2025.json`, `src/curated.json`, and `public/curated-provenance.json` together. Provenance records each input file's hash and each pack's question IDs. Normal tests and builds check these files offline. Gameplay makes no requests to Wikipedia or Wikidata. Both players' catalog hashes include the playable corrections, new questions and reviewed hint content, preventing different releases from silently disagreeing.
 
-## Reviewed context hints
+## Reviewed answer hints
 
-`data/prompt-hints.json` supplies exactly three progressively more specific context hints for every playable question. New question packs must include corresponding entries in this hint file before release. Write useful background or narrowing context from reliable factual sources; never generate clues by exposing answer names, prefixes or sampled answer lists. `tests/hints.test.ts` rejects literal accepted-name leaks. That mechanical check cannot assess whether a clue is useful, progressively specific or an indirect giveaway, so manual review remains required. The regression suite requires full catalog coverage and checks that every actual question renders and unlocks all three levels in both practice and duels. Hint content participates in the exact catalog hash used by both players.
+`data/prompt-hints.json` pins one accepted answer per playable question. New question packs need a corresponding target before release. Choose a recognizable, factually eligible 30–60-point answer of at least four letters/digits, preferably 5–22; avoid a target already printed in the question. Validate against corrected `PROMPTS`, not the raw archive. The question's existing source supplies the answer provenance. Acceptance alone does not establish factual eligibility: review the chosen answer, especially time-sensitive lists.
+
+`src/hints.ts` turns the pinned answer into three cumulative spelling patterns: about 40%, about 70%, then all but one meaningful character. Preserve punctuation, digits, accents and spacing; leave the final blank in a substantive word. This intentionally replaces the old prohibition on answer prefixes: the player now explicitly purchases answer-specific letter clues. Only purchased patterns may appear in the DOM, accessible labels and agent status. Do not print the full target or auto-submit it.
+
+`tests/hints.test.ts` requires full catalog coverage, accepted targets, correct scores and strictly increasing letter disclosure. It exercises all three levels for every actual question in solo and duels. The pinned targets and hint version participate in the catalog hash used by both players; bump the hint version when changing the pattern algorithm. A mechanical test proves matching and payment behavior, not human usefulness. Gameplay evaluations must label model simulations honestly and withhold later clues and answer lists from the simulated player.
 
 ## Future calibration
 
