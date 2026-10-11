@@ -140,7 +140,7 @@ describe('two-player protocol', () => {
     expect(errors).toEqual([]);
   });
   it('shares custom host settings and prevents changing them mid-match', async () => {
-    const settings = {startingHp:5000,questionSeconds:60,damageScaling:false};
+    const settings = {startingHp:5000,questionSeconds:60,damageScaling:false,playerCount:2};
     const {host,guest} = await pair(settings);
     expect(guest.state!.settings).toEqual(settings);
     expect(guest.state!.hp).toEqual([5000,5000]);

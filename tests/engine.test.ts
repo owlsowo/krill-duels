@@ -290,6 +290,29 @@ describe('continuous rounds, HP, and unique questions', () => {
     expect((await play(room, 'Clever', 'Clever')).hp).toEqual([300, 295]);
   });
 
+  it('supports free-for-all rooms where everyone below the top score takes gap damage', async () => {
+    const room = new DuelEngine('Host', 'ffa-match', fixture.ids, {
+      startingHp: 300, questionSeconds: 25, damageScaling: false, playerCount: 3,
+    });
+    expect(room.join('Two', 0)).toBe(1);
+    expect(room.join('Three', 0)).toBe(2);
+    expect(room.snapshot(0)).toMatchObject({ connected: true, joined: [true, true, true], hp: [300, 300, 300] });
+    const start = 100_000;
+    room.ready(0, start); room.ready(1, start); room.ready(2, start);
+    room.tick(start + 3000);
+    const q = room.snapshot(start + 3000);
+    const inputs = ['Gem', 'Common', ''] as const;
+    const salts = ['a', 'b', 'c'] as const;
+    const hashes = await Promise.all([0, 1, 2].map(seat =>
+      commitment(q.matchId, q.round, seat, q.promptId!, inputs[seat], salts[seat])));
+    for (const seat of [0, 1, 2]) expect(room.commit(seat, q.matchId, q.round, hashes[seat], q.now + seat + 1)).toBe(true);
+    for (const seat of [0, 1, 2]) expect(await room.reveal(seat, q.matchId, q.round, inputs[seat], salts[seat], q.now + seat + 4)).toBe(true);
+    const result = room.snapshot(q.now + 10);
+    expect(result.hp).toEqual([300, 210, 200]);
+    expect(result.history[0].damages).toEqual([0, 90, 100]);
+    expect(result.history[0].loser).toBeNull();
+  });
+
   it('switches damage multipliers at rounds 5 and 8', async () => {
     const room = engine();
     for (let i = 0; i < 8; i++) await play(room, 'Clever', 'Common');
@@ -367,7 +390,7 @@ describe('question rotation across rematches in one room', () => {
     // finish would always repeat its first question and fail these regressions.
     vi.spyOn(crypto, 'getRandomValues').mockImplementation(value => value);
     const room = new DuelEngine('Host', 'session-fixture', pool, {
-      startingHp: 100, questionSeconds: 25, damageScaling: false,
+      startingHp: 100, questionSeconds: 25, damageScaling: false, playerCount: 2,
     });
     room.join('Friend', 0);
     return room;
@@ -618,7 +641,7 @@ describe('custom duel settings', () => {
 
   it('uses the declared defaults when no settings are supplied', () => {
     const room = new DuelEngine('Host', 'default-settings-match', fixture.ids);
-    expect(SETTINGS_DEFAULTS).toEqual({ startingHp: 300, questionSeconds: 25, damageScaling: true });
+    expect(SETTINGS_DEFAULTS).toEqual({ startingHp: 300, questionSeconds: 25, damageScaling: true, playerCount: 2 });
     expect(room.snapshot(0).settings).toEqual(SETTINGS_DEFAULTS);
     expect(room.snapshot(0).hp).toEqual([300, 300]);
     expect(isValidDuelSettings(SETTINGS_DEFAULTS)).toBe(true);
@@ -681,19 +704,19 @@ describe('custom duel settings', () => {
   });
 
   it('copies settings at construction and does not expose mutable engine settings through snapshots', () => {
-    const input = { startingHp: 175, questionSeconds: 45, damageScaling: false };
+    const input = { startingHp: 175, questionSeconds: 45, damageScaling: false, playerCount: 2 };
     const room = new DuelEngine('Host', 'settings-copy-match', fixture.ids, input);
     input.startingHp = 10_000;
     input.questionSeconds = 90;
     input.damageScaling = true;
-    expect(room.snapshot(0).settings).toEqual({ startingHp: 175, questionSeconds: 45, damageScaling: false });
+    expect(room.snapshot(0).settings).toEqual({ startingHp: 175, questionSeconds: 45, damageScaling: false, playerCount: 2 });
     const view = room.snapshot(0);
     view.settings.startingHp = 100;
     view.settings.questionSeconds = 15;
     view.settings.damageScaling = true;
-    expect(room.snapshot(0).settings).toEqual({ startingHp: 175, questionSeconds: 45, damageScaling: false });
+    expect(room.snapshot(0).settings).toEqual({ startingHp: 175, questionSeconds: 45, damageScaling: false, playerCount: 2 });
     expect(room.snapshot(0).hp).toEqual([175, 175]);
-    expect(SETTINGS_DEFAULTS).toEqual({ startingHp: 300, questionSeconds: 25, damageScaling: true });
+    expect(SETTINGS_DEFAULTS).toEqual({ startingHp: 300, questionSeconds: 25, damageScaling: true, playerCount: 2 });
   });
 
   it('keeps damage at 1× past rounds 5 and 8 when scaling is disabled', async () => {
@@ -733,7 +756,7 @@ describe('custom duel settings', () => {
   });
 
   it('preserves custom settings on rematch while resetting HP, history, and the timer', async () => {
-    const selected = { startingHp: 175, questionSeconds: 90, damageScaling: false };
+    const selected = { startingHp: 175, questionSeconds: 90, damageScaling: false, playerCount: 2 };
     const room = configured(selected, ['fixture-1', 'fixture-2']);
     await play(room, 'Clever', 'Common');
     const previous = await play(room, 'Common', 'Common');

@@ -9,12 +9,15 @@ export const HANDSHAKE_TIMEOUT_MS = 10_000;
 export const JOIN_TIMEOUT_MS = 60_000;
 const SIGNALING_TIMEOUT_MS = 25_000;
 const RETRY_DELAY_MS = 2_000;
+const PROTOCOL = 4;
 
 type Draft = { matchId: string; round: number; promptId: string; input: string; salt: string; hash: string };
 type Callbacks = { change: (state: DuelState) => void; status: (message: string) => void; error: (message: string) => void };
 type Packet = Record<string, unknown>;
 type HintPurchase = { matchId: string; round: number; expectedHintLevel: number; sentAt: number;
   promise: Promise<boolean>; resolve: (accepted: boolean) => void; timer: ReturnType<typeof setTimeout> };
+type GuestLink = { conn: DataConnection; token: string; lastSeen: number };
+
 export const roomFromHash = (): string | null => {
   const id = new URLSearchParams(location.hash.slice(1)).get('room');
   return id && /^[a-f0-9]{24}$/.test(id) ? id : null;
@@ -26,15 +29,15 @@ const storageRemove = (key: string): void => { try { sessionStorage.removeItem(k
 /** Browser-to-browser rooms; the host owns timing/scoring. No account or custom backend. */
 export class DuelRoom {
   readonly room: string;
-  readonly seat: Seat;
+  seat: Seat;
   state: DuelState | null = null;
   hostClockOffset: number | null = null;
   private clockSamples: { rtt: number; offset: number }[] = [];
   private peer: Peer | null = null;
   private conn: DataConnection | null = null;
+  private guests = new Map<Seat, GuestLink>();
   private engine: DuelEngine | null = null;
   private version = '';
-  private guestToken = '';
   private token = '';
   private alive = true;
   private accepted = false;
@@ -64,7 +67,7 @@ export class DuelRoom {
   constructor(private name: string, room: string | null, private callbacks: Callbacks, settings: DuelSettings = DEFAULT_SETTINGS) {
     this.name = safeName(name);
     this.room = room ?? crypto.randomUUID().replaceAll('-', '').slice(0, 24);
-    this.seat = room ? 1 : 0;
+    this.seat = room ? -1 : 0;
     if (this.seat === 0) this.hostClockOffset = 0;
     this.token = storageRead(`kd-token-${this.room}`) || crypto.randomUUID();
     storageWrite(`kd-token-${this.room}`, this.token);
@@ -79,13 +82,16 @@ export class DuelRoom {
 
   /** Safe to share: no room IDs, session tokens, answers, IPs, or relay credentials. */
   diagnostics(): object {
-    const pc = this.conn?.peerConnection;
+    const pc = this.conn?.peerConnection ?? [...this.guests.values()][0]?.conn.peerConnection;
     return {
-      app: 'krill-duels', protocol: 3, role: this.seat === 0 ? 'host' : 'guest', stage: this.stage,
+      app: 'krill-duels', protocol: PROTOCOL, role: this.engine ? 'host' : 'guest', stage: this.stage,
       signaling: this.peer?.destroyed ? 'closed' : this.peer?.open ? 'open' : this.peer?.disconnected ? 'disconnected' : 'connecting',
-      attempts: this.retryAttempts, dataChannel: this.conn?.open ? 'open' : 'closed', accepted: this.accepted,
+      attempts: this.retryAttempts, dataChannel: this.engine
+        ? (this.guests.size ? 'open' : 'closed')
+        : this.conn?.open ? 'open' : 'closed',
+      accepted: this.accepted,
       ice: pc?.iceConnectionState ?? this.lastIce, connection: pc?.connectionState ?? this.lastConnection,
-      lastError: this.lastError || null,
+      lastError: this.lastError || null, seat: this.seat >= 0 ? this.seat : null,
     };
   }
 
@@ -95,9 +101,9 @@ export class DuelRoom {
     this.serviceStarted = Date.now();
     this.reconnectStarted = Date.now();
     this.interval = window.setInterval(() => this.tick(), 250);
-    this.callbacks.status(this.seat === 0 ? 'Opening your room…' : 'Joining your friend…');
+    this.callbacks.status(this.engine ? 'Opening your room…' : 'Joining your friend…');
     try {
-      this.version = `krill-duels-3:${await catalogVersion()}`;
+      this.version = `krill-duels-${PROTOCOL}:${await catalogVersion()}`;
     } catch {
       this.fail('Could not prepare the game. Refresh the page and try again.');
       return;
@@ -111,7 +117,7 @@ export class DuelRoom {
       return;
     }
     try {
-      this.peer = this.seat === 0 ? new Peer(`kd-${this.room}`, options) : new Peer(options);
+      this.peer = this.engine ? new Peer(`kd-${this.room}`, options) : new Peer(options);
     } catch {
       this.lastError = 'initialization-error';
       this.fail('Could not start the live connection. Refresh the page and try again.');
@@ -121,16 +127,15 @@ export class DuelRoom {
       if (!this.alive) return;
       this.serviceOpened = true;
       this.serviceStarted = null;
-      if (this.accepted) return;
-      // Signaling can recover while ICE is still negotiating. Keep that attempt.
-      if (this.seat === 1 && this.attemptStarted !== null) return;
-      this.stage = this.seat === 0 ? 'waiting for friend' : 'connecting';
-      this.callbacks.status(this.seat === 0 ? 'Room open. Send your invite link.' : 'Connecting to your friend…');
-      if (this.seat === 1 && !this.accepted) this.connect();
-      else this.publish();
+      if (this.accepted && !this.engine) return;
+      if (!this.engine && this.attemptStarted !== null) return;
+      this.stage = this.engine ? 'waiting for friend' : 'connecting';
+      this.callbacks.status(this.engine ? 'Room open. Send your invite link.' : 'Connecting to your friend…');
+      if (!this.engine && !this.accepted) this.connect();
+      else if (this.engine) this.publish();
     });
     this.peer.on('connection', connection => {
-      if (!this.alive || this.seat !== 0) { connection.close(); return; }
+      if (!this.alive || !this.engine) { connection.close(); return; }
       this.wireHost(connection);
     });
     this.peer.on('disconnected', () => {
@@ -141,10 +146,8 @@ export class DuelRoom {
     this.peer.on('error', error => {
       if (!this.alive) return;
       this.lastError = error.type;
-      // PeerJS emits these without a connection ID, including from promises on
-      // already-closed attempts. The channel's own events/timeouts own recovery.
       if (error.type === 'webrtc') return;
-      if (error.type === 'peer-unavailable' && this.seat === 1) {
+      if (error.type === 'peer-unavailable' && !this.engine) {
         if (!this.accepted) this.retryConnection();
         return;
       }
@@ -167,7 +170,6 @@ export class DuelRoom {
     this.slowHintShown = false;
     this.stage = 'connecting';
     this.callbacks.status(this.state ? 'Connection interrupted. Reconnecting…' : 'Connecting to your friend… Allowing time for your network.');
-    // Binary serialization chunks long match histories; PeerJS JSON is limited to 16 KB.
     let connection: DataConnection;
     try {
       connection = this.peer.connect(`kd-${this.room}`, { reliable: true, serialization: 'binary' });
@@ -196,6 +198,7 @@ export class DuelRoom {
       if (packet.type === 'reject') {
         this.fail(typeof packet.reason === 'string' ? packet.reason : 'The room is unavailable.');
       } else if (packet.type === 'state' && packet.version === this.version && this.validSnapshot(packet.state)) {
+        if (typeof packet.seat === 'number' && Number.isInteger(packet.seat) && packet.seat >= 0) this.seat = packet.seat;
         const wasAccepted = this.accepted;
         this.accepted = true;
         this.reconnectStarted = null;
@@ -231,6 +234,7 @@ export class DuelRoom {
   }
 
   private wireHost(connection: DataConnection): void {
+    let seat: Seat = -1;
     let authenticated = false;
     const timing = { started: Date.now(), opened: connection.open ? Date.now() : null as number | null };
     this.pendingHost.set(connection, timing);
@@ -245,60 +249,75 @@ export class DuelRoom {
           connection.send({ type: 'reject', reason: 'Your game versions differ. Both refresh the page, then create a new room.' });
           return;
         }
-        if (this.guestToken && packet.token !== this.guestToken) {
-          connection.send({ type: 'reject', reason: 'This room already has two players. Create your own duel.' });
-          return;
+        const existing = [...this.guests.entries()].find(([, guest]) => guest.token === packet.token);
+        if (existing) {
+          seat = existing[0];
+          existing[1].conn.close();
+          this.guests.set(seat, { conn: connection, token: packet.token, lastSeen: Date.now() });
+          this.engine!.rejoin(seat, packet.name, Date.now());
+          this.engine!.connection(seat, true, Date.now());
+        } else {
+          seat = this.engine!.join(packet.name, Date.now());
+          if (seat < 0) {
+            connection.send({ type: 'reject', reason: 'This room is full. Create your own duel.' });
+            return;
+          }
+          this.guests.set(seat, { conn: connection, token: packet.token, lastSeen: Date.now() });
         }
-        // The same session token may reconnect; a different player cannot take this seat.
         authenticated = true;
         this.pendingHost.delete(connection);
-        const previous = this.conn;
-        this.conn = connection;
-        previous?.close();
-        this.guestToken = packet.token;
         this.accepted = true;
-        this.lastSeen = Date.now();
         this.reconnectStarted = null;
         this.stage = 'connected';
-        this.engine!.join(packet.name, Date.now());
-        this.callbacks.status('Your friend joined. Both press Ready.');
+        const filled = this.engine!.snapshot(Date.now()).joined.filter(Boolean).length;
+        const need = this.engine!.snapshot(Date.now()).settings.playerCount;
+        this.callbacks.status(filled >= need
+          ? 'Everyone is here. All players press Ready.'
+          : `Player joined (${filled}/${need}). Share the invite for the rest.`);
         this.publish();
         return;
       }
-      if (this.conn !== connection) return;
-      this.lastSeen = Date.now();
+      const link = this.guests.get(seat);
+      if (!link || link.conn !== connection) return;
+      link.lastSeen = Date.now();
       if (packet.type === 'ping') {
-        if (typeof packet.sent === 'number' && Number.isFinite(packet.sent)) this.send({ type: 'pong', sent: packet.sent, now: Date.now() });
+        if (typeof packet.sent === 'number' && Number.isFinite(packet.sent)) {
+          try { connection.send({ type: 'pong', sent: packet.sent, now: Date.now() }); } catch { /* Guest will retry. */ }
+        }
         return;
       }
       const current = this.engine!.snapshot(Date.now());
       if (packet.type === 'hint' && typeof packet.matchId === 'string' && typeof packet.round === 'number' &&
           typeof packet.expectedHintLevel === 'number') {
-        const accepted = this.engine!.hint(1, packet.matchId, packet.round, packet.expectedHintLevel, Date.now());
+        const accepted = this.engine!.hint(seat, packet.matchId, packet.round, packet.expectedHintLevel, Date.now());
         this.publish();
-        this.send({ type: 'hint-result', matchId: packet.matchId, round: packet.round,
-          expectedHintLevel: packet.expectedHintLevel, accepted });
+        try {
+          connection.send({ type: 'hint-result', matchId: packet.matchId, round: packet.round,
+            expectedHintLevel: packet.expectedHintLevel, accepted });
+        } catch { /* Result arrives on the next state snapshot. */ }
         return;
       }
       if (packet.matchId !== current.matchId || packet.round !== current.round) return;
       if (packet.type === 'ready' && packet.phase === current.phase) {
-        this.engine!.ready(1, Date.now()); this.publish();
+        this.engine!.ready(seat, Date.now()); this.publish();
       } else if (packet.type === 'commit' && typeof packet.hash === 'string') {
-        this.engine!.commit(1, current.matchId, current.round, packet.hash, Date.now()); this.publish();
+        this.engine!.commit(seat, current.matchId, current.round, packet.hash, Date.now()); this.publish();
       } else if (packet.type === 'reveal' && typeof packet.input === 'string' && typeof packet.salt === 'string') {
-        void this.engine!.reveal(1, current.matchId, current.round, packet.input, packet.salt, Date.now()).then(accepted => { if (accepted) this.publish(); });
+        void this.engine!.reveal(seat, current.matchId, current.round, packet.input, packet.salt, Date.now()).then(accepted => { if (accepted) this.publish(); });
       } else if (packet.type === 'leave') {
-        this.engine!.forfeit(1); this.publish();
+        this.engine!.forfeit(seat); this.guests.delete(seat); this.publish();
       }
     });
     const disconnected = (): void => {
       this.pendingHost.delete(connection);
-      if (this.conn !== connection || !this.alive || !authenticated) return;
+      if (!authenticated || !this.alive) return;
+      const link = this.guests.get(seat);
+      if (!link || link.conn !== connection) return;
+      this.guests.delete(seat);
       if (this.accepted && !this.peer?.open) this.serviceStarted = Date.now();
-      this.accepted = false;
       this.stage = 'reconnecting';
-      this.callbacks.status('Connection interrupted. Waiting for your friend to reconnect…');
-      this.engine!.connection(false, Date.now());
+      this.callbacks.status('Connection interrupted. Waiting for players to reconnect…');
+      this.engine!.connection(seat, false, Date.now());
       this.publish();
     };
     connection.on('close', disconnected);
@@ -306,14 +325,14 @@ export class DuelRoom {
   }
 
   ready(): void {
-    if (!this.state || !this.alive) return;
+    if (!this.state || !this.alive || this.seat < 0) return;
     if (this.engine) { this.engine.ready(0, Date.now()); this.publish(); }
     else this.send({ type: 'ready', matchId: this.state.matchId, round: this.state.round, phase: this.state.phase });
   }
 
   async submit(input: string): Promise<boolean> {
     const state = this.state;
-    if (this.sending || !state || !state.connected || state.phase !== 'question' || state.committed[this.seat]) return false;
+    if (this.sending || !state || this.seat < 0 || !state.connected || state.phase !== 'question' || state.committed[this.seat]) return false;
     if (this.draft?.matchId === state.matchId && this.draft.round === state.round) return false;
     this.sending = true;
     try {
@@ -334,7 +353,7 @@ export class DuelRoom {
   hint(): Promise<boolean> {
     if (this.hintPending) return this.hintPending.promise;
     const s = this.state;
-    if (!this.alive || !s?.connected || s.phase !== 'question' || s.committed[this.seat] || this.sending ||
+    if (!this.alive || this.seat < 0 || !s?.connected || s.phase !== 'question' || s.committed[this.seat] || this.sending ||
         this.draft?.matchId === s.matchId && this.draft.round === s.round ||
         Date.now() - (this.hostClockOffset ?? 0) >= s.deadline) return Promise.resolve(false);
     if (this.engine) {
@@ -345,7 +364,7 @@ export class DuelRoom {
     if (!this.accepted || !this.conn?.open) return Promise.resolve(false);
     let resolve!: (accepted: boolean) => void;
     const promise = new Promise<boolean>(done => { resolve = done; });
-    this.hintPending = { matchId: s.matchId, round: s.round, expectedHintLevel: s.hintLevels[1],
+    this.hintPending = { matchId: s.matchId, round: s.round, expectedHintLevel: s.hintLevels[this.seat],
       sentAt: Date.now(), promise, resolve, timer: setTimeout(() => this.finishHint(false), 6000) };
     this.sendHint();
     return promise;
@@ -373,9 +392,8 @@ export class DuelRoom {
     if (previous && previous.matchId === state.matchId && JSON.stringify(previous.settings) !== JSON.stringify(state.settings)) {
       this.fail('Room settings changed during the match. Create a new duel.'); return;
     }
-    // Pin commitments; a changed hash after locking is a protocol error.
     if (previous && previous.matchId === state.matchId && previous.round === state.round) {
-      for (const seat of [0, 1] as const) {
+      for (let seat = 0; seat < state.settings.playerCount; seat++) {
         if (previous.hashes[seat] && previous.hashes[seat] !== state.hashes[seat]) {
           this.fail('The room sent conflicting answers. Create a new duel.'); return;
         }
@@ -383,7 +401,7 @@ export class DuelRoom {
     }
     this.state = state;
     const pendingHint = this.hintPending;
-    if (pendingHint) {
+    if (pendingHint && this.seat >= 0) {
       if (state.matchId !== pendingHint.matchId || state.round !== pendingHint.round) this.finishHint(false);
       else if (state.hintLevels[this.seat] > pendingHint.expectedHintLevel) this.finishHint(true);
       else if (state.phase !== 'question' || state.committed[this.seat]) this.finishHint(false);
@@ -394,12 +412,11 @@ export class DuelRoom {
     }
     this.callbacks.change(state);
     const draft = this.draft;
-    if (draft && state.connected && state.phase === 'question' && !state.committed[this.seat]) {
-      // Restore a sent commitment after a brief guest reconnect.
+    if (draft && this.seat >= 0 && state.connected && state.phase === 'question' && !state.committed[this.seat]) {
       if (!this.engine) this.send({ type: 'commit', matchId: draft.matchId, round: draft.round, hash: draft.hash });
     }
     const revealKey = draft ? `${draft.matchId}:${draft.round}` : '';
-    if (draft && state.connected && state.phase === 'reveal' && state.hashes[this.seat] === draft.hash && !this.revealing && (!this.engine || this.hostRevealedKey !== revealKey)) {
+    if (draft && this.seat >= 0 && state.connected && state.phase === 'reveal' && state.hashes[this.seat] === draft.hash && !this.revealing && (!this.engine || this.hostRevealedKey !== revealKey)) {
       this.revealing = true;
       if (this.engine) {
         this.hostRevealedKey = revealKey;
@@ -418,7 +435,11 @@ export class DuelRoom {
   private publish(): void {
     if (!this.engine || !this.alive || !this.serviceOpened) return;
     const state = this.engine.snapshot(Date.now());
-    this.send({ type: 'state', version: this.version, state });
+    for (const [seat, guest] of this.guests) {
+      if (!guest.conn.open) continue;
+      try { guest.conn.send({ type: 'state', version: this.version, seat, state }); }
+      catch { /* Presence timeout handles a dead channel. */ }
+    }
     this.receive(state);
   }
 
@@ -429,8 +450,9 @@ export class DuelRoom {
     this.reconnectStarted ??= Date.now();
     this.stage = this.state ? 'reconnecting' : 'connecting';
     this.callbacks.status(this.state ? 'Connection interrupted. Reconnecting…' : 'Could not connect yet. Retrying while the host keeps the room open…');
-    if (this.engine) this.engine.connection(false, Date.now());
-    else if (wasAccepted) {
+    if (this.engine) {
+      for (const seat of this.guests.keys()) this.engine.connection(seat, false, Date.now());
+    } else if (wasAccepted) {
       if (this.state && this.state.phase !== 'finished') {
         const now = Date.now() - (this.hostClockOffset ?? 0);
         this.state = { ...this.state, connected:false, reconnectUntil:now + GRACE_MS, now };
@@ -470,13 +492,11 @@ export class DuelRoom {
     if (!this.alive) return;
     const now = Date.now();
     if (this.hintPending && now - this.hintPending.sentAt >= 1000) this.sendHint();
-    // Keep an established game alive even if signaling drops. Discovery is only
-    // needed for a new data channel, and reconnect() can throw during retries.
     if (this.peer?.disconnected && !this.peer.destroyed && now >= this.nextServiceRetry) {
       this.nextServiceRetry = now + RETRY_DELAY_MS;
       try { this.peer.reconnect(); } catch { /* Retry after the peer finishes disconnecting. */ }
     }
-    const serviceTimeout = this.state && (this.seat === 1 || this.guestToken) ? GRACE_MS + 8_000 : SIGNALING_TIMEOUT_MS;
+    const serviceTimeout = this.state && (this.seat > 0 || this.guests.size) ? GRACE_MS + 8_000 : SIGNALING_TIMEOUT_MS;
     if (this.serviceStarted !== null && !this.peer?.open && !this.accepted && now - this.serviceStarted >= serviceTimeout) {
       this.fail('Could not reach the room service. Check your internet connection and try again.');
       return;
@@ -487,13 +507,15 @@ export class DuelRoom {
         if (expired) { this.pendingHost.delete(connection); connection.close(); }
       }
       this.engine.tick(now);
-      if (this.accepted && now - this.lastSeen > 8_000) {
-        if (!this.peer?.open) this.serviceStarted = now;
-        this.accepted = false;
-        this.stage = 'reconnecting';
-        this.callbacks.status('Connection interrupted. Waiting for your friend to reconnect…');
-        this.engine.connection(false, now);
-        this.conn?.close();
+      for (const [seat, guest] of [...this.guests]) {
+        if (now - guest.lastSeen > 8_000) {
+          if (!this.peer?.open) this.serviceStarted = now;
+          this.guests.delete(seat);
+          this.stage = 'reconnecting';
+          this.callbacks.status('Connection interrupted. Waiting for players to reconnect…');
+          this.engine.connection(seat, false, now);
+          guest.conn.close();
+        }
       }
       if (now - this.lastBroadcast >= 500) { this.lastBroadcast = now; this.publish(); }
     } else {
@@ -537,31 +559,59 @@ export class DuelRoom {
   private validSnapshot(value: unknown): value is DuelState {
     if (!value || typeof value !== 'object') return false;
     const s = value as DuelState;
-    return validSettings(s.settings) && typeof s.matchId === 'string' && s.matchId.length <= 80 &&
+    const settings = s.settings && typeof s.settings === 'object' && !Array.isArray(s.settings) && !('playerCount' in s.settings)
+      ? { ...s.settings, playerCount: 2 }
+      : s.settings;
+    if (!validSettings(settings)) return false;
+    s.settings = settings;
+    const n = settings.playerCount;
+    if (!Array.isArray(s.joined)) s.joined = Array.from({ length: n }, (_, seat) => seat === 0 || !!s.connected);
+    if (!Array.isArray(s.online)) s.online = Array.from({ length: n }, (_, seat) => seat === 0 || !!s.connected);
+    if (Array.isArray(s.history)) {
+      for (const round of s.history) {
+        if (round && !Array.isArray(round.damages)) {
+          round.damages = Array.from({ length: n }, (_, seat) => seat === round.loser ? round.damage : 0);
+        }
+      }
+    }
+    return typeof s.matchId === 'string' && s.matchId.length <= 80 &&
       ['lobby', 'countdown', 'question', 'reveal', 'result', 'finished'].includes(s.phase) &&
       Number.isInteger(s.round) && s.round >= 0 && s.round <= PROMPT_IDS.length &&
       (s.promptId === null || typeof s.promptId === 'string' && !!promptById(s.promptId)) &&
-      Array.isArray(s.names) && s.names.length === 2 && s.names.every(n => typeof n === 'string' && n.length <= 24) &&
-      Array.isArray(s.hp) && s.hp.length === 2 && s.hp.every(h => Number.isFinite(h) && h >= 0 && h <= s.settings.startingHp) &&
-      Array.isArray(s.hintUses) && s.hintUses.length === 2 && s.hintUses.every(n => Number.isSafeInteger(n) && n >= 0 && n <= PROMPT_IDS.length * 3) &&
-      Array.isArray(s.hintLevels) && s.hintLevels.length === 2 && s.hintLevels.every((n, seat) => Number.isInteger(n) && n >= 0 && n <= 3 && n <= s.hintUses[seat]) &&
-      Array.isArray(s.ready) && s.ready.length === 2 && s.ready.every(b => typeof b === 'boolean') &&
-      Array.isArray(s.committed) && s.committed.length === 2 && s.committed.every(b => typeof b === 'boolean') &&
-      Array.isArray(s.hashes) && s.hashes.length === 2 && s.hashes.every(h => h === null || typeof h === 'string' && /^[a-f0-9]{64}$/.test(h)) &&
+      Array.isArray(s.names) && s.names.length === n && s.names.every(name => typeof name === 'string' && name.length <= 24) &&
+      Array.isArray(s.hp) && s.hp.length === n && s.hp.every(h => Number.isFinite(h) && h >= 0 && h <= s.settings.startingHp) &&
+      s.joined.length === n && s.joined.every(b => typeof b === 'boolean') &&
+      s.online.length === n && s.online.every(b => typeof b === 'boolean') &&
+      Array.isArray(s.hintUses) && s.hintUses.length === n && s.hintUses.every(uses => Number.isSafeInteger(uses) && uses >= 0 && uses <= PROMPT_IDS.length * 3) &&
+      Array.isArray(s.hintLevels) && s.hintLevels.length === n && s.hintLevels.every((level, seat) => Number.isInteger(level) && level >= 0 && level <= 3 && level <= s.hintUses[seat]) &&
+      Array.isArray(s.ready) && s.ready.length === n && s.ready.every(b => typeof b === 'boolean') &&
+      Array.isArray(s.committed) && s.committed.length === n && s.committed.every(b => typeof b === 'boolean') &&
+      Array.isArray(s.hashes) && s.hashes.length === n && s.hashes.every(h => h === null || typeof h === 'string' && /^[a-f0-9]{64}$/.test(h)) &&
       Array.isArray(s.history) && s.history.length <= PROMPT_IDS.length && s.history.every(r =>
         r && typeof r.promptId === 'string' && !!promptById(r.promptId) && Number.isInteger(r.round) &&
-        Number.isFinite(r.damage) && r.damage >= 0 && r.damage <= 300 && [null, 0, 1].includes(r.loser) &&
-        [1, 2, 3].includes(r.multiplier) && Array.isArray(r.results) && r.results.length === 2 && r.results.every(a =>
+        Number.isFinite(r.damage) && r.damage >= 0 && r.damage <= 300 &&
+        Array.isArray(r.damages) && r.damages.length === n && r.damages.every(d => Number.isFinite(d) && d >= 0 && d <= 300) &&
+        (r.loser === null || Number.isInteger(r.loser) && r.loser >= 0 && r.loser < n) &&
+        [1, 2, 3].includes(r.multiplier) && Array.isArray(r.results) && r.results.length === n && r.results.every(a =>
           a && typeof a.input === 'string' && a.input.length <= 160 && (a.answer === null || typeof a.answer === 'string') &&
           [0, 10, 15, 30, 60, 85, 100].includes(a.points))) &&
       Number.isFinite(s.now) && Number.isFinite(s.deadline) &&
       (s.reconnectUntil === null || Number.isFinite(s.reconnectUntil)) &&
-      [null, 0, 1].includes(s.winner) && typeof s.connected === 'boolean' && typeof s.reason === 'string';
+      (s.winner === null || Number.isInteger(s.winner) && s.winner >= 0 && s.winner < n) &&
+      typeof s.connected === 'boolean' && typeof s.reason === 'string';
   }
 
   dispose(notify = true): void {
     if (!this.alive) return;
-    if (notify) this.send(this.seat === 0 ? { type: 'ended' } : { type: 'leave', matchId: this.state?.matchId, round: this.state?.round });
+    if (notify) {
+      if (this.engine) {
+        for (const guest of this.guests.values()) {
+          try { if (guest.conn.open) guest.conn.send({ type: 'ended' }); } catch { /* Closing anyway. */ }
+        }
+      } else {
+        this.send({ type: 'leave', matchId: this.state?.matchId, round: this.state?.round });
+      }
+    }
     this.alive = false;
     this.finishHint(false);
     this.accepted = false;
@@ -571,6 +621,8 @@ export class DuelRoom {
     this.lastConnection = this.conn?.peerConnection?.connectionState ?? this.lastConnection;
     for (const connection of this.pendingHost.keys()) connection.close();
     this.pendingHost.clear();
+    for (const guest of this.guests.values()) guest.conn.close();
+    this.guests.clear();
     this.conn?.close();
     this.peer?.destroy();
   }

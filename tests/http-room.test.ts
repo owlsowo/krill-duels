@@ -6,7 +6,8 @@ const callback = () => ({ change: vi.fn(), status: vi.fn(), error: vi.fn() });
 const engine = new DuelEngine('Host');
 let rooms: DuelRoom[];
 const room = (id: string | null = null, cb = callback()) => { const r = new DuelRoom('Tester', id, cb); rooms.push(r); return r; };
-const reply = (revision: number, state = engine.snapshot(Date.now()), accepted = true) => Response.json({ protocol: 4, revision, state, accepted });
+const reply = (revision: number, state = engine.snapshot(Date.now()), accepted = true, seat = 0) =>
+  Response.json({ protocol: 5, revision, state, accepted, seat });
 beforeEach(() => {
   rooms = []; storage.clear();
   vi.stubGlobal('location', { origin: 'https://game.example', pathname: '/', hash: '' });
@@ -20,7 +21,7 @@ it('uses only same-origin HTTP and shares safe diagnostics', async () => {
   expect(url).toBe('/api/duel'); expect(init.method).toBe('POST');
   expect(init.headers.Authorization).toMatch(/^Bearer [a-f0-9]{32}$/);
   expect(r.hostClockOffset).not.toBeNull();
-  expect(r.diagnostics()).toMatchObject({ transport: 'https', protocol: 4, accepted: true });
+  expect(r.diagnostics()).toMatchObject({ transport: 'https', protocol: 5, accepted: true });
   expect(JSON.stringify(r.diagnostics())).not.toContain(r.room);
   expect(JSON.stringify(r.diagnostics())).not.toContain(init.headers.Authorization.slice(7));
 });
@@ -34,7 +35,7 @@ it('restores host role and session after refresh without sending Leave', async (
   expect(fetch.mock.calls.map(c => JSON.parse(c[1].body).action)).toEqual(['create', 'create']);
 });
 it('explicit Leave sends the same authenticated session with keepalive', async () => {
-  const fetch = vi.fn().mockImplementation(() => Promise.resolve(reply(1))); vi.stubGlobal('fetch', fetch);
+  const fetch = vi.fn().mockImplementation(() => Promise.resolve(reply(1, engine.snapshot(Date.now()), true, 1))); vi.stubGlobal('fetch', fetch);
   const guest = room('a'.repeat(24)); await guest.open(); guest.dispose();
   expect(guest.seat).toBe(1);
   expect(JSON.parse(fetch.mock.calls[1][1].body).action).toBe('leave');

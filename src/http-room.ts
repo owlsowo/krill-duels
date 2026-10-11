@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS, type DuelSettings } from './settings';
 
 type Callbacks = { change: (state: DuelState) => void; status: (message: string) => void; error: (message: string) => void };
 type Command = { action: 'create' | 'join' | 'poll' | 'ready' | 'answer' | 'hint' | 'leave'; [key: string]: unknown };
-interface Reply { protocol: number; revision: number; state: DuelState; accepted: boolean }
+interface Reply { protocol: number; revision: number; state: DuelState; accepted: boolean; seat?: number }
 export const roomFromHash = (): string | null => {
   const id = new URLSearchParams(location.hash.slice(1)).get('room');
   return id && /^[a-f0-9]{24}$/.test(id) ? id : null;
@@ -13,10 +13,12 @@ const read = (key: string): string | null => { try { return sessionStorage.getIt
 const write = (key: string, value: string): void => { try { sessionStorage.setItem(key, value); } catch { /* Optional session recovery. */ } };
 class RoomError extends Error { constructor(message: string, readonly code: string, readonly permanent: boolean) { super(message); } }
 
+const PROTOCOL = 5;
+
 /** Both players use the website's HTTPS API; no browser-to-browser route is required. */
 export class DuelRoom {
   readonly room: string;
-  readonly seat: Seat;
+  seat: Seat;
   state: DuelState | null = null;
   hostClockOffset: number | null = null;
   private token: string;
@@ -36,21 +38,26 @@ export class DuelRoom {
   private answerPending = false;
   private hintPending: Promise<boolean> | null = null;
   private lastStatus = '';
+  private hosting: boolean;
   private now(): number { return Date.now(); }
 
   constructor(private name: string, room: string | null, private callbacks: Callbacks, private settings: DuelSettings = DEFAULT_SETTINGS) {
     this.name = safeName(name);
     this.room = room ?? crypto.randomUUID().replaceAll('-', '').slice(0, 24);
-    this.seat = room && read(`kd-https-host-${room}`) !== '1' ? 1 : 0;
+    this.hosting = !room || read(`kd-https-host-${this.room}`) === '1';
+    this.seat = this.hosting ? 0 : -1;
     this.token = read(`kd-https-token-${this.room}`) || crypto.randomUUID().replaceAll('-', '');
     write(`kd-https-token-${this.room}`, this.token);
-    if (this.seat === 0) write(`kd-https-host-${this.room}`, '1');
+    if (this.hosting) write(`kd-https-host-${this.room}`, '1');
+    const savedSeat = Number(read(`kd-https-seat-${this.room}`));
+    if (!this.hosting && Number.isInteger(savedSeat) && savedSeat >= 0) this.seat = savedSeat;
   }
   get invite(): string { return `${location.origin}${location.pathname}#room=${this.room}`; }
   diagnostics(): object {
-    return { app: 'krill-duels', protocol: 4, transport: 'https', role: this.seat === 0 ? 'host' : 'guest',
+    return { app: 'krill-duels', protocol: PROTOCOL, transport: 'https', role: this.hosting ? 'host' : 'guest',
       stage: this.stage, attempts: this.attempts, accepted: this.opened,
-      connection: this.stage === 'connected' ? 'connected' : this.stage, lastError: this.lastError };
+      connection: this.stage === 'connected' ? 'connected' : this.stage, lastError: this.lastError,
+      seat: this.seat >= 0 ? this.seat : null };
   }
   private status(value: string): void {
     if (value !== this.lastStatus) { this.lastStatus = value; this.callbacks.status(value); }
@@ -63,23 +70,36 @@ export class DuelRoom {
   async open(): Promise<void> {
     if (!this.alive || this.version) return;
     this.stage = 'connecting';
-    this.version = `krill-https-4:${await catalogVersion()}`;
+    this.version = `krill-https-${PROTOCOL}:${await catalogVersion()}`;
     if (!this.alive) return;
-    await this.enqueue(() => this.exchange({ action: this.seat === 0 ? 'create' : 'join', name: this.name, settings: this.settings }));
+    await this.enqueue(() => this.exchange({
+      action: this.hosting ? 'create' : 'join',
+      name: this.name,
+      settings: this.settings,
+      seat: this.hosting ? 0 : (this.seat >= 0 ? this.seat : -1),
+    }));
     this.schedule();
   }
   private schedule(): void {
     if (!this.alive) return;
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      void this.enqueue(() => this.exchange({ action: this.opened ? 'poll' : this.seat === 0 ? 'create' : 'join', name: this.name, settings: this.settings }))
-        .finally(() => this.schedule());
+      void this.enqueue(() => this.exchange({
+        action: this.opened ? 'poll' : this.hosting ? 'create' : 'join',
+        name: this.name,
+        settings: this.settings,
+        seat: this.hosting ? 0 : (this.seat >= 0 ? this.seat : -1),
+      })).finally(() => this.schedule());
     }, this.failureSince !== null ? 1500 : 750);
   }
   private accept(reply: Reply, start: number, end: number): void {
     if (!this.alive || reply.revision <= this.revision) return;
-    if (reply.protocol !== 4 || !Number.isSafeInteger(reply.revision) || !reply.state || !Number.isFinite(reply.state.now)) {
+    if (reply.protocol !== PROTOCOL || !Number.isSafeInteger(reply.revision) || !reply.state || !Number.isFinite(reply.state.now)) {
       throw new RoomError('The room returned an unexpected response. Both refresh and try again.', 'invalid-response', true);
+    }
+    if (typeof reply.seat === 'number' && Number.isInteger(reply.seat) && reply.seat >= 0) {
+      this.seat = reply.seat;
+      write(`kd-https-seat-${this.room}`, String(reply.seat));
     }
     this.revision = reply.revision;
     this.clockSamples.push({ rtt: end - start, offset: (start + end) / 2 - reply.state.now });
@@ -88,7 +108,14 @@ export class DuelRoom {
     this.state = reply.state;
     this.stage = 'connected'; this.opened = true; this.failureSince = null; this.lastError = null;
     this.callbacks.change(reply.state);
-    this.status(reply.state.connected ? 'Connected to your friend.' : reply.state.phase === 'lobby' ? 'Room open. Send the invite to your friend.' : reply.state.phase === 'finished' ? 'Duel complete.' : 'Connection interrupted. Waiting for both players to reconnect…');
+    const filled = reply.state.joined.filter(Boolean).length;
+    const need = reply.state.settings.playerCount;
+    this.status(reply.state.connected
+      ? (need > 2 ? 'Connected. Everyone press Ready.' : 'Connected to your friend.')
+      : reply.state.phase === 'lobby'
+        ? (filled >= need ? 'Room open. Waiting for everyone to reconnect…' : `Room open. Invite players (${filled}/${need}).`)
+        : reply.state.phase === 'finished' ? 'Duel complete.'
+        : 'Connection interrupted. Waiting for players to reconnect…');
   }
   private async request(c: Command): Promise<{ reply: Reply; start: number; end: number }> {
     if (!this.alive) throw new RoomError('Room closed.', 'closed', true);
@@ -97,7 +124,7 @@ export class DuelRoom {
     const start = this.now(); this.attempts++;
     try {
       const response = await fetch('/api/duel', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.token}` },
-        body: JSON.stringify({ ...c, room: this.room, seat: this.seat, version: this.version }), cache: 'no-store', signal: controller.signal });
+        body: JSON.stringify({ ...c, room: this.room, seat: c.seat ?? this.seat, version: this.version }), cache: 'no-store', signal: controller.signal });
       let data: Reply & { error?: string; code?: string };
       try { data = await response.json(); } catch { throw new RoomError('The room service did not respond. Trying again…', 'invalid-response', false); }
       if (!response.ok) throw new RoomError(data.error || 'The room could not respond. Trying again…', data.code || `http-${response.status}`, response.status >= 400 && response.status < 500 && response.status !== 429);
@@ -129,26 +156,24 @@ export class DuelRoom {
   }
   ready(): void {
     const s = this.state;
-    if (!this.alive || !s?.connected || this.readyPending || !['lobby', 'result', 'finished'].includes(s.phase)) return;
+    if (!this.alive || this.seat < 0 || !s?.connected || this.readyPending || !['lobby', 'result', 'finished'].includes(s.phase)) return;
     this.readyPending = true;
-    void this.enqueue(() => this.exchange({ action: 'ready', matchId: s.matchId, round: s.round, phase: s.phase }))
+    void this.enqueue(() => this.exchange({ action: 'ready', matchId: s.matchId, round: s.round, phase: s.phase, seat: this.seat }))
       .finally(() => { this.readyPending = false; });
   }
   async submit(input: string): Promise<boolean> {
     const s = this.state;
-    if (!this.alive || !s?.connected || s.phase !== 'question' || this.answerPending || input.length > 160) return false;
+    if (!this.alive || this.seat < 0 || !s?.connected || s.phase !== 'question' || this.answerPending || input.length > 160) return false;
     this.answerPending = true;
-    try { return await this.enqueue(() => this.exchange({ action: 'answer', matchId: s.matchId, round: s.round, input })); }
+    try { return await this.enqueue(() => this.exchange({ action: 'answer', matchId: s.matchId, round: s.round, input, seat: this.seat })); }
     finally { this.answerPending = false; }
   }
   hint(): Promise<boolean> {
     if (this.hintPending) return this.hintPending;
     const s = this.state;
-    if (!this.alive || !s?.connected || s.phase !== 'question' || this.answerPending || s.committed[this.seat] ||
+    if (!this.alive || this.seat < 0 || !s?.connected || s.phase !== 'question' || this.answerPending || s.committed[this.seat] ||
         this.now() - (this.hostClockOffset ?? 0) >= s.deadline) return Promise.resolve(false);
-    // Capture the level before joining the request queue. Retrying this command
-    // after a lost response can only acknowledge the same purchase.
-    const command: Command = { action: 'hint', matchId: s.matchId, round: s.round, expectedHintLevel: s.hintLevels[this.seat] };
+    const command: Command = { action: 'hint', matchId: s.matchId, round: s.round, expectedHintLevel: s.hintLevels[this.seat], seat: this.seat };
     this.hintPending = this.enqueue(() => this.exchange(command)).finally(() => { this.hintPending = null; });
     return this.hintPending;
   }
@@ -158,7 +183,7 @@ export class DuelRoom {
     clearTimeout(this.timer);
     for (const controller of this.controllers) controller.abort();
     this.controllers.clear();
-    if (notify && this.version) {
+    if (notify && this.version && this.seat >= 0) {
       void fetch('/api/duel', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.token}` },
         body: JSON.stringify({ action: 'leave', room: this.room, seat: this.seat, version: this.version }), keepalive: true }).catch(() => undefined);
     }

@@ -3,7 +3,7 @@ import '@fontsource-variable/space-grotesk';
 import '@fontsource/press-start-2p/latin-400.css';
 import { PROMPTS, promptById } from './data';
 import { multiplier, type DuelState } from './duel-engine';
-import { DEFAULT_SETTINGS, TIME_OPTIONS, validSettings, type DuelSettings } from './settings';
+import { DEFAULT_SETTINGS, TIME_OPTIONS, normalizeSettings, PLAYER_COUNT_MAX, PLAYER_COUNT_MIN, type DuelSettings } from './settings';
 import { PracticeSession } from './practice';
 import { AnswerIndex } from './match';
 import type { Prompt } from './types';
@@ -15,11 +15,16 @@ import { clockMarkup, duelRemaining, duelTimer, questionTimer, timerMarkup, type
 
 const app = document.querySelector<HTMLElement>('#app')!;
 const esc = (s: unknown): string => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]!);
+const AVATARS = ['🦐', '🦑', '🦀', '🐙', '🐡', '🐟'];
 let room: DuelRoom | null = null;
 let practice: PracticeSession | null = null;
 let mode: 'solo' | 'duel' = 'duel';
 let settings: DuelSettings = { ...DEFAULT_SETTINGS };
-try { const saved = JSON.parse(localStorage.getItem('krill-duels:settings') || 'null'); if (validSettings(saved)) settings = saved; } catch { /* Optional preferences. */ }
+try {
+  const saved = JSON.parse(localStorage.getItem('krill-duels:settings') || 'null');
+  const normalized = normalizeSettings(saved);
+  if (normalized) settings = normalized;
+} catch { /* Optional preferences. */ }
 const ANSWER_COUNT = PROMPTS.reduce((count,prompt) => count + prompt.answers.length,0);
 const roundFactor = (s: DuelState) => s.settings.damageScaling ? multiplier(s.round) : 1;
 let state: DuelState | null = null;
@@ -37,7 +42,7 @@ let announced = '';
 let savedName = 'Player';
 try { savedName = localStorage.getItem('krill-duels:name') || 'Player'; } catch { /* Preferences are optional. */ }
 
-app.innerHTML = `<div class="ocean" aria-hidden="true"></div><div class="shell"><header class="masthead"><a class="wordmark" href="${location.pathname}">KRILL<span>DUELS</span></a><span class="edition">RARE-ANSWER BATTLES</span><button class="quiet" data-action="help">How to play</button></header><div id="screen"></div><footer><span>Independent fan game · historical and estimated scores</span><a href="https://krillionanswers.com/data-sources/" target="_blank" rel="noopener">Archive source ↗</a><a href="https://github.com/owlsowo/krill-duels" target="_blank" rel="noopener">Source code ↗</a></footer></div><div id="announcement" class="sr-only" role="status" aria-live="polite"></div><dialog id="help"><button class="close" data-action="close-help" aria-label="Close instructions">×</button><div class="eyebrow">HOW TO PLAY</div><h2>Make your answer count.</h2><ol><li>Create a duel and send the invite link to a friend.</li><li>Choose HP, answer time, and damage rules when creating a duel. Both players press Ready to get the same random question.</li><li>Rare answers earn more points. The score difference damages the lower scorer’s HP.</li><li>With increasing damage enabled, damage doubles at round 5 and triples at round 8. Reach 0 HP and you’re out.</li></ol><p>Every question offers three spelling hints that guide you toward one accepted answer. Press Hint for starting letters, then More letters to uncover more of that same answer. The third hint leaves just one character to fill in. You can still submit a different answer. The hinted answer’s point value is shown before you buy. The next cost is shown beneath the button: 5%, 10%, 15% of starting HP and so on, increasing with every hint you buy in that match. Costs reset on Play again. You must have HP left after buying a hint. The timer keeps running. Hints are free in solo practice.</p><p>Solo practice uses the same questions and scores, without an opponent. In duels, questions don’t repeat within a room, including when you press Play again. After the whole bank is used, the next game starts a fresh shuffle. Both players need to keep their tabs open during a duel. No Krillion purchase or extension is needed.</p><p class="fine">Each question shows its scoring method. Historical scores are editorial grades; reviewed questions correct known answer-list errors. New questions use estimated familiarity from 2025 English Wikipedia readership, relative to the other accepted answers. News and language can affect that estimate. Equivalent names share a score where reviewed aliases are available; small spelling mistakes can offer a suggestion. Unlisted answers can be retried before time expires. This is casual play between friends.</p><button class="primary" data-action="close-help">Got it</button></dialog>`;
+app.innerHTML = `<div class="ocean" aria-hidden="true"></div><div class="shell"><header class="masthead"><a class="wordmark" href="${location.pathname}">KRILL<span>DUELS</span></a><span class="edition">RARE-ANSWER BATTLES</span><button class="quiet" data-action="help">How to play</button></header><div id="screen"></div><footer><span>Independent fan game · historical and estimated scores</span><a href="https://krillionanswers.com/data-sources/" target="_blank" rel="noopener">Archive source ↗</a><a href="https://github.com/owlsowo/krill-duels" target="_blank" rel="noopener">Source code ↗</a></footer></div><div id="announcement" class="sr-only" role="status" aria-live="polite"></div><dialog id="help"><button class="close" data-action="close-help" aria-label="Close instructions">×</button><div class="eyebrow">HOW TO PLAY</div><h2>Make your answer count.</h2><ol><li>Create a duel and send the invite link to your friends.</li><li>Choose player count (2–6), HP, answer time, and damage rules when creating a duel. Everyone presses Ready to get the same random question.</li><li>Rare answers earn more points. Anyone below the round’s top score takes damage equal to the point gap (times the damage multiplier).</li><li>With increasing damage enabled, damage doubles at round 5 and triples at round 8. Reach 0 HP and you’re out; last player standing wins.</li></ol><p>Every question offers three spelling hints that guide you toward one accepted answer. Press Hint for starting letters, then More letters to uncover more of that same answer. The third hint leaves just one character to fill in. You can still submit a different answer. The hinted answer’s point value is shown before you buy. The next cost is shown beneath the button: 5%, 10%, 15% of starting HP and so on, increasing with every hint you buy in that match. Costs reset on Play again. You must have HP left after buying a hint. The timer keeps running. Hints are free in solo practice.</p><p>Solo practice uses the same questions and scores, without an opponent. In duels, questions don’t repeat within a room, including when you press Play again. After the whole bank is used, the next game starts a fresh shuffle. Everyone needs to keep their tabs open during a duel. No Krillion purchase or extension is needed.</p><p class="fine">Each question shows its scoring method. Historical scores are editorial grades; reviewed questions correct known answer-list errors. New questions use estimated familiarity from 2025 English Wikipedia readership, relative to the other accepted answers. News and language can affect that estimate. Equivalent names share a score where reviewed aliases are available; small spelling mistakes can offer a suggestion. Unlisted answers can be retried before time expires. This is casual play between friends.</p><button class="primary" data-action="close-help">Got it</button></dialog>`;
 const screen = document.querySelector<HTMLElement>('#screen')!;
 
 function announce(message: string): void {
@@ -61,7 +66,37 @@ function suggestionButtons(disabled = false): string {
 
 function playerCard(name: string, hp: number, side: number, detail: string): string {
   const maxHp = state?.settings.startingHp ?? settings.startingHp;
-  return `<section class="player player-${side}"><div class="player-id"><span class="avatar" aria-hidden="true">${side === 0 ? '🦐' : '🦑'}</span><div><span class="player-label">${side === 0 ? 'PLAYER 01' : 'PLAYER 02'}</span><h2>${esc(name)}</h2></div><strong class="hp">${hp}<small> HP</small></strong></div><div class="health-track" role="meter" aria-label="${esc(name)} health" aria-valuemin="0" aria-valuemax="${maxHp}" aria-valuenow="${hp}"><div class="health-fill" style="width:${hp / maxHp * 100}%"></div></div><div class="player-status">${esc(detail)}</div></section>`;
+  const label = `PLAYER ${String(side + 1).padStart(2, '0')}`;
+  return `<section class="player player-${side % 6}"><div class="player-id"><span class="avatar" aria-hidden="true">${AVATARS[side % AVATARS.length]}</span><div><span class="player-label">${label}</span><h2>${esc(name)}</h2></div><strong class="hp">${hp}<small> HP</small></strong></div><div class="health-track" role="meter" aria-label="${esc(name)} health" aria-valuemin="0" aria-valuemax="${maxHp}" aria-valuenow="${hp}"><div class="health-fill" style="width:${Math.max(0, hp / maxHp * 100)}%"></div></div><div class="player-status">${esc(detail)}</div></section>`;
+}
+
+function healthBoard(s: DuelState, mySeat: number): string {
+  const n = s.settings.playerCount;
+  const details = s.names.map((_, i) => {
+    if (!s.joined[i]) return 'Open seat';
+    if (!s.online[i]) return 'Reconnecting…';
+    if (s.hp[i] <= 0 && s.phase !== 'lobby') return 'Eliminated';
+    if (s.ready[i]) return 'Ready';
+    if (s.committed[i] && ['question', 'reveal'].includes(s.phase)) return 'Answer locked';
+    if (i === mySeat) return 'You';
+    return n === 2 ? 'Opponent' : 'Rival';
+  });
+  if (n === 2) {
+    return `${playerCard(s.names[0], s.hp[0], 0, details[0])}<span class="versus">VS</span>${playerCard(s.names[1], s.hp[1], 1, details[1])}`;
+  }
+  return s.names.map((name, i) => playerCard(name, s.hp[i], i, details[i])).join('');
+}
+
+function formatMatchLabel(s: DuelState): string {
+  const n = s.settings.playerCount;
+  if (n === 2) return s.phase === 'lobby' ? 'LIVE 1V1' : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`;
+  return s.phase === 'lobby' ? `LIVE ${n}-PLAYER` : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`;
+}
+
+function damageSummary(s: DuelState, last: NonNullable<DuelState['history'][number]>): string {
+  const hit = last.damages.map((dmg, i) => dmg > 0 ? `${s.names[i]} ${dmg}` : null).filter(Boolean);
+  if (!hit.length) return 'Equal scores. No damage this round.';
+  return `${hit.join(', ')} damage${last.multiplier > 1 ? ` at ${last.multiplier}×` : ''}.`;
 }
 
 function render(force = false): void {
@@ -89,22 +124,27 @@ function render(force = false): void {
   const last = s.history.at(-1);
   const prompt = s.promptId ? promptById(s.promptId) : null;
   const frozen = !s.connected && s.phase !== 'lobby' && s.phase !== 'finished';
-  const details = ([0,1] as const).map(i => !s.connected && i===1 ? 'Waiting for connection' : s.ready[i] ? 'Ready' : s.committed[i] && ['question','reveal'].includes(s.phase) ? 'Answer locked' : i===mySeat ? 'You' : 'Opponent');
+  const filled = s.joined.filter(Boolean).length;
+  const need = s.settings.playerCount;
+  const waitingCopy = need === 2 ? 'Waiting for your friend…' : 'Waiting for everyone…';
   let content = '';
   if (s.phase === 'lobby') {
-    content = `<div class="lobby-content"><span class="eyebrow">PRIVATE DUEL</span><h1>${s.connected ? 'Two minds.<br><em>One winner.</em>' : 'Invite your<br><em>rival.</em>'}</h1><p>${s.connected ? 'Both players press Ready to start the first question.' : 'Send this link to a friend. Keep this tab open while you play.'}</p><label class="sr-only" for="invite">Invite link</label><p class="room-rules">${s.settings.startingHp.toLocaleString()} HP · ${s.settings.questionSeconds} seconds · ${s.settings.damageScaling ? 'Increasing damage' : 'Steady 1× damage'}</p><div class="invite-row"><input id="invite" readonly value="${esc(room!.invite)}"><button class="secondary" data-action="copy">Copy invite</button></div><button class="primary" data-action="ready" ${!s.connected || s.ready[mySeat] ? 'disabled' : ''}>${s.ready[mySeat] ? 'Waiting for your friend…' : s.connected ? 'I’m ready →' : 'Waiting for friend…'}</button></div>`;
+    content = `<div class="lobby-content"><span class="eyebrow">PRIVATE DUEL</span><h1>${s.connected ? (need === 2 ? 'Two minds.<br><em>One winner.</em>' : `${need} minds.<br><em>One winner.</em>`) : 'Invite your<br><em>rivals.</em>'}</h1><p>${s.connected ? 'Everyone presses Ready to start the first question.' : `Send this link to your friends (${filled}/${need} seated). Keep this tab open while you play.`}</p><label class="sr-only" for="invite">Invite link</label><p class="room-rules">${need} players · ${s.settings.startingHp.toLocaleString()} HP · ${s.settings.questionSeconds} seconds · ${s.settings.damageScaling ? 'Increasing damage' : 'Steady 1× damage'}</p><div class="invite-row"><input id="invite" readonly value="${esc(room!.invite)}"><button class="secondary" data-action="copy">Copy invite</button></div><button class="primary" data-action="ready" ${!s.connected || mySeat < 0 || s.ready[mySeat] ? 'disabled' : ''}>${mySeat >= 0 && s.ready[mySeat] ? waitingCopy : s.connected ? 'I’m ready →' : `Waiting for players (${filled}/${need})…`}</button></div>`;
   } else if (s.phase === 'countdown') {
     content = `<div class="countdown-content"><span class="eyebrow">ROUND ${s.round} · ${roundFactor(s)}× DAMAGE</span><h1>Get ready.</h1><div id="countdown" class="big-count" aria-live="off">3</div><p>A new question. A chance to turn the tide.</p></div>`;
   } else if (s.phase === 'question' || s.phase === 'reveal') {
-    const locked = s.committed[mySeat] || s.phase === 'reveal' || submitting;
+    const out = mySeat >= 0 && s.hp[mySeat] <= 0;
+    const locked = out || mySeat < 0 || s.committed[mySeat] || s.phase === 'reveal' || submitting;
     const timer = duelTimer(s, Date.now(), offset);
-    content = `<div class="question-top"><span class="eyebrow">${esc(prompt?.category || 'TRIVIA')}</span>${clockMarkup(timer)}</div><h1 class="question">${esc(prompt?.prompt)}</h1>${questionNotes(prompt)}${hintMarkup(s.promptId!, s.hintLevels[mySeat], { cost:hintCost(s.settings.startingHp,s.hintUses[mySeat]), hp:s.hp[mySeat], disabled:locked || frozen || timer.seconds === 0, pending:!!hintPending, message:hintMessage })}${timerMarkup(timer)}<form id="answer-form"><label for="answer">${locked ? 'YOUR ANSWER IS LOCKED' : 'YOUR ANSWER'}</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…" ${locked || frozen ? 'disabled' : ''}><button class="primary" type="submit" ${locked || frozen ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock in →'}</button></div><div class="answer-foot"><span id="answer-hint" ${answerHint ? 'role="alert"' : ''}>${esc(answerHint || (s.phase === 'reveal' ? 'Revealing both answers…' : locked ? 'Waiting for the other answer…' : 'Press Enter to lock in. Rarer answers score higher.'))}</span>${!locked ? `<button class="quiet" type="button" data-action="skip" ${frozen ? 'disabled' : ''}>Skip</button>` : ''}</div>${suggestionButtons(locked || frozen)}</form>`;
+    content = `<div class="question-top"><span class="eyebrow">${esc(prompt?.category || 'TRIVIA')}</span>${clockMarkup(timer)}</div><h1 class="question">${esc(prompt?.prompt)}</h1>${questionNotes(prompt)}${out ? '<p class="fine">You’re out this match. Spectating until someone wins.</p>' : hintMarkup(s.promptId!, s.hintLevels[mySeat], { cost:hintCost(s.settings.startingHp,s.hintUses[mySeat]), hp:s.hp[mySeat], disabled:locked || frozen || timer.seconds === 0, pending:!!hintPending, message:hintMessage })}${timerMarkup(timer)}${out ? '' : `<form id="answer-form"><label for="answer">${locked ? 'YOUR ANSWER IS LOCKED' : 'YOUR ANSWER'}</label><div class="answer-row"><input id="answer" maxlength="160" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Think of something less obvious…" ${locked || frozen ? 'disabled' : ''}><button class="primary" type="submit" ${locked || frozen ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock in →'}</button></div><div class="answer-foot"><span id="answer-hint" ${answerHint ? 'role="alert"' : ''}>${esc(answerHint || (s.phase === 'reveal' ? 'Revealing answers…' : locked ? 'Waiting for other answers…' : 'Press Enter to lock in. Rarer answers score higher.'))}</span>${!locked ? `<button class="quiet" type="button" data-action="skip" ${frozen ? 'disabled' : ''}>Skip</button>` : ''}</div>${suggestionButtons(locked || frozen)}</form>`}`;
   } else {
     const finished = s.phase === 'finished';
-    const headline = finished ? s.winner === null ? 'An even match.' : s.winner === mySeat ? 'You win.' : 'You’re sunk.' : last?.loser === null ? 'No damage.' : last?.loser === mySeat ? 'That one hurt.' : 'Direct hit.';
-    content = `<div class="result-head"><span class="eyebrow">${finished ? 'DUEL COMPLETE' : `ROUND ${s.round} RESULTS`}</span><h1>${headline}</h1><p>${esc(finished ? s.reason : last?.damage ? `${s.names[last.loser!]} takes ${last.damage} damage${last.multiplier>1 ? ` at ${last.multiplier}×` : ''}.` : 'Equal scores. Both HP bars stay put.')}</p></div>${last ? `<p class="result-prompt">${esc(promptById(last.promptId)?.prompt)}</p><div class="result-grid">${last.results.map((result,i)=>`<div class="answer-result player-${i}"><div class="result-name">${esc(s.names[i])}</div><strong>${result.points}<small> pts</small></strong><h2>${esc(result.answer || (result.input ? `“${result.input}”` : 'No answer'))}</h2><span class="rarity score-${result.points}">${esc(scoreLabel(result.points, promptById(last.promptId)))}</span></div>`).join('')}</div>` : ''}<button class="primary" data-action="ready" ${!s.connected || s.ready[mySeat] ? 'disabled' : ''}>${s.ready[mySeat] ? 'Waiting for your friend…' : finished ? 'Play again →' : 'Ready for next question →'}</button>${last ? answerSheet(last.promptId) : ''}`;
+    const myDamage = last && mySeat >= 0 ? last.damages[mySeat] : 0;
+    const headline = finished ? s.winner === null ? 'An even match.' : s.winner === mySeat ? 'You win.' : 'You’re sunk.' : !last || last.damages.every(d => d === 0) ? 'No damage.' : myDamage > 0 ? 'That one hurt.' : 'Direct hit.';
+    const resultCopy = finished ? s.reason : last ? damageSummary(s, last) : 'Equal scores. No damage this round.';
+    content = `<div class="result-head"><span class="eyebrow">${finished ? 'DUEL COMPLETE' : `ROUND ${s.round} RESULTS`}</span><h1>${headline}</h1><p>${esc(resultCopy)}</p></div>${last ? `<p class="result-prompt">${esc(promptById(last.promptId)?.prompt)}</p><div class="result-grid players-${Math.min(last.results.length, 4)}">${last.results.map((result,i)=>`<div class="answer-result player-${i % 6}"><div class="result-name">${esc(s.names[i])}</div><strong>${result.points}<small> pts</small></strong><h2>${esc(result.answer || (result.input ? `“${result.input}”` : 'No answer'))}</h2><span class="rarity score-${result.points}">${esc(scoreLabel(result.points, promptById(last.promptId)))}</span>${last.damages[i] ? `<small class="damage-taken">−${last.damages[i]} HP</small>` : ''}</div>`).join('')}</div>` : ''}<button class="primary" data-action="ready" ${!s.connected || mySeat < 0 || s.ready[mySeat] || (!finished && s.hp[mySeat] <= 0) ? 'disabled' : ''}>${mySeat >= 0 && s.ready[mySeat] ? waitingCopy : finished ? 'Play again →' : 'Ready for next question →'}</button>${last ? answerSheet(last.promptId) : ''}`;
   }
-  screen.innerHTML = `<section class="match"><div class="match-heading"><span class="eyebrow">${s.phase==='lobby' ? 'LIVE 1V1' : `ROUND ${s.round} · ${roundFactor(s)}× DAMAGE`}</span><button class="quiet" data-action="leave">Leave duel</button></div><div class="health-board">${playerCard(s.names[0],s.hp[0],0,details[0])}<span class="versus">VS</span>${playerCard(s.names[1],s.hp[1],1,details[1])}</div>${frozen ? `<div class="connection-warning" role="status">Connection interrupted. Round paused while both players reconnect.</div>` : ''}<section class="arena ${s.phase}">${content}</section><div class="match-foot"><span class="status">${esc(status)}</span><button class="quiet" data-action="copy">Copy invite link</button></div>${error ? `<section class="connection-warning" role="alert">${esc(error)} <button class="secondary" data-action="retry">Reconnect</button><button class="quiet" data-action="home">New room</button></section>` : ''}${connectionHelp()}${s.history.length > 1 ? `<details class="history"><summary>Match history · ${s.history.length} rounds</summary>${s.history.slice().reverse().map(r=>`<div class="history-row"><b>${r.round}</b><span>${esc(promptById(r.promptId)?.prompt)}</span><strong>${r.results[0].points} : ${r.results[1].points}</strong><small>${r.damage ? `${r.damage} damage` : 'Tie'}</small></div>`).join('')}</details>` : ''}</section>`;
+  screen.innerHTML = `<section class="match"><div class="match-heading"><span class="eyebrow">${esc(formatMatchLabel(s))}</span><button class="quiet" data-action="leave">Leave duel</button></div><div class="health-board players-${need}">${healthBoard(s, mySeat)}</div>${frozen ? `<div class="connection-warning" role="status">Connection interrupted. Round paused while players reconnect.</div>` : ''}<section class="arena ${s.phase}">${content}</section><div class="match-foot"><span class="status">${esc(status)}</span><button class="quiet" data-action="copy">Copy invite link</button></div>${error ? `<section class="connection-warning" role="alert">${esc(error)} <button class="secondary" data-action="retry">Reconnect</button><button class="quiet" data-action="home">New room</button></section>` : ''}${connectionHelp()}${s.history.length > 1 ? `<details class="history"><summary>Match history · ${s.history.length} rounds</summary>${s.history.slice().reverse().map(r=>`<div class="history-row"><b>${r.round}</b><span>${esc(promptById(r.promptId)?.prompt)}</span><strong>${r.results.map(result => result.points).join(' : ')}</strong><small>${r.damages.some(d => d > 0) ? r.damages.map((d,i)=>d?`${s.names[i]} −${d}`:null).filter(Boolean).join(', ') : 'Tie'}</small></div>`).join('')}</details>` : ''}</section>`;
   bindForms();
   restoreDetails();
   const input = screen.querySelector<HTMLInputElement>('#answer');
@@ -112,7 +152,7 @@ function render(force = false): void {
   if (input && !input.disabled && previousAnswer === undefined) input.focus({preventScroll:true});
   paintClock();
   if (s.phase === 'question' && prompt) announce(`Round ${s.round}. ${prompt.prompt}. ${s.settings.questionSeconds} seconds.`);
-  else if (s.phase === 'result' && last) announce(`Round complete. ${s.names[0]} ${last.results[0].points} points. ${s.names[1]} ${last.results[1].points} points. ${last.damage} damage.`);
+  else if (s.phase === 'result' && last) announce(`Round complete. ${s.names.map((name,i)=>`${name} ${last.results[i].points}`).join('. ')}.`);
   else if (s.phase === 'finished') announce(s.winner === null ? 'The duel is a draw.' : `${s.names[s.winner]} wins the duel.`);
 }
 
@@ -264,15 +304,20 @@ app.addEventListener('click', async event => {
 });
 window.addEventListener('hashchange', () => { if (!room) render(true); });
 screen.addEventListener('input', event => {
-  if ((event.target as HTMLElement).id === 'answer' && (answerHint || answerSuggestions.length)) {
+  const target = event.target as HTMLInputElement;
+  if (target.id === 'answer' && (answerHint || answerSuggestions.length)) {
     answerHint = ''; answerSuggestions = []; render();
+  } else if (target.id === 'player-count') {
+    readSettings();
+    const label = screen.querySelector('#player-count-value');
+    if (label) label.textContent = String(settings.playerCount);
   }
 });
 screen.addEventListener('change', event => {
   const target = event.target as HTMLInputElement | HTMLSelectElement;
-  if (!['starting-hp','question-time','damage-mode'].includes(target.id)) return;
+  if (!['starting-hp','question-time','damage-mode','player-count'].includes(target.id)) return;
   readSettings();
-  if (target.id === 'damage-mode' && target.nextElementSibling) target.nextElementSibling.textContent = settings.damageScaling ? '2× at round 5, 3× at round 8' : 'Score difference only';
+  if (target.id === 'damage-mode' && target.nextElementSibling) target.nextElementSibling.textContent = settings.damageScaling ? '2× at round 5, 3× at round 8' : 'Score difference from the top';
 });
 window.addEventListener('beforeunload', event => { if (room && state && state.phase !== 'finished') { event.preventDefault(); event.returnValue = ''; } });
 window.addEventListener('pagehide', () => room?.dispose(!HTTPS_ROOMS));
@@ -317,16 +362,23 @@ function renderHome(name: string): void {
   const invited = !!roomFromHash();
   const soloMode = !invited && mode === 'solo';
   const selectTime = `<label for="question-time">Time per question</label><select id="question-time">${TIME_OPTIONS.map(seconds=>`<option value="${seconds}" ${seconds===settings.questionSeconds?'selected':''}>${seconds} seconds</option>`).join('')}</select>`;
-  screen.innerHTML = `<section class="start setup"><div class="start-heading"><span class="eyebrow">${invited?'YOUR FRIEND SENT AN INVITE':'RARE ANSWERS. REAL POINTS.'}</span><h1>${invited?'Your duel awaits.':'Play your way.'}</h1><p>${invited?'Join the room, check the rules, and press Ready.':'Practice on your own or challenge a friend to an HP battle.'}</p></div><section class="start-controls">${invited?'':`<div class="mode-picker" aria-label="Game mode"><button class="mode-choice ${soloMode?'selected':''}" data-action="mode" data-mode="solo" ${joining?'disabled':''} aria-pressed="${soloMode}"><span aria-hidden="true">🦐</span><strong>Solo practice</strong><small>Find rare answers at your own pace</small></button><button class="mode-choice ${!soloMode?'selected':''}" data-action="mode" data-mode="duel" ${joining?'disabled':''} aria-pressed="${!soloMode}"><span aria-hidden="true">⚔️</span><strong>Create duel</strong><small>Invite a friend and battle for HP</small></button></div>`}<form id="start-form">${soloMode?'':`<label for="name">Your name</label><input id="name" ${joining?'disabled':''} maxlength="24" autocomplete="nickname" value="${esc(name)}" placeholder="Player">`}${invited?'':`<fieldset class="settings" ${joining?'disabled':''}><legend>${soloMode?'Practice settings':'Duel settings'}</legend><div class="settings-grid ${soloMode?'solo-settings':''}">${soloMode?'':`<div><label for="starting-hp">Starting HP</label><input id="starting-hp" type="number" min="100" max="10000" step="1" value="${settings.startingHp}" required><small>100–10,000 · higher means longer</small></div>`}<div>${selectTime}</div>${soloMode?'':`<div><label for="damage-mode">Damage</label><select id="damage-mode"><option value="scaling" ${settings.damageScaling?'selected':''}>Increasing 1× → 3×</option><option value="steady" ${!settings.damageScaling?'selected':''}>Steady 1×</option></select><small>${settings.damageScaling?'2× at round 5, 3× at round 8':'Score difference only'}</small></div>`}</div></fieldset>`}<button class="primary start-button" type="submit" ${joining?'disabled':''}>${joining?'Connecting…':invited?'Join duel →':soloMode?'Start solo practice →':'Create duel →'}</button></form>${joining?'<button class="quiet" data-action="cancel">Cancel connection</button>':''}<div class="game-facts"><span>${PROMPTS.length.toLocaleString()} questions</span><span>${ANSWER_COUNT.toLocaleString()} scored answers</span></div><p class="status" role="status">${esc(status || (invited?'The host’s settings apply to both players.':soloMode?'No room or connection needed once the game loads.':'Create a private room and share its invite link.'))}</p>${error?`<p class="error" role="alert">${esc(error)}</p><button class="quiet" data-action="retry">Try again</button>`:''}${soloMode?'':connectionHelp()}${invited?'<button class="quiet" data-action="home">Play solo or create your own duel</button>':''}</section></section>`;
+  const playerSlider = `<div class="player-count-setting"><label for="player-count">Players <strong id="player-count-value">${settings.playerCount}</strong></label><input id="player-count" type="range" min="${PLAYER_COUNT_MIN}" max="${PLAYER_COUNT_MAX}" step="1" value="${settings.playerCount}"><small>2–6 free-for-all · same questions, shared top-score damage</small></div>`;
+  screen.innerHTML = `<section class="start setup"><div class="start-heading"><span class="eyebrow">${invited?'YOUR FRIEND SENT AN INVITE':'RARE ANSWERS. REAL POINTS.'}</span><h1>${invited?'Your duel awaits.':'Play your way.'}</h1><p>${invited?'Join the room, check the rules, and press Ready.':'Practice on your own or challenge friends to an HP battle.'}</p></div><section class="start-controls">${invited?'':`<div class="mode-picker" aria-label="Game mode"><button class="mode-choice ${soloMode?'selected':''}" data-action="mode" data-mode="solo" ${joining?'disabled':''} aria-pressed="${soloMode}"><span aria-hidden="true">🦐</span><strong>Solo practice</strong><small>Find rare answers at your own pace</small></button><button class="mode-choice ${!soloMode?'selected':''}" data-action="mode" data-mode="duel" ${joining?'disabled':''} aria-pressed="${!soloMode}"><span aria-hidden="true">⚔️</span><strong>Create duel</strong><small>Invite friends and battle for HP</small></button></div>`}<form id="start-form">${soloMode?'':`<label for="name">Your name</label><input id="name" ${joining?'disabled':''} maxlength="24" autocomplete="nickname" value="${esc(name)}" placeholder="Player">`}${invited?'':`<fieldset class="settings" ${joining?'disabled':''}><legend>${soloMode?'Practice settings':'Duel settings'}</legend>${soloMode?'':playerSlider}<div class="settings-grid ${soloMode?'solo-settings':''}">${soloMode?'':`<div><label for="starting-hp">Starting HP</label><input id="starting-hp" type="number" min="100" max="10000" step="1" value="${settings.startingHp}" required><small>100–10,000 · higher means longer</small></div>`}<div>${selectTime}</div>${soloMode?'':`<div><label for="damage-mode">Damage</label><select id="damage-mode"><option value="scaling" ${settings.damageScaling?'selected':''}>Increasing 1× → 3×</option><option value="steady" ${!settings.damageScaling?'selected':''}>Steady 1×</option></select><small>${settings.damageScaling?'2× at round 5, 3× at round 8':'Score difference from the top'}</small></div>`}</div></fieldset>`}<button class="primary start-button" type="submit" ${joining?'disabled':''}>${joining?'Connecting…':invited?'Join duel →':soloMode?'Start solo practice →':'Create duel →'}</button></form>${joining?'<button class="quiet" data-action="cancel">Cancel connection</button>':''}<div class="game-facts"><span>${PROMPTS.length.toLocaleString()} questions</span><span>${ANSWER_COUNT.toLocaleString()} scored answers</span></div><p class="status" role="status">${esc(status || (invited?'The host’s settings apply to every player.':soloMode?'No room or connection needed once the game loads.':'Create a private room and share its invite link.'))}</p>${error?`<p class="error" role="alert">${esc(error)}</p><button class="quiet" data-action="retry">Try again</button>`:''}${soloMode?'':connectionHelp()}${invited?'<button class="quiet" data-action="home">Play solo or create your own duel</button>':''}</section></section>`;
 }
 
 function readSettings(): void {
   const hp = screen.querySelector<HTMLInputElement>('#starting-hp');
   const seconds = screen.querySelector<HTMLSelectElement>('#question-time');
   const damage = screen.querySelector<HTMLSelectElement>('#damage-mode');
-  const next = { startingHp:hp ? Number(hp.value) : settings.startingHp, questionSeconds:seconds ? Number(seconds.value) : settings.questionSeconds, damageScaling:damage ? damage.value==='scaling' : settings.damageScaling };
-  if (validSettings(next)) settings = next;
-  try { localStorage.setItem('krill-duels:settings',JSON.stringify(settings)); } catch { /* Optional preferences. */ }
+  const players = screen.querySelector<HTMLInputElement>('#player-count');
+  const next = normalizeSettings({
+    startingHp: hp ? Number(hp.value) : settings.startingHp,
+    questionSeconds: seconds ? Number(seconds.value) : settings.questionSeconds,
+    damageScaling: damage ? damage.value === 'scaling' : settings.damageScaling,
+    playerCount: players ? Number(players.value) : settings.playerCount,
+  });
+  if (next) settings = next;
+  try { localStorage.setItem('krill-duels:settings', JSON.stringify(settings)); } catch { /* Optional preferences. */ }
 }
 
 async function startPlay(): Promise<void> {

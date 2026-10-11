@@ -4,14 +4,14 @@ Free rare-answer trivia for solo practice or a private battle with a friend.
 
 **[Play Krill Duels](https://owlsowo.github.io/krill-duels/)** · **[Alternate HTTPS version](https://krill-duels-play.owlsowo1.chatgpt.site/)**
 
-Choose **Solo practice** to play immediately, or **Create duel** to set your rules and send an invite link to a friend. Both duel players press Ready to receive the same randomly selected question. Rarer answers earn more points; the score difference damages the lower scorer's HP.
+Choose **Solo practice** to play immediately, or **Create duel** to set your rules and send an invite link to friends. Everyone presses Ready to receive the same randomly selected question. Rarer answers earn more points; anyone below that round's top score takes damage equal to the point gap.
 
 ## Rules
 
-- Set **100–10,000 starting HP** and **15, 25, 45, 60, or 90 seconds** per question. Defaults are 300 HP and 25 seconds. Both players share the host's settings, which stay fixed for the match and rematch.
+- Set **2–6 players**, **100–10,000 starting HP**, and **15, 25, 45, 60, or 90 seconds** per question. Defaults are 2 players, 300 HP, and 25 seconds. Everyone shares the host's settings, which stay fixed for the match and rematch.
 - Published archive scores: **10, 15, 30, 60, 85, or 100** points. A skipped or missing answer scores zero.
-- Choose **steady 1× damage**, or increasing damage: **1× in rounds 1–4**, **2× in rounds 5–7**, and **3× from round 8**. Damage is the absolute score difference times that multiplier.
-- Continue until a knockout. There is no seven- or fifteen-round limit. If both survive every question in the catalog, the match is a draw.
+- Choose **steady 1× damage**, or increasing damage: **1× in rounds 1–4**, **2× in rounds 5–7**, and **3× from round 8**. Damage is the gap from the round's highest score times that multiplier. In a 1v1 that matches the old score-difference rule; with 3+ players, several people can take damage in the same round.
+- Continue until a knockout (last player with HP remaining). There is no seven- or fifteen-round limit. If more than one player survives every question in the catalog, the match is a draw.
 - Each room shuffles the catalog once. Both players press Ready between rounds; Play again continues with unused questions across rematches. A fresh shuffle starts after the whole bank has been played.
 - Canonical spellings take priority. Case, accents, and ordinary punctuation are normalized when unambiguous. Unlisted answers can be retried while time remains; ambiguous shortened names are not guessed. A few archive spelling variants carry conflicting historical scores, so their exact published spellings keep their recorded score.
 - Reviewed alternate names are accepted directly for the same score: for example, **Ship of Theseus** also matches **Theseus's ship** in the ship question. These aliases apply only to their reviewed question.
